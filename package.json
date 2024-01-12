@@ -1,0 +1,33 @@
+{
+  "name": "alley",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev:vite": "vite",
+    "build:vite": "tsc && vite build",
+    "build": "tauri build",
+    "preview": "vite preview",
+    "tauri": "tauri",
+    "start:dev": "cross-env RUST_BACKTRACE=1 LOG_LEVEL=4 tauri dev",
+    "trace": "cross-env RUST_BACKTRACE=1 LOG_LEVEL=5 tauri dev",
+    "dev": "pnpm start:dev"
+  },
+  "dependencies": {
+    "@ant-design/icons": "^5.2.6",
+    "@tauri-apps/api": "^1.5.3",
+    "antd": "^5.12.8",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-use-websocket": "^4.5.0"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^1.5.9",
+    "@types/react": "^18.2.47",
+    "@types/react-dom": "^18.2.18",
+    "@vitejs/plugin-react": "^4.2.1",
+    "cross-env": "^7.0.3",
+    "typescript": "^5.3.3",
+    "vite": "^5.0.11"
+  }
+}
