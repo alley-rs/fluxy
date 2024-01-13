@@ -19,7 +19,7 @@
   | Windows amd64 - msi                     | 3.85 MB |
   | Windows amd64 - exe                     | 3.17 MB |
 
-- 页面丑
+- 页面丑（缺少设计天份）
 
 ## 使用
 
