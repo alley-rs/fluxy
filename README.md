@@ -1,4 +1,4 @@
-<p align="center"><img src="./src-tauri/icons/128x128.png" /></p>
+<p align="center"><img height="128" width="128" src="./src-tauri/icons/icon.png" /></p>
 
 # ALLEY
 
