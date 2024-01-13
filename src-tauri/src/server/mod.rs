@@ -219,9 +219,14 @@ pub async fn serve() {
             current_dir.is_absolute()
         );
 
+        #[cfg(target_os = "windows")]
+        let static_dir = current_dir.join("alley/static");
+        #[cfg(target_os = "macos")]
+        let static_dir = current_dir.join("Resources/static");
+
         router = router.push(
             Router::with_path("<**path>").get(
-                StaticDir::new([current_dir.join("Resources/static")])
+                StaticDir::new([static_dir])
                     .defaults("index.html")
                     .auto_list(true),
             ),

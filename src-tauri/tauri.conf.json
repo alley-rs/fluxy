@@ -14,7 +14,7 @@
       "all": false,
       "shell": {
         "all": false,
-        "open": "^/Users/.+"
+        "open": "^((/Users/.+)|(C:\\\\Users\\\\.+)).+"
       }
     },
     "bundle": {
