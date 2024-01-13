@@ -211,7 +211,7 @@ pub async fn serve() {
     #[cfg(not(debug_assertions))]
     {
         #[cfg(any(target_os = "windows", target_os = "macos"))]
-        {
+        let static_dir = {
             let current_exe = env::current_exe().unwrap();
             let current_dir = current_exe.parent().unwrap().parent().unwrap();
 
@@ -225,7 +225,9 @@ pub async fn serve() {
             let static_dir = current_dir.join("alley/static");
             #[cfg(target_os = "macos")]
             let static_dir = current_dir.join("Resources/static");
-        }
+
+            static_dir
+        };
 
         #[cfg(target_os = "linux")]
         let static_dir = "/usr/share/alley/static";
