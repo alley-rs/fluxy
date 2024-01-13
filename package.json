@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev:vite": "vite",
-    "build:vite": "tsc && vite build",
+    "build:vite": "tsc && vite build && cd static && tsc && vite build",
     "build": "tauri build",
     "preview": "vite preview",
     "tauri": "tauri",
