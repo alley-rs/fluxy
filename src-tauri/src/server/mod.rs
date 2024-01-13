@@ -210,19 +210,25 @@ pub async fn serve() {
 
     #[cfg(not(debug_assertions))]
     {
-        let current_exe = env::current_exe().unwrap();
-        let current_dir = current_exe.parent().unwrap().parent().unwrap();
+        #[cfg(any(target_os = "windows", target_os = "macos"))]
+        {
+            let current_exe = env::current_exe().unwrap();
+            let current_dir = current_exe.parent().unwrap().parent().unwrap();
 
-        debug!(
-            "当前工作目录:{:?}({})",
-            current_dir,
-            current_dir.is_absolute()
-        );
+            debug!(
+                "当前工作目录:{:?}({})",
+                current_dir,
+                current_dir.is_absolute()
+            );
 
-        #[cfg(target_os = "windows")]
-        let static_dir = current_dir.join("alley/static");
-        #[cfg(target_os = "macos")]
-        let static_dir = current_dir.join("Resources/static");
+            #[cfg(target_os = "windows")]
+            let static_dir = current_dir.join("alley/static");
+            #[cfg(target_os = "macos")]
+            let static_dir = current_dir.join("Resources/static");
+        }
+
+        #[cfg(target_os = "linux")]
+        let static_dir = "/usr/share/alley/static";
 
         router = router.push(
             Router::with_path("<**path>").get(

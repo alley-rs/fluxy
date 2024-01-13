@@ -6,7 +6,7 @@
     "withGlobalTauri": false
   },
   "package": {
-    "productName": "alley",
+    "productName": "Alley",
     "version": "../package.json"
   },
   "tauri": {
@@ -14,16 +14,19 @@
       "all": false,
       "shell": {
         "all": false,
-        "open": "^((/Users/.+)|(C:\\\\Users\\\\.+)).+"
+        "open": "^((/Users/.+)|(C:\\\\Users\\\\.+)|(/home/.+)).+"
       }
     },
     "bundle": {
       "active": true,
       "targets": "all",
+      "deb": {
+        "files": {
+          "usr/share/alley/static": "./static"
+        }
+      },
       "identifier": "com.thepoy.alley",
-      "resources": [
-        "static"
-      ],
+      "resources": ["static"],
       "icon": [
         "icons/32x32.png",
         "icons/128x128.png",
@@ -37,7 +40,7 @@
     },
     "windows": [
       {
-        "title": "alley",
+        "title": "小路速传",
         "width": 400,
         "height": 600,
         "resizable": false
