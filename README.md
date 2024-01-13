@@ -1,4 +1,4 @@
-![logo](./src-tauri/icons/128x128.png)
+<p align="center"><img src="./src-tauri/icons/128x128.png" /></p>
 
 # ALLEY
 
