@@ -14,6 +14,9 @@ pub enum AlleyError {
     Tauro(#[from] tauri::Error),
     #[error(transparent)]
     QRCode(#[from] QRCodeError),
+    #[cfg(not(debug_assertions))]
+    #[error(transparent)]
+    Io(#[from] std::io::Error),
 }
 
 impl Serialize for AlleyError {

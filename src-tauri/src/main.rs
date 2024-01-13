@@ -24,7 +24,7 @@ use serde::Serialize;
 use server::{DOWNLOADS_DIR, MAIN_WINDOW, QR_CODE_MAP};
 #[cfg(debug_assertions)]
 use simplelog::{ColorChoice, TermLogger, TerminalMode};
-use tauri::{api::shell::open, Manager};
+use tauri::Manager;
 #[cfg(not(debug_assertions))]
 use {lazy::APP_CONFIG_DIR, simplelog::WriteLogger, std::fs};
 
