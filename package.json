@@ -4,6 +4,7 @@
   "version": "0.1.0",
   "type": "module",
   "scripts": {
+    "install:all": "pnpm i && cd static && pnpm i",
     "dev:vite": "vite",
     "build:vite": "tsc && vite build && cd static && tsc && vite build",
     "build": "tauri build",
