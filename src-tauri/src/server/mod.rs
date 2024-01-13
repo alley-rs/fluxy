@@ -1,6 +1,8 @@
 mod logger;
 
 use std::collections::HashMap;
+#[cfg(all(not(debug_assertions), any(target_os = "windows", target_os = "macos")))]
+use std::env;
 use std::path::PathBuf;
 use std::pin::Pin;
 use std::str::FromStr;
@@ -15,14 +17,14 @@ use read_progress_stream::ReadProgressStream;
 use salvo::http::Body;
 use salvo::http::ReqBody;
 use salvo::prelude::*;
+#[cfg(not(debug_assertions))]
+use salvo::serve_static::StaticDir;
 use serde::Serialize;
 use tauri::Window;
 use tokio::fs;
 use tokio::fs::File;
 use tokio::sync::RwLock;
 use tokio_util::io::StreamReader;
-#[cfg(not(debug_assertions))]
-use {salvo::serve_static::StaticDir, std::env};
 
 use crate::lazy::LOCAL_IP;
 use crate::server::logger::Logger;
