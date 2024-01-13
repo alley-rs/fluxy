@@ -37,9 +37,14 @@ function getBody(xhr: XMLHttpRequest) {
   }
 }
 
-const upload = (option: UploadRequestOption) => {
+const upload = (
+  option: UploadRequestOption,
+  appendTask: (task: RequestTask) => void
+) => {
   // eslint-disable-next-line no-undef
   const xhr = new XMLHttpRequest();
+
+  const task: RequestTask = { xhr, data: option.file as File };
 
   if (option.onProgress && xhr.upload) {
     xhr.upload.onprogress = function progress(e: UploadProgressEvent) {
@@ -52,9 +57,13 @@ const upload = (option: UploadRequestOption) => {
 
   xhr.onerror = function error(e) {
     option.onError!(e);
+    task.done!();
   };
 
   xhr.onload = function onload() {
+    // 代码执行到这里时 done 一定存在
+    task.done!();
+
     // allow success when 2xx status
     // see https://github.com/react-component/upload/issues/34
     if (xhr.status < 200 || xhr.status >= 300) {
@@ -67,7 +76,7 @@ const upload = (option: UploadRequestOption) => {
   xhr.open(
     option.method,
     option.action + "?name=" + (option.file as RcFile).name,
-    true,
+    true
   );
 
   // Has to be after `.open()`. See https://github.com/enyo/dropzone/issues/179
@@ -89,14 +98,10 @@ const upload = (option: UploadRequestOption) => {
     }
   });
 
-  // 上传文件流,而非 FormData
-  xhr.send(option.file);
+  appendTask(task);
 
-  return {
-    abort() {
-      xhr.abort();
-    },
-  };
+  // 上传文件流,而非 FormData
+  // xhr.send(option.file);
 };
 
 export default upload;
