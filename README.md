@@ -10,7 +10,7 @@
 
 | PC 端扫描前                                                  | 手机端                                                       | PC 端扫描后                                                  |
 | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
-| ![截屏2024-01-13 15.15.56](https://raw.githubusercontent.com/thep0y/image-bed/main/up2b/截屏2024-01-13 15.15.56_1705130245959.png) | ![192.168.31.222_5800_(iPhone SE)](https://raw.githubusercontent.com/thep0y/image-bed/main/up2b/192.168.31.222_5800_(iPhone%20SE)_1705130440970.png) | ![截屏2024-01-13 15.20.52](https://raw.githubusercontent.com/thep0y/image-bed/main/up2b/截屏2024-01-13 15.20.52_1705130455720.png) |
+| ![output](https://raw.githubusercontent.com/thep0y/image-bed/main/up2b/%E6%88%AA%E5%B1%8F2024-01-13%2015.15.56_1705130245959.png) | ![output](https://raw.githubusercontent.com/thep0y/image-bed/main/up2b/192.168.31.222_5800_(iPhone%20SE)_1705130440970.png) | ![output](https://raw.githubusercontent.com/thep0y/image-bed/main/up2b/%E6%88%AA%E5%B1%8F2024-01-13%2015.20.52_1705130455720.png) |
 
 在手机上点击页面中间的`upload`按钮即可上传多个文件，同时 PC 端也能看到收取文件的进度。
 
