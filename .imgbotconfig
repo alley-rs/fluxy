@@ -1,0 +1,6 @@
+{
+    "schedule": "weekly", 
+    "ignoredFiles": [
+        "src-tauri/icons/*"
+    ]
+}
