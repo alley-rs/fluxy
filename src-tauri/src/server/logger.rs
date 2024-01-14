@@ -27,8 +27,22 @@ impl Handler for Logger {
             let duration = now.elapsed();
 
             let status = res.status_code.unwrap_or(StatusCode::OK);
+
+            #[cfg(debug_assertions)]
             info!(
                 "<b>{}</b> <b>status</b>={} <b>duration</b>={:?} <cyan>-</> uri=<green>{}</> remote_addr={} version={:?} headers={:?} queries={:?}",
+                req.method(),
+                status.as_u16(),
+                duration,
+                req.uri().path(),
+                req.remote_addr(),
+                req.version(),
+                req.headers(),  
+                req.queries()
+            );
+            #[cfg(not(debug_assertions))]
+            info!(
+                "method={} status={} duration={:?} uri={} remote_addr={} version={:?} headers={:?} queries={:?}",
                 req.method(),
                 status.as_u16(),
                 duration,

@@ -1,0 +1,27 @@
+.container {
+  margin: 0;
+  padding-top: 10vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+}
+
+.header {
+  .directory-button-label {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .directory-button {
+    max-width: 100%;
+    padding-left: 0;
+
+    span {
+      max-width: 100%;
+      overflow-wrap: break-word;
+      white-space: normal;
+    }
+  }
+}
