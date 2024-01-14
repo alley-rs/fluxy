@@ -1,29 +1,33 @@
 mod logger;
 
 use std::collections::HashMap;
+#[cfg(all(not(debug_assertions), any(target_os = "windows", target_os = "macos")))]
+use std::env;
 use std::path::PathBuf;
 use std::pin::Pin;
-use std::str::FromStr;
 use std::sync::OnceLock;
 use std::task::Context;
 use std::task::Poll;
+use std::time::Instant;
 
 use bytes::Bytes;
 use futures::stream::Stream;
-use lazy_static::lazy_static;
+use log::debug;
+use log::info;
 use read_progress_stream::ReadProgressStream;
 use salvo::http::Body;
 use salvo::http::ReqBody;
 use salvo::prelude::*;
+#[cfg(not(debug_assertions))]
+use salvo::serve_static::StaticDir;
 use serde::Serialize;
 use tauri::Window;
 use tokio::fs;
 use tokio::fs::File;
 use tokio::sync::RwLock;
 use tokio_util::io::StreamReader;
-#[cfg(not(debug_assertions))]
-use {salvo::serve_static::StaticDir, std::env};
 
+#[cfg(debug_assertions)]
 use crate::lazy::LOCAL_IP;
 use crate::server::logger::Logger;
 
@@ -31,7 +35,8 @@ const UPLOAD_EVENT: &str = "upload://progress";
 pub static MAIN_WINDOW: OnceLock<Window> = OnceLock::new();
 
 lazy_static! {
-    pub static ref DOWNLOADS_DIR: PathBuf = dirs::download_dir().unwrap().join("alley");
+    pub static ref DOWNLOADS_DIR: RwLock<PathBuf> =
+        RwLock::new(dirs::download_dir().unwrap().join("alley"));
     pub static ref QR_CODE_MAP: RwLock<HashMap<u64, bool>> = RwLock::new(HashMap::new());
 }
 
@@ -81,6 +86,7 @@ impl Task {
     }
 }
 
+#[cfg(debug_assertions)]
 #[handler]
 async fn index(res: &mut Response) {
     res.render(Redirect::found(format!(
@@ -89,32 +95,27 @@ async fn index(res: &mut Response) {
     )))
 }
 
-fn parse_string<T: FromStr>(input: &str) -> Result<T> {
-    input.parse::<T>().map_err(|_| {
-        error!("字符串无法转换: {}", input);
-        ServerError::Bad("无法转换字符串".to_owned())
-    })
-}
-
 #[handler]
-async fn ping(req: &Request, res: &mut Response) -> Result<()> {
-    let queries = req.queries();
-    let ts = queries.get("ts");
+async fn connect(req: &Request, res: &mut Response) -> Result<()> {
+    debug!("有客户端连接: addr={}", req.remote_addr());
 
-    let id: u64 = match ts {
-        Some(s) => parse_string(&s)?,
-        None => return Err(ServerError::Bad("缺少 ts".to_string())),
+    let id = match req.query::<u64>("ts") {
+        Some(ts) => ts,
+        None => {
+            error!("请求 url 中未找到 ts");
+            return Err(ServerError::Bad("缺少 ts".to_string()));
+        }
     };
 
     let mut qr_code_map = QR_CODE_MAP.write().await;
     if qr_code_map.contains_key(&id) {
+        error!("此二维码已被使用: {}", id);
         return Err(ServerError::Bad("此二维码已被使用".to_string()));
     }
 
     qr_code_map.insert(id, true);
 
-    let remote_ip = req.remote_addr().to_string();
-    debug!("有客户端发起连接: {}", remote_ip);
+    info!("客户端连接成功: addr={}", req.remote_addr());
 
     // 客户端重定向到首页
     res.render(Redirect::found("/"));
@@ -145,16 +146,34 @@ impl Stream for FileBody {
 
 #[handler]
 async fn upload(req: &mut Request) -> Result<()> {
+    debug!("收到上传任务: addr={}", req.remote_addr());
+
     let name = match req.query::<String>("name") {
         Some(s) => s,
-        None => return Err(ServerError::Bad("文件名为空".into())),
+        None => {
+            error!("请求地址中未找到文件名");
+            return Err(ServerError::Bad("文件名为空".into()));
+        }
     };
     debug!("文件名: {:?}", name);
 
     let size: u64 = match req.header("content-length") {
         Some(n) => n,
-        None => return Err(ServerError::Bad("文件长度为空".into())),
+        None => {
+            error!("请求头中未找到文件大小");
+
+            return Err(ServerError::Bad("文件长度为空".into()));
+        }
     };
+
+    info!(
+        "收到有效的上传任务: name={} size={} addr={}",
+        name,
+        size,
+        req.remote_addr()
+    );
+
+    let start = Instant::now();
 
     let body = req.take_body();
     let stream = ReadProgressStream::new(
@@ -173,34 +192,51 @@ async fn upload(req: &mut Request) -> Result<()> {
         }),
     );
 
-    let file_path = DOWNLOADS_DIR.join(&name);
+    let file_path = DOWNLOADS_DIR.read().await.join(&name);
+
+    debug!("保存的文件路径: {:?}", file_path);
 
     let mut stream_reader = StreamReader::new(stream);
     let mut file = File::create(&file_path).await.map_err(|e| {
-        error!("新建文件时出错: {}", e);
+        error!("新建文件时出错: path={:?} error={}", file_path, e);
         ServerError::Internal
     })?;
     if let Err(e) = tokio::io::copy(&mut stream_reader, &mut file).await {
-        error!("复制文件流时出错: {}", e);
+        error!("复制文件流时出错: path={:?} error={}", file_path, e);
 
         // 上传未完成时删除本地未完成的文件
-        fs::remove_file(file_path).await.map_err(|e| {
-            error!("复制文件流时出错: {}", e);
+        fs::remove_file(&file_path).await.map_err(|e| {
+            error!("删除未完成文件时出错: path={:?} error={}", file_path, e);
             ServerError::Internal
         })?;
+
+        info!("已删除未完成文件: {:?}", file_path);
     }
+
+    let end = Instant::now();
+
+    info!(
+        "已保存文件: path={:?} size={} addr={} cost={:?}",
+        file_path,
+        size,
+        req.remote_addr(),
+        end.duration_since(start)
+    );
 
     Ok(())
 }
 
 pub async fn serve() {
-    if !DOWNLOADS_DIR.exists() {
-        fs::create_dir(&*DOWNLOADS_DIR).await.unwrap();
+    // 程序启动时的默认下载目录
+    let default_downloads_dir = DOWNLOADS_DIR.read().await;
+    if !default_downloads_dir.exists() {
+        fs::create_dir(default_downloads_dir.clone()).await.unwrap();
     }
+    drop(default_downloads_dir);
 
     let mut router = Router::new()
         .hoop(Logger::new())
-        .push(Router::with_path("connect").get(ping))
+        .push(Router::with_path("connect").get(connect))
         .push(Router::with_path("upload").post(upload));
 
     #[cfg(debug_assertions)]

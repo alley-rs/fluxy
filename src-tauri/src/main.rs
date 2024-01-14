@@ -8,11 +8,15 @@ mod server;
 
 #[macro_use]
 extern crate lazy_static;
+#[cfg(debug_assertions)]
 #[macro_use]
 extern crate simplelog;
+#[cfg(not(debug_assertions))]
+#[macro_use]
+extern crate log;
 
 use std::{
-    path::Path,
+    path::PathBuf,
     time::{Duration, SystemTime, UNIX_EPOCH},
 };
 
@@ -46,16 +50,31 @@ struct QrCode {
 
 #[tauri::command]
 async fn get_qr_code_state(id: u64) -> bool {
+    trace!("获取 server 地址二维码状态");
+
     let map = QR_CODE_MAP.read().await;
-    map.contains_key(&id)
+    let state = map.contains_key(&id);
+
+    info!("server 地址二维码可用状态: {}", !state);
+
+    state
 }
 
 #[tauri::command]
 async fn local_ip_qr_code() -> AlleyResult<QrCode> {
+    trace!("获取 server 地址二维码");
+
     let ts = now()?.as_secs();
 
+    trace!("获取时间戳: {}", ts);
+
     let url = format!("http://{}:{}/connect?ts={}", LOCAL_IP.to_string(), 5800, ts);
+
+    debug!("二维码对应的 url: {}", url);
+
     let code = qrcode_generator::to_svg_to_string(&url, QrCodeEcc::Low, 256, None::<&str>)?;
+
+    info!("已创建二维码");
 
     Ok(QrCode {
         svg: code,
@@ -65,8 +84,24 @@ async fn local_ip_qr_code() -> AlleyResult<QrCode> {
 }
 
 #[tauri::command]
-async fn download_dir() -> &'static Path {
-    &DOWNLOADS_DIR
+async fn downloads_dir() -> PathBuf {
+    trace!("获取下载目录");
+
+    let path = DOWNLOADS_DIR.read().await.to_path_buf();
+
+    info!("当前下载目录为: {:?}", path);
+
+    path
+}
+
+#[tauri::command]
+async fn change_downloads_dir(path: PathBuf) {
+    trace!("修改下载目录");
+
+    let mut downloads_dir = DOWNLOADS_DIR.write().await;
+    *downloads_dir = path.clone();
+
+    info!("下载目录已改为: {:?}", path);
 }
 
 #[tokio::main]
@@ -86,6 +121,7 @@ async fn main() -> AlleyResult<()> {
     )?;
 
     tokio::spawn(server::serve());
+    info!("已创建 serve 线程");
 
     tauri::Builder::default()
         .setup(|app| {
@@ -97,7 +133,8 @@ async fn main() -> AlleyResult<()> {
         .invoke_handler(tauri::generate_handler![
             local_ip_qr_code,
             get_qr_code_state,
-            download_dir,
+            downloads_dir,
+            change_downloads_dir,
         ])
         .run(tauri::generate_context!())?;
 

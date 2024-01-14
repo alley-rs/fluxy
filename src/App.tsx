@@ -1,11 +1,17 @@
 import { useEffect, useState } from "react";
-import { Button, Progress } from "antd";
-import { invoke } from "@tauri-apps/api/tauri";
+import { Button, Empty, Progress, Dropdown, Row, Col } from "antd";
+import type { MenuProps } from "antd";
 import { appWindow } from "@tauri-apps/api/window";
 import { OrderedSet } from "~/utils";
-import "./App.css";
-import { getDownloadDir } from "./api";
+import "./App.scss";
+import {
+  changeDownloadsDir,
+  getDownloadsDir,
+  getLocalIPQrCode,
+  getQrCodeState,
+} from "./api";
 import { open } from "@tauri-apps/api/shell";
+import { open as pick } from "@tauri-apps/api/dialog";
 
 interface FileListItemProps {
   name: string;
@@ -28,7 +34,7 @@ const FileListItem = ({ name, percent }: FileListItemProps) => (
 );
 
 const App = () => {
-  const [downloadDir, setDownloadDir] = useState<string | null>(null);
+  const [downloadDir, setDownloadDir] = useState<string | undefined>(undefined);
 
   const [qrcode, setQrcode] = useState<QrCode | null>(null);
 
@@ -37,10 +43,12 @@ const App = () => {
   );
   const [fileList, setFileList] = useState<TaskMessage[]>([]);
 
+  const [openDropDown, setOpenDropDown] = useState(false);
+
   useEffect(() => {
     if (downloadDir) return;
 
-    getDownloadDir().then((d) => setDownloadDir(d));
+    getDownloadsDir().then((d) => setDownloadDir(d));
   }, []);
 
   useEffect(() => {
@@ -68,7 +76,7 @@ const App = () => {
   useEffect(() => {
     if (qrcode || !progressList.empty() || fileList.length) return;
 
-    invoke<QrCode>("local_ip_qr_code").then((s) => setQrcode(s));
+    getLocalIPQrCode().then((c) => setQrcode(c));
   }, []);
 
   useEffect(() => {
@@ -76,9 +84,7 @@ const App = () => {
 
     const query = async () => {
       const timer = setInterval(async () => {
-        const used = await invoke<boolean>("get_qr_code_state", {
-          id: qrcode.id,
-        });
+        const used = await getQrCodeState(qrcode.id);
 
         if (used) {
           clearTimeout(timer);
@@ -90,20 +96,74 @@ const App = () => {
     query();
   }, [qrcode]);
 
+  const pickDirectory = async () => {
+    const dir = (await pick({
+      directory: true,
+      defaultPath: downloadDir,
+      multiple: false,
+    })) as string | null;
+
+    if (!dir) return;
+
+    await changeDownloadsDir(dir);
+
+    setDownloadDir(dir);
+  };
+
+  const DirectoryDropdownItems: MenuProps["items"] = [
+    {
+      key: "1",
+      label: <a>打开</a>,
+      onClick: () => open(downloadDir!),
+    },
+    {
+      key: "2",
+      label: <a>修改</a>,
+      onClick: () => pickDirectory(),
+    },
+  ];
+
   return (
     <>
       {downloadDir && !qrcode ? (
-        <div className="container button">
-          <Button type="default" onClick={async () => open(downloadDir)}>
-            打开文件夹
-          </Button>
-        </div>
+        <Row className="header">
+          <Col span={5} className="directory-button-label">
+            <span style={{ fontSize: "0.8rem" }}>保存目录：</span>
+          </Col>
+
+          <Col span={19}>
+            <Dropdown
+              open={openDropDown}
+              onOpenChange={() => setOpenDropDown((pre) => !pre)}
+              menu={{ items: DirectoryDropdownItems }}
+              placement="bottomRight"
+              arrow
+              overlayStyle={{ minWidth: 0 }}
+            >
+              <Button
+                className="directory-button"
+                type="link"
+                onClick={async () => {
+                  setOpenDropDown(false);
+                  open(downloadDir);
+                }}
+                style={{ textOverflow: "ellipsis" }}
+              >
+                {downloadDir}
+              </Button>
+            </Dropdown>
+          </Col>
+        </Row>
       ) : null}
 
       <div className="container">
-        {fileList.map((t) => (
-          <FileListItem key={t.name} name={t.name} percent={100} />
-        ))}
+        {progressList.empty() && !qrcode && !fileList.length ? (
+          <Empty description="请在手机端上传文件" />
+        ) : (
+          fileList.map((t) => (
+            <FileListItem key={t.name} name={t.name} percent={100} />
+          ))
+        )}
 
         {progressList.map((progress) => (
           <FileListItem
@@ -119,11 +179,11 @@ const App = () => {
             <div dangerouslySetInnerHTML={{ __html: qrcode.svg }} />
 
             <div>或在浏览器中访问</div>
-            <div>{qrcode.url}</div>
+            <Button type="link" onClick={async () => await open(qrcode.url)}>
+              {qrcode.url}
+            </Button>
           </>
-        ) : fileList.length ? null : (
-          <div>请在手机端上传文件</div>
-        )}
+        ) : null}
       </div>
     </>
   );
