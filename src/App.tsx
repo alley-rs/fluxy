@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Button, Progress } from "antd";
+import { Button, Empty, Progress } from "antd";
 import { invoke } from "@tauri-apps/api/tauri";
 import { appWindow } from "@tauri-apps/api/window";
 import { OrderedSet } from "~/utils";
@@ -101,9 +101,13 @@ const App = () => {
       ) : null}
 
       <div className="container">
-        {fileList.map((t) => (
-          <FileListItem key={t.name} name={t.name} percent={100} />
-        ))}
+        {progressList.empty() && !qrcode && !fileList.length ? (
+          <Empty description="请在手机端上传文件" />
+        ) : (
+          fileList.map((t) => (
+            <FileListItem key={t.name} name={t.name} percent={100} />
+          ))
+        )}
 
         {progressList.map((progress) => (
           <FileListItem
@@ -121,9 +125,7 @@ const App = () => {
             <div>或在浏览器中访问</div>
             <div>{qrcode.url}</div>
           </>
-        ) : fileList.length ? null : (
-          <div>请在手机端上传文件</div>
-        )}
+        ) : null}
       </div>
     </>
   );

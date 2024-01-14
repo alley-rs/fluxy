@@ -35,14 +35,14 @@ const App = () => {
             item.done = resolve;
 
             xhr.send(item.data);
-          })
+          }),
       );
     }
   }, [fileCount, requestTasks]);
 
   return (
     <Upload {...props}>
-      <Button icon={<UploadOutlined />}>Upload</Button>
+      <Button icon={<UploadOutlined />}>选择文件</Button>
     </Upload>
   );
 };
