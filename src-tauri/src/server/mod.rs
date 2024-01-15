@@ -4,20 +4,12 @@ use std::collections::HashMap;
 #[cfg(all(not(debug_assertions), any(target_os = "windows", target_os = "macos")))]
 use std::env;
 use std::path::PathBuf;
-use std::pin::Pin;
 use std::process;
 use std::sync::OnceLock;
-use std::task::Context;
-use std::task::Poll;
 use std::time::Instant;
 
-use bytes::Bytes;
-use futures::stream::Stream;
 use log::debug;
 use log::info;
-use read_progress_stream::ReadProgressStream;
-use salvo::http::Body;
-use salvo::http::ReqBody;
 use salvo::prelude::*;
 #[cfg(not(debug_assertions))]
 use salvo::serve_static::StaticDir;
@@ -31,6 +23,7 @@ use tokio_util::io::StreamReader;
 #[cfg(debug_assertions)]
 use crate::lazy::LOCAL_IP;
 use crate::server::logger::Logger;
+use crate::stream::ReadProgressStream;
 
 const UPLOAD_EVENT: &str = "upload://progress";
 pub static MAIN_WINDOW: OnceLock<Window> = OnceLock::new();
@@ -64,23 +57,17 @@ impl Writer for ServerError {
 }
 
 #[derive(Debug, Serialize, Clone)]
-struct Task {
-    name: String,
+struct Task<'a> {
+    name: &'a str,
     percent: f64,
     speed: f64, // MB/s
 }
 
-impl Into<String> for Task {
-    fn into(self) -> String {
-        format!(r#"{{"name":"{}", "progress":{}}}"#, self.name, self.percent)
-    }
-}
-
-impl Task {
-    fn new<S: Into<String>>(name: S, progress: f64, speed: f64) -> Self {
+impl<'a> Task<'a> {
+    fn new(name: &'a str, percent: f64, speed: f64) -> Self {
         Self {
-            name: name.into(),
-            percent: progress,
+            name,
+            percent,
             speed,
         }
     }
@@ -123,27 +110,6 @@ async fn connect(req: &Request, res: &mut Response) -> Result<()> {
     Ok(())
 }
 
-struct FileBody {
-    inner: ReqBody,
-}
-
-impl Stream for FileBody {
-    type Item = std::result::Result<Bytes, std::io::Error>;
-
-    fn poll_next(mut self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Option<Self::Item>> {
-        let body = &mut self.inner;
-        match Body::poll_frame(Pin::new(body), cx) {
-            Poll::Ready(Some(Ok(frame))) => {
-                let frame_bytes: Bytes = frame.into_data().unwrap();
-                Poll::Ready(Some(Ok(frame_bytes)))
-            }
-            Poll::Ready(Some(Err(e))) => Poll::Ready(Some(Err(e))),
-            Poll::Ready(None) => Poll::Ready(None),
-            Poll::Pending => Poll::Pending,
-        }
-    }
-}
-
 #[handler]
 async fn upload(req: &mut Request) -> Result<()> {
     debug!("收到上传任务: addr={}", req.remote_addr());
@@ -177,24 +143,22 @@ async fn upload(req: &mut Request) -> Result<()> {
 
     let body = req.take_body();
     let stream = ReadProgressStream::new(
-        FileBody { inner: body },
+        body,
         Box::new({
             let name = name.clone();
-            move |_, progress| {
-                let name = name.clone();
+            move |cost, progress| {
+                let percent = (progress * 1000 / size) as f64 / 10.0;
 
-                let progress_end = Instant::now();
+                // 纳秒转为浮点数的秒
+                let cost_senconds = cost.as_nanos() as f64 / 1000000000.0;
 
-                // cost 不能是秒, 秒转为整数可能是 0
-                let cost = progress_end.duration_since(start).as_millis() as f64;
+                // chunk_size 转为浮点数的 mb
+                let progress = progress as f64 / (1024 * 1024) as f64;
 
-                let speed = (progress / 1024 / 1024) as f64 / (cost / 1000.0);
+                let speed = progress / cost_senconds;
 
                 if let Some(w) = MAIN_WINDOW.get() {
-                    let _ = w.emit(
-                        UPLOAD_EVENT,
-                        Task::new(name, (progress * 10000 / size) as f64 / 100.0, speed),
-                    );
+                    let _ = w.emit(UPLOAD_EVENT, Task::new(&name, percent, speed));
                 }
             }
         }),

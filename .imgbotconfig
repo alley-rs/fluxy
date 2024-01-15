@@ -2,5 +2,6 @@
     "schedule": "weekly", 
     "ignoredFiles": [
         "src-tauri/icons/*"
-    ]
+    ],
+    "prTitle": "chore: [ImgBot] Optimize images"
 }
