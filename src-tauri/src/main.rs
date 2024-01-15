@@ -5,6 +5,7 @@ mod error;
 mod lazy;
 mod logger;
 mod server;
+mod stream;
 
 #[macro_use]
 extern crate lazy_static;
