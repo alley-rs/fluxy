@@ -5,6 +5,7 @@ use std::collections::HashMap;
 use std::env;
 use std::path::PathBuf;
 use std::pin::Pin;
+use std::process;
 use std::sync::OnceLock;
 use std::task::Context;
 use std::task::Poll;
@@ -277,6 +278,12 @@ pub async fn serve() {
         );
     }
 
-    let acceptor = TcpListener::new("0.0.0.0:5800").bind().await;
+    let acceptor = match TcpListener::new("0.0.0.0:5800").try_bind().await {
+        Ok(a) => a,
+        Err(e) => {
+            error!("创建 TcpListener 失败: {}", e);
+            process::exit(1);
+        }
+    };
     Server::new(acceptor).serve(router).await;
 }
