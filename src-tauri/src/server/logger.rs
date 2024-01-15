@@ -31,7 +31,9 @@ impl Handler for Logger {
 
             let headers = req.headers();
 
-            #[cfg(debug_assertions)]
+            println!("{:?}", headers.get("User-Agent"));
+
+            #[cfg(feature = "log-paris")]
             info!(
                 "<b>{}</b> <b>status</b>={} <b>duration</b>={:?} <cyan>-</> uri=<green>{}</> remote_addr={} content-type={:?} content-length={:?} queries={:?}",
                 req.method(),
@@ -43,7 +45,7 @@ impl Handler for Logger {
                 headers.get(CONTENT_LENGTH.to_string()),
                 req.queries()
             );
-            #[cfg(not(debug_assertions))]
+            #[cfg(not(feature = "log-paris"))]
             info!(
                 "method={} status={} duration={:?} uri={} remote_addr={} content-type={:?} content-length={:?} queries={:?}",
                 req.method(),

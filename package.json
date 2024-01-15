@@ -7,7 +7,7 @@
     "install:all": "pnpm i && cd static && pnpm i",
     "dev:vite": "vite",
     "build:vite": "tsc && vite build && cd static && tsc && vite build",
-    "build": "tauri build",
+    "build": "tauri build -- --no-default-features",
     "preview": "vite preview",
     "tauri": "tauri",
     "start:dev": "cross-env RUST_BACKTRACE=1 LOG_LEVEL=4 tauri dev",
