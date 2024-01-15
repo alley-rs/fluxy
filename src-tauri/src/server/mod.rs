@@ -64,23 +64,17 @@ impl Writer for ServerError {
 }
 
 #[derive(Debug, Serialize, Clone)]
-struct Task {
-    name: String,
+struct Task<'a> {
+    name: &'a str,
     percent: f64,
     speed: f64, // MB/s
 }
 
-impl Into<String> for Task {
-    fn into(self) -> String {
-        format!(r#"{{"name":"{}", "progress":{}}}"#, self.name, self.percent)
-    }
-}
-
-impl Task {
-    fn new<S: Into<String>>(name: S, progress: f64, speed: f64) -> Self {
+impl<'a> Task<'a> {
+    fn new(name: &'a str, percent: f64, speed: f64) -> Self {
         Self {
-            name: name.into(),
-            percent: progress,
+            name,
+            percent,
             speed,
         }
     }
@@ -193,7 +187,7 @@ async fn upload(req: &mut Request) -> Result<()> {
                 if let Some(w) = MAIN_WINDOW.get() {
                     let _ = w.emit(
                         UPLOAD_EVENT,
-                        Task::new(name, (progress * 10000 / size) as f64 / 100.0, speed),
+                        Task::new(&name, (progress * 10000 / size) as f64 / 100.0, speed),
                     );
                 }
             }
