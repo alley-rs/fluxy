@@ -178,7 +178,7 @@ const App = () => {
             <h2>扫码连接</h2>
             <div dangerouslySetInnerHTML={{ __html: qrcode.svg }} />
 
-            <div>或在浏览器中访问</div>
+            <div>或在另一台电脑中通过浏览器中访问</div>
             <Button type="link" onClick={async () => await open(qrcode.url)}>
               {qrcode.url}
             </Button>
