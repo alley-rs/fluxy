@@ -175,8 +175,7 @@ async fn upload(req: &mut Request) -> Result<()> {
         Box::new({
             let name = name.clone();
             move |_, progress| {
-                let name = name.clone();
-
+                let name = &name;
                 let progress_end = Instant::now();
 
                 // cost 不能是秒, 秒转为整数可能是 0
