@@ -16,9 +16,10 @@ import { open as pick } from "@tauri-apps/api/dialog";
 interface FileListItemProps {
   name: string;
   percent: number;
+  speed?: number;
 }
 
-const FileListItem = ({ name, percent }: FileListItemProps) => (
+const FileListItem = ({ name, percent, speed }: FileListItemProps) => (
   <div>
     <div
       style={{
@@ -28,6 +29,7 @@ const FileListItem = ({ name, percent }: FileListItemProps) => (
       }}
     >
       {name}
+      {speed ? `(${speed.toFixed(1)} MB/s)` : ""}
     </div>
     <Progress percent={percent} />
   </div>
@@ -41,7 +43,7 @@ const App = () => {
   const [progressList, setProgressList] = useState<OrderedSet<TaskMessage>>(
     new OrderedSet("name"),
   );
-  const [fileList, setFileList] = useState<TaskMessage[]>([]);
+  const [fileList, setFileList] = useState<Omit<TaskMessage, "speed">[]>([]);
 
   const [openDropDown, setOpenDropDown] = useState(false);
 
@@ -57,13 +59,15 @@ const App = () => {
 
       setProgressList((pre) => pre.push(e.payload));
 
-      if (e.payload.progress === 100) {
+      const { name, percent } = e.payload;
+
+      if (percent === 100) {
         setProgressList((pre) => pre.remove(e.payload));
 
         setFileList((pre) => {
-          const t = pre.find((v) => v.name === e.payload.name);
+          const t = pre.find((v) => v.name === name);
 
-          return t ? pre : [...pre, e.payload];
+          return t ? pre : [...pre, { name, percent }];
         });
       }
     });
@@ -169,7 +173,8 @@ const App = () => {
           <FileListItem
             key={progress.name}
             name={progress.name}
-            percent={Math.round(progress.progress)}
+            percent={Math.round(progress.percent)}
+            speed={progress.speed}
           />
         ))}
 
