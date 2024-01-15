@@ -45,7 +45,7 @@ impl Handler for Logger {
             );
             #[cfg(not(debug_assertions))]
             info!(
-                "method={} status={} duration={:?} uri={} remote_addr={} version={:?} content-type={:?} content-length={:?} queries={:?}",
+                "method={} status={} duration={:?} uri={} remote_addr={} content-type={:?} content-length={:?} queries={:?}",
                 req.method(),
                 status.as_u16(),
                 duration,
