@@ -4,6 +4,8 @@
 
 在局域网中使用手机快速向 PC 传递文件的工具，适配 Windows、macOS 和 Linux 桌面发行版。
 
+在未开发手机端前，只能通过手机浏览器上传文件，建议使用 [Edge](https://play.google.com/store/search?q=edge&c=apps)、[Chrome](https://play.google.com/store/search?q=Chrome&c=apps) 、[Firefox](https://play.google.com/store/apps/details?id=org.mozilla.firefox) 或 [QQ浏览器](https://browser.qq.com/mobile)。
+
 ## 特点
 
 本软件可能有别于其他同功能软件的特点有：
