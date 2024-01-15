@@ -86,18 +86,16 @@ const App = () => {
   useEffect(() => {
     if (!qrcode) return;
 
-    const query = async () => {
-      const timer = setInterval(async () => {
-        const used = await getQrCodeState(qrcode.id);
+    const timer = setInterval(async () => {
+      const used = await getQrCodeState(qrcode.id);
 
-        if (used) {
-          clearTimeout(timer);
-          setQrcode(null);
-        }
-      }, 500);
-    };
+      if (used) {
+        clearTimeout(timer);
+        setQrcode(null);
+      }
+    }, 500);
 
-    query();
+    return () => clearTimeout(timer);
   }, [qrcode]);
 
   const pickDirectory = async () => {
