@@ -1,6 +1,7 @@
 interface TaskMessage {
   name: string;
-  progress: number;
+  percent: number;
+  speed: number;
 }
 
 interface QrCode {

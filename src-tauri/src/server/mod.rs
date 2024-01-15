@@ -66,23 +66,22 @@ impl Writer for ServerError {
 #[derive(Debug, Serialize, Clone)]
 struct Task {
     name: String,
-    progress: f64,
+    percent: f64,
+    speed: f64, // MB/s
 }
 
 impl Into<String> for Task {
     fn into(self) -> String {
-        format!(
-            r#"{{"name":"{}", "progress":{}}}"#,
-            self.name, self.progress
-        )
+        format!(r#"{{"name":"{}", "progress":{}}}"#, self.name, self.percent)
     }
 }
 
 impl Task {
-    fn new<S: Into<String>>(name: S, progress: f64) -> Self {
+    fn new<S: Into<String>>(name: S, progress: f64, speed: f64) -> Self {
         Self {
             name: name.into(),
-            progress,
+            percent: progress,
+            speed,
         }
     }
 }
@@ -183,10 +182,18 @@ async fn upload(req: &mut Request) -> Result<()> {
             let name = name.clone();
             move |_, progress| {
                 let name = name.clone();
+
+                let progress_end = Instant::now();
+
+                // cost 不能是秒, 秒转为整数可能是 0
+                let cost = progress_end.duration_since(start).as_millis() as f64;
+
+                let speed = (progress / 1024 / 1024) as f64 / (cost / 1000.0);
+
                 if let Some(w) = MAIN_WINDOW.get() {
                     let _ = w.emit(
                         UPLOAD_EVENT,
-                        Task::new(name, (progress * 10000 / size) as f64 / 100.0),
+                        Task::new(name, (progress * 10000 / size) as f64 / 100.0, speed),
                     );
                 }
             }
