@@ -1,8 +1,7 @@
 use bytes::Bytes;
 use futures::stream::Stream;
 use futures::task::{Context, Poll};
-use pin_project_lite::pin_project;
-use salvo::http::ReqBody;
+use salvo::http::{Body, ReqBody};
 use std::cell::OnceCell;
 use std::io::Result;
 use std::pin::Pin;
@@ -10,20 +9,17 @@ use std::time::{Duration, Instant};
 
 pub(super) type ProgressHandler = Box<dyn FnMut(Duration, u64) + Send + Sync + 'static>;
 
-pin_project! {
-    pub(super) struct ReadProgressStream {
-        #[pin]
-        inner: Pin<Box<ReqBody>>,
-        bytes_read: u64,
-        progress: ProgressHandler,
-        start: OnceCell<Instant>,
-    }
+pub(super) struct ReadProgressStream {
+    inner: ReqBody,
+    bytes_read: u64,
+    progress: ProgressHandler,
+    start: OnceCell<Instant>,
 }
 
 impl ReadProgressStream {
     pub(super) fn new(inner: ReqBody, progress: ProgressHandler) -> Self {
         ReadProgressStream {
-            inner: Box::pin(inner),
+            inner,
             progress,
             bytes_read: 0,
             start: OnceCell::new(),
@@ -34,30 +30,30 @@ impl ReadProgressStream {
 impl Stream for ReadProgressStream {
     type Item = Result<Bytes>;
 
-    fn poll_next(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Option<Self::Item>> {
-        let this = self.project();
+    fn poll_next(mut self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Option<Self::Item>> {
+        let start = self.start.get_or_init(|| Instant::now()).clone();
 
-        let start = this.start.get_or_init(|| Instant::now());
+        let body = &mut self.inner;
 
-        match this.inner.poll_next(cx) {
-            Poll::Ready(reader) => match reader {
-                Some(result) => match result {
-                    Ok(frame) => {
-                        let bytes = frame.into_data().unwrap();
+        match Body::poll_frame(Pin::new(body), cx) {
+            Poll::Ready(Some(Ok(frame))) => {
+                let bytes: Bytes = frame.into_data().unwrap();
 
-                        let current_time = Instant::now();
-                        let cost = current_time.duration_since(*start);
+                let current_time = Instant::now();
+                let cost = current_time.duration_since(start);
 
-                        *this.bytes_read += bytes.len() as u64;
+                let mut bytes_read = self.bytes_read;
 
-                        (this.progress)(cost, *this.bytes_read);
+                bytes_read += bytes.len() as u64;
 
-                        Poll::Ready(Some(Ok(bytes)))
-                    }
-                    Err(e) => Poll::Ready(Some(Err(e))),
-                },
-                None => Poll::Ready(None),
-            },
+                (self.progress)(cost, bytes_read);
+
+                self.bytes_read = bytes_read;
+
+                Poll::Ready(Some(Ok(bytes)))
+            }
+            Poll::Ready(Some(Err(e))) => Poll::Ready(Some(Err(e))),
+            Poll::Ready(None) => Poll::Ready(None),
             Poll::Pending => Poll::Pending,
         }
     }

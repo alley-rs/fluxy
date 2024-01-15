@@ -31,7 +31,6 @@ log = "0.4"
 simplelog = { version = "0.12", features = ["paris"] }
 time = { version = "0.3", features = ['formatting'] }
 thiserror = "1"
-pin-project-lite = "0.2"
 
 
 [features]

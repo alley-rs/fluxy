@@ -71,7 +71,6 @@ dependencies = [
  "lazy_static",
  "local-ip-address",
  "log",
- "pin-project-lite",
  "qrcode-generator",
  "salvo",
  "serde",
