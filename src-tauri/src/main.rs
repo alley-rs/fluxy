@@ -17,7 +17,6 @@ extern crate simplelog;
 extern crate log;
 
 use std::{
-    os::unix::fs::MetadataExt,
     path::PathBuf,
     time::{Duration, SystemTime, UNIX_EPOCH},
 };
@@ -162,7 +161,7 @@ async fn get_files_metadata(paths: Vec<PathBuf>) -> AlleyResult<Vec<SendFile>> {
         let filename = path.file_name().unwrap().to_str().unwrap();
         let extension = path.extension().unwrap().to_str().unwrap();
         let file = File::open(path).await?;
-        let size = file.metadata().await?.size();
+        let size = file.metadata().await?.len();
 
         files.push(SendFile::new(filename, path, extension, size))
     }
