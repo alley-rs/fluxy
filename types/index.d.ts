@@ -9,3 +9,10 @@ interface QrCode {
   url: string;
   id: number;
 }
+
+interface SendFile {
+  name: string;
+  path: string;
+  extension: string;
+  size: string;
+}

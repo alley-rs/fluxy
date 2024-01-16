@@ -12,6 +12,8 @@
   "dependencies": {
     "@ant-design/icons": "^5.2.6",
     "antd": "^5.12.8",
+    "antd-mobile": "^5.34.0",
+    "antd-mobile-icons": "^0.3.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
@@ -24,6 +26,7 @@
     "eslint": "^8.55.0",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.5",
+    "sass": "^1.69.7",
     "typescript": "^5.2.2",
     "vite": "^5.0.8"
   }

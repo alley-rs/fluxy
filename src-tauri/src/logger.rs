@@ -4,7 +4,7 @@ use log::{Level, LevelFilter};
 use simplelog::{Color, Config, ConfigBuilder};
 use time::macros::{format_description, offset};
 
-pub fn logger_config(is_term: bool) -> Config {
+pub(super) fn logger_config(is_term: bool) -> Config {
     let mut config = &mut ConfigBuilder::new();
 
     if is_term {
@@ -36,7 +36,7 @@ pub fn logger_config(is_term: bool) -> Config {
         .build()
 }
 
-pub fn log_level() -> LevelFilter {
+pub(super) fn log_level() -> LevelFilter {
     let level_strings: HashMap<&str, LevelFilter> = HashMap::from([
         ("off", LevelFilter::Off),
         ("error", LevelFilter::Error),

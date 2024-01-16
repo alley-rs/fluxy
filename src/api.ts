@@ -11,5 +11,14 @@ export const getQrCodeState = async (id: number) =>
     id,
   });
 
-export const getLocalIPQrCode = async () =>
-  await invoke<QrCode>("local_ip_qr_code");
+export const getUploadQrCode = async () =>
+  await invoke<QrCode>("upload_qr_code");
+
+export const pickFileServerDirectory = async (path: string) =>
+  await invoke<string[]>("pick_file_server_directory", { path });
+
+export const getFilesMetadata = async (paths: string[]) =>
+  await invoke<SendFile[]>("get_files_metadata", { paths });
+
+export const getSendFilesUrlQrCode = async (files: SendFile[]) =>
+  await invoke<QrCode>("get_send_files_url_qr_code", { files });

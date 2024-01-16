@@ -5,7 +5,7 @@ use qrcode_generator::QRCodeError;
 use serde::{Serialize, Serializer};
 
 #[derive(Debug, thiserror::Error)]
-pub enum AlleyError {
+pub(crate) enum AlleyError {
     #[error(transparent)]
     SetLogger(#[from] SetLoggerError),
     #[error(transparent)]
@@ -14,7 +14,6 @@ pub enum AlleyError {
     Tauro(#[from] tauri::Error),
     #[error(transparent)]
     QRCode(#[from] QRCodeError),
-    #[cfg(not(debug_assertions))]
     #[error(transparent)]
     Io(#[from] std::io::Error),
 }
@@ -28,4 +27,4 @@ impl Serialize for AlleyError {
     }
 }
 
-pub type AlleyResult<T> = Result<T, AlleyError>;
+pub(crate) type AlleyResult<T> = Result<T, AlleyError>;

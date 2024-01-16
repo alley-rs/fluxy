@@ -1,32 +1,3 @@
-// export default async function asyncPool(
-//   concurrencyLimit: number,
-//   items: RequestTask[]
-// ) {
-//   const pendings: Promise<void>[] = [];
-
-//   for (const item of items) {
-//     if (concurrencyLimit <= items.length) {
-//       const send = new Promise<void>((resolve) => {
-//         const xhr = item.xhr;
-
-//         item.done = resolve;
-
-//         xhr.send(item.data);
-//       });
-
-//       send.then(() => {
-//         pendings.splice(pendings.indexOf(send), 1);
-//       });
-
-//       pendings.push(send);
-
-//       if (pendings.length >= concurrencyLimit) {
-//         await Promise.race(pendings);
-//       }
-//     }
-//   }
-// }
-
 /**
  * Asynchronously processes an array of items with a concurrency limit.
  *
