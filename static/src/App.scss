@@ -1,0 +1,18 @@
+#root {
+  width: 100vw;
+  height: 100vh;
+  margin: 0 auto;
+  display: flex;
+
+  .container {
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    justify-content: center;
+  }
+
+  .result,
+  .align-center {
+    align-items: center;
+  }
+}

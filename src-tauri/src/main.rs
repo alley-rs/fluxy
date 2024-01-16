@@ -17,23 +17,26 @@ extern crate simplelog;
 extern crate log;
 
 use std::{
+    os::unix::fs::MetadataExt,
     path::PathBuf,
     time::{Duration, SystemTime, UNIX_EPOCH},
 };
 
 use error::AlleyResult;
 use lazy::LOCAL_IP;
+use log::info;
 use logger::logger_config;
 use qrcode_generator::QrCodeEcc;
 use serde::Serialize;
-use server::{DOWNLOADS_DIR, MAIN_WINDOW, QR_CODE_MAP};
+use server::{SendFile, DOWNLOADS_DIR, MAIN_WINDOW, QR_CODE_MAP};
 #[cfg(debug_assertions)]
 use simplelog::{ColorChoice, TermLogger, TerminalMode};
 use tauri::Manager;
+use tokio::fs::File;
 #[cfg(not(debug_assertions))]
 use {lazy::APP_CONFIG_DIR, simplelog::WriteLogger, std::fs};
 
-use crate::logger::log_level;
+use crate::{logger::log_level, server::SEND_FILES};
 
 fn now() -> AlleyResult<Duration> {
     SystemTime::now().duration_since(UNIX_EPOCH).map_err(|e| {
@@ -42,11 +45,51 @@ fn now() -> AlleyResult<Duration> {
     })
 }
 
-#[derive(Serialize)]
+enum Mode {
+    Send,
+    Receive,
+}
+
+impl Mode {
+    fn to_str(&self) -> &'static str {
+        match self {
+            Mode::Send => "send",
+            Mode::Receive => "receive",
+        }
+    }
+}
+
+#[derive(Debug, Serialize)]
 struct QrCode {
     svg: String,
     url: String,
     id: u64,
+}
+
+impl QrCode {
+    fn new(mode: Mode) -> AlleyResult<Self> {
+        let ts = now()?.as_secs();
+        trace!("获取时间戳: {}", ts);
+
+        let url = format!(
+            "http://{}:{}/connect?mode={}&ts={}",
+            LOCAL_IP.to_string(),
+            5800,
+            mode.to_str(),
+            ts
+        );
+        debug!("二维码对应的 url: {}", url);
+
+        let code = qrcode_generator::to_svg_to_string(&url, QrCodeEcc::Low, 256, None::<&str>)?;
+
+        info!("已创建二维码");
+
+        Ok(Self {
+            svg: code,
+            url,
+            id: ts,
+        })
+    }
 }
 
 #[tauri::command]
@@ -62,26 +105,27 @@ async fn get_qr_code_state(id: u64) -> bool {
 }
 
 #[tauri::command]
-async fn local_ip_qr_code() -> AlleyResult<QrCode> {
-    trace!("获取 server 地址二维码");
+async fn upload_qr_code() -> AlleyResult<QrCode> {
+    trace!("获取上传地址二维码");
 
-    let ts = now()?.as_secs();
+    let code = QrCode::new(Mode::Send)?;
 
-    trace!("获取时间戳: {}", ts);
+    info!("上传地址二维码已创建: {:?}", code);
 
-    let url = format!("http://{}:{}/connect?ts={}", LOCAL_IP.to_string(), 5800, ts);
+    Ok(code)
+}
 
-    debug!("二维码对应的 url: {}", url);
+#[tauri::command]
+async fn get_send_files_url_qr_code(files: Vec<SendFile>) -> AlleyResult<QrCode> {
+    trace!("获取发送址二维码");
+    let mut send_files = SEND_FILES.write().await;
+    *send_files = Some(files);
 
-    let code = qrcode_generator::to_svg_to_string(&url, QrCodeEcc::Low, 256, None::<&str>)?;
+    let code = QrCode::new(Mode::Receive)?;
 
-    info!("已创建二维码");
+    info!("发送地址二维码已创建: {:?}", code);
 
-    Ok(QrCode {
-        svg: code,
-        url,
-        id: ts,
-    })
+    Ok(code)
 }
 
 #[tauri::command]
@@ -103,6 +147,29 @@ async fn change_downloads_dir(path: PathBuf) {
     *downloads_dir = path.clone();
 
     info!("下载目录已改为: {:?}", path);
+}
+
+#[tauri::command]
+async fn get_files_metadata(paths: Vec<PathBuf>) -> AlleyResult<Vec<SendFile>> {
+    trace!("获取待发送文件信息");
+    let mut files = Vec::with_capacity(paths.len());
+
+    for path in paths.iter() {
+        if path.is_dir() {
+            continue;
+        }
+
+        let filename = path.file_name().unwrap().to_str().unwrap();
+        let extension = path.extension().unwrap().to_str().unwrap();
+        let file = File::open(path).await?;
+        let size = file.metadata().await?.size();
+
+        files.push(SendFile::new(filename, path, extension, size))
+    }
+
+    info!("所有待发送文件信息: {:?}", files);
+
+    Ok(files)
 }
 
 #[tokio::main]
@@ -132,10 +199,12 @@ async fn main() -> AlleyResult<()> {
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![
-            local_ip_qr_code,
+            upload_qr_code,
             get_qr_code_state,
             downloads_dir,
             change_downloads_dir,
+            get_files_metadata,
+            get_send_files_url_qr_code,
         ])
         .run(tauri::generate_context!())?;
 

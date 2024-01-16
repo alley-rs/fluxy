@@ -8,12 +8,12 @@ use std::process;
 use std::sync::OnceLock;
 use std::time::Instant;
 
-use log::debug;
 use log::info;
+use salvo::fs::NamedFile;
 use salvo::prelude::*;
 #[cfg(not(debug_assertions))]
 use salvo::serve_static::StaticDir;
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 use tauri::Window;
 use tokio::fs;
 use tokio::fs::File;
@@ -29,25 +29,50 @@ const UPLOAD_EVENT: &str = "upload://progress";
 pub static MAIN_WINDOW: OnceLock<Window> = OnceLock::new();
 
 lazy_static! {
-    pub static ref DOWNLOADS_DIR: RwLock<PathBuf> =
+    pub(super) static ref DOWNLOADS_DIR: RwLock<PathBuf> =
         RwLock::new(dirs::download_dir().unwrap().join("alley"));
-    pub static ref QR_CODE_MAP: RwLock<HashMap<u64, bool>> = RwLock::new(HashMap::new());
+    pub(super) static ref QR_CODE_MAP: RwLock<HashMap<u64, bool>> = RwLock::new(HashMap::new());
+    pub(super) static ref SEND_FILES: RwLock<Option<Vec<SendFile>>> = RwLock::new(None);
 }
 
 type Result<T> = std::result::Result<T, ServerError>;
 
+#[derive(Serialize)]
+#[serde(untagged)]
 enum ServerError {
-    Bad(String),
+    Bad {
+        error: String,
+        advice: Option<String>,
+    },
     Internal,
+}
+
+impl ServerError {
+    fn new<'a, O: Into<Option<&'a str>>>(error: O, advice: O) -> Self {
+        let msg: Option<&str> = error.into();
+        let advice: Option<&str> = advice.into();
+        let advice = match advice {
+            None => None,
+            Some(s) => Some(s.to_owned()),
+        };
+
+        match msg {
+            None => Self::Internal,
+            Some(s) => Self::Bad {
+                error: s.into(),
+                advice,
+            },
+        }
+    }
 }
 
 #[async_trait]
 impl Writer for ServerError {
     async fn write(self, _req: &mut Request, _depot: &mut Depot, res: &mut Response) {
-        match self {
-            ServerError::Bad(s) => {
+        match &self {
+            ServerError::Bad { .. } => {
                 res.status_code(StatusCode::BAD_REQUEST);
-                res.render(s);
+                res.render(Json(&self));
             }
             ServerError::Internal => {
                 res.status_code(StatusCode::INTERNAL_SERVER_ERROR);
@@ -75,11 +100,24 @@ impl<'a> Task<'a> {
 
 #[cfg(debug_assertions)]
 #[handler]
-async fn index(res: &mut Response) {
+async fn index(req: &Request, res: &mut Response) -> Result<()> {
+    let mode = match req.query::<String>("mode") {
+        None => {
+            return Err(ServerError::new(
+                "缺少查询参数: mode",
+                "请通过小路互传扫码访问",
+            ))
+        }
+        Some(s) => s,
+    };
+
     res.render(Redirect::found(format!(
-        "http://{}:5173",
-        LOCAL_IP.to_owned()
-    )))
+        "http://{}:5173?mode={}",
+        LOCAL_IP.to_owned(),
+        mode
+    )));
+
+    Ok(())
 }
 
 #[handler]
@@ -90,14 +128,25 @@ async fn connect(req: &Request, res: &mut Response) -> Result<()> {
         Some(ts) => ts,
         None => {
             error!("请求 url 中未找到 ts");
-            return Err(ServerError::Bad("缺少 ts".to_string()));
+            return Err(ServerError::new("缺少 ts", "请通过小路互传扫码访问"));
+        }
+    };
+
+    let mode = match req.query::<String>("mode") {
+        Some(s) => s,
+        None => {
+            error!("请求 url 中未找到 mode");
+            return Err(ServerError::new("缺少 mode", "请通过小路互传扫码访问"));
         }
     };
 
     let mut qr_code_map = QR_CODE_MAP.write().await;
     if qr_code_map.contains_key(&id) {
         error!("此二维码已被使用: {}", id);
-        return Err(ServerError::Bad("此二维码已被使用".to_string()));
+        return Err(ServerError::new(
+            "此二维码已被使用",
+            "请刷新小路互传页面生成新的二维码",
+        ));
     }
 
     qr_code_map.insert(id, true);
@@ -105,7 +154,104 @@ async fn connect(req: &Request, res: &mut Response) -> Result<()> {
     info!("客户端连接成功: addr={}", req.remote_addr());
 
     // 客户端重定向到首页
-    res.render(Redirect::found("/"));
+    res.render(Redirect::found("/?mode=".to_owned() + &mode));
+
+    Ok(())
+}
+
+fn format_file_size(size: u64) -> String {
+    const KB: u64 = 1024;
+    const MB: u64 = KB * 1024;
+    const GB: u64 = MB * 1024;
+
+    if size < KB {
+        return format!("{} B", size);
+    } else if size < MB {
+        return format!("{:.2} KB", size as f64 / KB as f64);
+    } else if size < GB {
+        return format!("{:.2} MB", size as f64 / MB as f64);
+    } else {
+        return format!("{:.2} GB", size as f64 / GB as f64);
+    }
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub(super) struct SendFile {
+    name: String,
+    path: PathBuf,
+    extension: String,
+    size: String,
+}
+
+impl SendFile {
+    pub(super) fn new<S: Into<String>, P: Into<PathBuf>>(
+        name: S,
+        path: P,
+        extension: &str,
+        size: u64,
+    ) -> Self {
+        Self {
+            name: name.into(),
+            path: path.into(),
+            extension: extension.to_uppercase(),
+            size: format_file_size(size),
+        }
+    }
+}
+
+#[handler]
+async fn download_file(req: &Request, res: &mut Response) -> Result<()> {
+    let path = match req.param::<PathBuf>("path") {
+        None => {
+            error!("请求 url 中未找到 path");
+            return Err(ServerError::new("缺少 path", "请通过小路互传扫码访问"));
+        }
+        Some(p) => p,
+    };
+
+    debug!("下载文件: {:?}", path);
+
+    if !path.exists() {
+        error!("path 不存在: {:?}", path);
+        return Err(ServerError::new("文件不存在", "路径错误或该文件已被删除"));
+    }
+
+    let builder = NamedFile::builder(&path);
+
+    let filename = path.file_name().unwrap().to_str().unwrap();
+
+    builder
+        .attached_name(filename)
+        .send(req.headers(), res)
+        .await;
+
+    Ok(())
+}
+
+#[handler]
+async fn files(res: &mut Response) -> Result<()> {
+    let send_files_guard = SEND_FILES.read().await;
+
+    let send_files = match send_files_guard.as_ref() {
+        None => {
+            error!("未选择文件");
+            return Err(ServerError::new(
+                "小路互传客户端未选择文件",
+                "请先在小路互传选择一些文件",
+            ));
+        }
+        Some(arr) => arr,
+    };
+
+    debug!("发送的文件列表: {:?}", send_files);
+
+    res.render(Json(send_files));
+
+    drop(send_files_guard);
+
+    info!("文件列表已发送到客户端，清空文件列表");
+    let mut send_files = SEND_FILES.write().await;
+    *send_files = None;
 
     Ok(())
 }
@@ -118,7 +264,7 @@ async fn upload(req: &mut Request) -> Result<()> {
         Some(s) => s,
         None => {
             error!("请求地址中未找到文件名");
-            return Err(ServerError::Bad("文件名为空".into()));
+            return Err(ServerError::new("文件名为空", "请通过小路互传扫码访问"));
         }
     };
     debug!("文件名: {:?}", name);
@@ -128,7 +274,7 @@ async fn upload(req: &mut Request) -> Result<()> {
         None => {
             error!("请求头中未找到文件大小");
 
-            return Err(ServerError::Bad("文件长度为空".into()));
+            return Err(ServerError::new("文件长度为空", "请通过小路互传扫码访问"));
         }
     };
 
@@ -198,7 +344,7 @@ async fn upload(req: &mut Request) -> Result<()> {
     Ok(())
 }
 
-pub async fn serve() {
+pub(super) async fn serve() {
     // 程序启动时的默认下载目录
     let default_downloads_dir = DOWNLOADS_DIR.read().await;
     if !default_downloads_dir.exists() {
@@ -209,6 +355,8 @@ pub async fn serve() {
     let mut router = Router::new()
         .hoop(Logger::new())
         .push(Router::with_path("connect").get(connect))
+        .push(Router::with_path("files").get(files))
+        .push(Router::with_path("download/<path>").get(download_file))
         .push(Router::with_path("upload").post(upload));
 
     #[cfg(debug_assertions)]

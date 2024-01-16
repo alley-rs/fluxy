@@ -1,50 +1,33 @@
-import { useEffect, useState } from "react";
-import { Upload, Button } from "antd";
-import type { UploadProps } from "antd";
-import { UploadOutlined } from "@ant-design/icons";
-import upload from "./request";
-import "./App.css";
-import asyncPool from "./asyncPool";
+import { Result } from "antd-mobile";
+import "./App.scss";
+import Send from "./pages/send";
+import Receive from "./pages/receive/index.tsx";
+
+type Mode = "receive" | "send";
 
 const App = () => {
-  const [fileCount, setFileCount] = useState(0);
-  const [requestTasks, setRequestTasks] = useState<RequestTask[]>([]);
+  const href = window.location.href;
+  const url = new URL(href);
+  const params = new URLSearchParams(url.search);
+  const mode = params.get("mode") as Mode | null;
 
-  const appendTask = (task: RequestTask) =>
-    setRequestTasks((pre) => [...pre, task]);
+  if (!mode) {
+    return (
+      <div className="container result">
+        <Result
+          status="error"
+          title="无效的请求"
+          description="缺少查询参数: mode"
+        />
+      </div>
+    );
+  }
 
-  const props: UploadProps = {
-    action: "/upload",
-    onChange: ({ fileList }) => {
-      setFileCount(fileList.length);
-    },
-    customRequest: (option) => upload(option, appendTask),
-    multiple: true,
-    // concurrencyLimit: 2, // antd 5.12.8 版本此属性无意义
-  };
-
-  useEffect(() => {
-    if (fileCount === requestTasks.length) {
-      asyncPool(
-        2, // 并发数量，应该根据实际场景判断，比如通过 fileList 中的文件尺寸进行判断，当超过某个阈值时减小并发量
-        requestTasks,
-        (item) =>
-          new Promise<void>((resolve) => {
-            const xhr = item.xhr;
-
-            item.done = resolve;
-
-            xhr.send(item.data);
-          }),
-      );
-    }
-  }, [fileCount, requestTasks]);
-
-  return (
-    <Upload {...props}>
-      <Button icon={<UploadOutlined />}>选择文件</Button>
-    </Upload>
-  );
+  if (mode === "send") {
+    return <Send />;
+  } else {
+    return <Receive />;
+  }
 };
 
 export default App;

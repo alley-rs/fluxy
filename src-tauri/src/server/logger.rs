@@ -4,7 +4,7 @@ use salvo::http::{Request, Response, StatusCode};
 use salvo::{async_trait, Depot, FlowCtrl, Handler};
 use tauri::http::header::{CONTENT_LENGTH, CONTENT_TYPE};
 
-pub struct Logger;
+pub(super) struct Logger;
 
 impl Logger {
     #[inline]
@@ -30,8 +30,6 @@ impl Handler for Logger {
             let status = res.status_code.unwrap_or(StatusCode::OK);
 
             let headers = req.headers();
-
-            println!("{:?}", headers.get("User-Agent"));
 
             #[cfg(feature = "log-paris")]
             info!(

@@ -8,6 +8,8 @@ export default defineConfig({
     proxy: {
       "/upload": "http://127.0.0.1:5800",
       "/ping": "http://127.0.0.1:5800",
+      "/files": "http://127.0.0.1:5800",
+      "/download": "http://127.0.0.1:5800",
     },
   },
 
