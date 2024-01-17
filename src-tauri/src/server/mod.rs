@@ -86,14 +86,16 @@ struct Task<'a> {
     name: &'a str,
     percent: f64,
     speed: f64, // MB/s
+    size: &'a str,
 }
 
 impl<'a> Task<'a> {
-    fn new(name: &'a str, percent: f64, speed: f64) -> Self {
+    fn new(name: &'a str, size: &'a str, percent: f64, speed: f64) -> Self {
         Self {
             name,
             percent,
             speed,
+            size,
         }
     }
 }
@@ -287,6 +289,8 @@ async fn upload(req: &mut Request) -> Result<()> {
 
     let start = Instant::now();
 
+    let formatted_size = format_file_size(size);
+
     let body = req.take_body();
     let stream = ReadProgressStream::new(
         body,
@@ -304,7 +308,10 @@ async fn upload(req: &mut Request) -> Result<()> {
                 let speed = progress / cost_senconds;
 
                 if let Some(w) = MAIN_WINDOW.get() {
-                    let _ = w.emit(UPLOAD_EVENT, Task::new(&name, percent, speed));
+                    let _ = w.emit(
+                        UPLOAD_EVENT,
+                        Task::new(&name, &formatted_size, percent, speed),
+                    );
                 }
             }
         }),
