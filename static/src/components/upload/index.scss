@@ -1,0 +1,85 @@
+#upload {
+  flex-direction: column;
+  padding: 10px;
+  width: calc(100vw - 20px);
+  display: flex;
+
+  .upload-file-list {
+    border: 1px #999 dashed;
+    height: 80%;
+    border-radius: 5px;
+    flex-grow: 14;
+
+    .file-list-item {
+      list-style-type: none;
+      padding: 5px;
+      position: relative;
+      background-color: transparent;
+
+      &:not(:last-child) {
+        border-bottom: 1px #999 dashed;
+      }
+
+      .progress-bar {
+        --fill-color: #ccc;
+        width: calc(100% - 10px);
+        height: calc(100% - 10px);
+        position: absolute;
+        z-index: -1;
+
+        &-trail {
+          flex: auto;
+          overflow: hidden;
+          height: 8px;
+          height: 100%;
+          border-radius: 15px;
+        }
+
+        &-fill {
+          transition: width 0.3s;
+          background: var(--fill-color);
+          height: 8px;
+          height: 100%;
+        }
+
+        &-fill-success {
+          background-color: var(--adm-color-success);
+          height: 8px;
+          height: 100%;
+          transition: width 0.3s;
+        }
+      }
+
+      .file-detail {
+        padding: 5px;
+
+        .filename {
+          white-space: normal;
+          word-break: break-all;
+        }
+
+        .data {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        }
+      }
+    }
+  }
+
+  .submit-button {
+    margin-top: 5px;
+    flex-grow: 1;
+  }
+
+  .empty {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+.success {
+  color: #fff;
+}

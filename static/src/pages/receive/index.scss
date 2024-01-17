@@ -1,3 +1,8 @@
-.file-list {
+.receive-file-list {
   width: 100%;
+
+  .download-url {
+    white-space: normal;
+    word-break: break-all;
+  }
 }

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Result, SpinLoading, List, Space, Toast } from "antd-mobile";
 import { DownlandOutline } from "antd-mobile-icons";
 import "./index.scss";
-import { fileType } from ".";
+import fileType from "./fileType";
 
 const Receive = () => {
   const [files, setFiles] = useState<SendFile[] | null>(null);
@@ -42,7 +42,10 @@ const Receive = () => {
 
   return (
     <div className="container">
-      <List className="file-list" header="点击文件名或右侧下载按钮即可下载文件">
+      <List
+        className="receive-file-list"
+        header="点击文件名或右侧下载按钮即可下载文件"
+      >
         {files.map((f) => {
           const url = "/download/" + encodeURIComponent(f.path);
           return (
@@ -57,7 +60,7 @@ const Receive = () => {
                 </Space>
               }
               extra={
-                <a download={f.name} href={url}>
+                <a download={f.name} href={url} className="download-url">
                   <DownlandOutline fontSize={20} />
                 </a>
               }

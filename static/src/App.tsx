@@ -1,7 +1,7 @@
 import { Result } from "antd-mobile";
 import "./App.scss";
 import Send from "./pages/send";
-import Receive from "./pages/receive/index.tsx";
+import Receive from "./pages/receive";
 
 type Mode = "receive" | "send";
 

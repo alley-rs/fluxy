@@ -1,5 +1,8 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
+import path from "path";
+
+const pathSrc = path.resolve(__dirname, "src");
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -10,6 +13,12 @@ export default defineConfig({
       "/ping": "http://127.0.0.1:5800",
       "/files": "http://127.0.0.1:5800",
       "/download": "http://127.0.0.1:5800",
+    },
+  },
+
+  resolve: {
+    alias: {
+      "~/": `${pathSrc}/`,
     },
   },
 

@@ -1,20 +1,3 @@
-import type { UploadProps } from "antd";
-import { RcFile } from "antd/es/upload";
-
-type UploadRequestOption = Parameters<
-  NonNullable<UploadProps["customRequest"]>
->[0];
-
-type UploadProgressEvent = Parameters<
-  NonNullable<UploadRequestOption["onProgress"]>
->[0];
-
-interface UploadRequestError extends Error {
-  status: number;
-  method: UploadRequestOption["method"];
-  url: string;
-}
-
 function getError(option: UploadRequestOption, xhr: XMLHttpRequest) {
   const msg = `cannot ${option.method} ${option.action} ${xhr.status}'`;
   const err = new Error(msg) as UploadRequestError;
@@ -44,19 +27,23 @@ const upload = (
   // eslint-disable-next-line no-undef
   const xhr = new XMLHttpRequest();
 
-  const task: RequestTask = { xhr, data: option.file as File };
+  const task: RequestTask = { xhr, data: option.file };
 
   if (option.onProgress && xhr.upload) {
     xhr.upload.onprogress = function progress(e: UploadProgressEvent) {
       if (e.total! > 0) {
         e.percent = (e.loaded! / e.total!) * 100;
+        const now = Math.round(new Date().getTime() / 1000);
+        const delta = now - task.start!;
+        if (delta) e.speed = e.loaded! / 1024 / 1024 / (now - task.start!);
+        else e.speed = 0;
       }
-      option.onProgress!(e);
+      option.onProgress(e, option.file);
     };
   }
 
   xhr.onerror = function error(e) {
-    option.onError!(e);
+    option.onError(e);
     task.done!();
   };
 
@@ -70,14 +57,10 @@ const upload = (
       return option.onError!(getError(option, xhr), getBody(xhr));
     }
 
-    return option.onSuccess!(getBody(xhr), xhr);
+    return option.onSuccess(getBody(xhr), xhr);
   };
 
-  xhr.open(
-    option.method,
-    option.action + "?name=" + (option.file as RcFile).name,
-    true
-  );
+  xhr.open(option.method, option.action + "?name=" + option.file.name, true);
 
   // Has to be after `.open()`. See https://github.com/enyo/dropzone/issues/179
   if (option.withCredentials && "withCredentials" in xhr) {
