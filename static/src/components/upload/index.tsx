@@ -116,7 +116,7 @@ const Upload = ({ action, headers, withCredentials, method }: UploadProps) => {
 
   return (
     <div id="upload" onClick={onClick}>
-      <div className={"upload-file-list"}>
+      <div className="upload-file-list">
         {!fileItems?.length ? (
           <div className="empty">
             <ErrorBlock
