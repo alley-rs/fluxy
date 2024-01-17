@@ -35,9 +35,9 @@
 
 | PC 端扫描前                                 | 手机端                                         | PC 端扫描后                                   |
 | ------------------------------------------- | ---------------------------------------------- | --------------------------------------------- |
-| ![output](./docs/images/receive-qrcode.png) | ![output](./docs/images/mobile-send-index.png) | ![output](./docs/images/pc-receive-empty.png) |
+| ![output](./docs/images/receive-qrcode.png) | ![output](./docs/images/mobile-send-index.jpg) | ![output](./docs/images/pc-receive-empty.png) |
 
-在手机上点击页面中间的`upload`按钮即可上传多个文件，同时 PC 端也能看到收取文件的进度。
+在手机上点击页面最下面的的`选择文件`按钮即可上传多个文件，同时 PC 端也能看到收取文件的进度。
 
 | 手机端上传                                    | PC端接收                                  |
 | --------------------------------------------- | ----------------------------------------- |
