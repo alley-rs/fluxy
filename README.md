@@ -4,7 +4,7 @@
 
 在局域网的同网段中各终端快速互传文件的工具，适配 Windows、macOS 和 Linux 桌面发行版，为频繁在手机与电脑间互传文件的用户提供便捷、舒适的体验。
 
-在未开发手机端前，只能通过手机浏览器上传和接收文件，建议使用 [Edge](https://play.google.com/store/search?q=edge&c=apps)、[Chrome](https://play.google.com/store/search?q=Chrome&c=apps) 、[Firefox](https://play.google.com/store/apps/details?id=org.mozilla.firefox) 或 [QQ浏览器](https://browser.qq.com/mobile)。
+在未开发手机端前，只能通过手机浏览器上传和接收文件，为了更好的上传体验，建议使用 [Edge](https://play.google.com/store/search?q=edge&c=apps)、[Chrome](https://play.google.com/store/search?q=Chrome&c=apps) 、[Firefox](https://play.google.com/store/apps/details?id=org.mozilla.firefox) 或 [QQ浏览器](https://browser.qq.com/mobile)。
 
 ## 特点
 
@@ -14,12 +14,12 @@
 
 - 体积小
 
-  | 平台及格式                              | 体积    |
-  | --------------------------------------- | ------- |
-  | macOS aarch64 - dmg                     | 4.24 MB |
-  | Linux(Debian/Ubuntu/Deepin) amd64 - deb | 6.2 MB  |
-  | Windows amd64 - msi                     | 4.03 MB |
-  | Windows amd64 - exe                     | 3.26 MB |
+  | 平台及格式                              | 体积（v0.1.0-alpha.5） |
+  | --------------------------------------- | ---------------------- |
+  | macOS aarch64 - dmg                     | 4.3 MB                 |
+  | Linux(Debian/Ubuntu/Deepin) amd64 - deb | 6.53 MB                |
+  | Windows amd64 - msi                     | 4.27 MB                |
+  | Windows amd64 - exe                     | 4.08 MB                |
 
 - 页面丑（缺少设计天份）
 
