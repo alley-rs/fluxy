@@ -70,8 +70,15 @@ const avatar = (ext: string) => {
     case "TSX":
     case "RS":
     case "CPP":
+    case "C":
+    case "JAVA":
+    case "LUA":
     case "CSS":
+    case "GO":
     case "SCSS":
+    case "PHP":
+    case "SQL":
+    case "CS":
       return <CodeOutlined />;
     case "TXT":
     case "JSON":
