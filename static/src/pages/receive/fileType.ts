@@ -28,6 +28,7 @@ const FILE_TYPES: FileType[] = [
       "NUMBERS",
       "KEYNOTES",
       "MD",
+      "PDF",
     ],
     name: "文档",
   },
@@ -61,8 +62,10 @@ const FILE_TYPES: FileType[] = [
   },
 ];
 
-export const fileType = (extension: string) => {
+const fileType = (extension: string) => {
   const ft = FILE_TYPES.find((ft) => ft.extensions.includes(extension));
 
   return ft ? ft.name : "未知";
 };
+
+export default fileType;

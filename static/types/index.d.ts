@@ -1,6 +1,7 @@
 interface RequestTask {
   xhr: XMLHttpRequest;
   data: File;
+  start?: number;
   done?: () => void;
 }
 
