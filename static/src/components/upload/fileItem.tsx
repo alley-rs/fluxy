@@ -44,9 +44,7 @@ const FileItem = ({ file, speed, percent }: FileItemProps) => {
           <h3 className="filename">{file.name}</h3>
           <Space style={{ "--gap": "24px" }}>
             <span>大小：{formatFileSize(file.size)}</span>
-            <span>
-              类型：{fileType(extension)} - {extension}
-            </span>
+            <span>类型：{fileType(extension)}</span>
           </Space>
         </Grid.Item>
 

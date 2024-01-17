@@ -54,9 +54,7 @@ const Receive = () => {
               description={
                 <Space style={{ "--gap": "24px" }}>
                   <span>大小：{f.size}</span>
-                  <span>
-                    类型：{fileType(f.extension) + ` - ${f.extension}`}
-                  </span>
+                  <span>类型：{fileType(f.extension)}</span>
                 </Space>
               }
               extra={
