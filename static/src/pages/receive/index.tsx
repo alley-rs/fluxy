@@ -57,7 +57,7 @@ const Receive = () => {
                 </Space>
               }
               extra={
-                <a download={f.name} href={url}>
+                <a download={f.name} href={url} className="download-url">
                   <DownlandOutline fontSize={20} />
                 </a>
               }
