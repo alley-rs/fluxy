@@ -3,112 +3,21 @@ import { appWindow } from "@tauri-apps/api/window";
 import { TauriEvent } from "@tauri-apps/api/event";
 import { Avatar, Button, Empty, Flex, List, Space } from "antd";
 import "./index.scss";
-import {
-  AndroidOutlined,
-  AppleOutlined,
-  CodeOutlined,
-  CustomerServiceOutlined,
-  DeleteOutlined,
-  FileExcelOutlined,
-  FileGifOutlined,
-  FileImageOutlined,
-  FileJpgOutlined,
-  FileMarkdownOutlined,
-  FilePdfOutlined,
-  FilePptOutlined,
-  FileTextOutlined,
-  FileUnknownOutlined,
-  FileWordOutlined,
-  FileZipOutlined,
-  VideoCameraOutlined,
-  WindowsOutlined,
-} from "@ant-design/icons";
+import { DeleteOutlined } from "@ant-design/icons";
 import { getFilesMetadata, getSendFilesUrlQrCode, getQrCodeState } from "~/api";
-
-const avatar = (ext: string) => {
-  switch (ext) {
-    case "MP4":
-    case "MOV":
-    case "AVI":
-    case "WEBM":
-      return <VideoCameraOutlined />;
-    case "JPG":
-    case "JPEG":
-      return <FileJpgOutlined />;
-    case "GIF":
-      return <FileGifOutlined />;
-    case "PNG":
-    case "WEBP":
-    case "AVIF":
-    case "SVG":
-      return <FileImageOutlined />;
-    case "PDF":
-      return <FilePdfOutlined />;
-    case "MP3":
-      return <CustomerServiceOutlined />;
-    case "MD":
-      return <FileMarkdownOutlined />;
-    case "PPT":
-      return <FilePptOutlined />;
-    case "XLS":
-    case "XLSX":
-      return <FileExcelOutlined />;
-    case "DOC":
-    case "DOCX":
-      return <FileWordOutlined />;
-    case "ZIP":
-    case "RAR":
-    case "7Z":
-    case "TAR":
-      return <FileZipOutlined />;
-    case "DMG":
-    case "IPA":
-      return <AppleOutlined />;
-    case "EXE":
-    case "MSI":
-      return <WindowsOutlined />;
-    case "APK":
-      return <AndroidOutlined />;
-    case "PY":
-    case "JS":
-    case "JSX":
-    case "TS":
-    case "TSX":
-    case "RS":
-    case "CPP":
-    case "CSS":
-    case "SCSS":
-      return <CodeOutlined />;
-    case "TXT":
-    case "JSON":
-    case "YAML":
-    case "TOML":
-    case "HTML":
-    case "XML":
-    case "YML":
-      return <FileTextOutlined />;
-    default:
-      return <FileUnknownOutlined />;
-  }
-};
+import avatar from "./avatar";
+import { deleteRepetition } from "./utils";
 
 const Send = () => {
   const [files, setFiles] = useState<SendFile[] | null>(null);
 
   const [qrcode, setQrcode] = useState<QrCode | null>(null);
 
-  const deleteRepetition = (paths: string[]): string[] => {
-    return paths.filter((p) => {
-      const index = files?.findIndex((f) => f.path === p);
-      return index === undefined ? true : index === -1;
-    });
-  };
-
   useEffect(() => {
     const unlisten = appWindow.listen<string[]>(
       TauriEvent.WINDOW_FILE_DROP,
       async (e) => {
-        const paths = deleteRepetition(e.payload);
+        const paths = deleteRepetition(e.payload, files ?? []);
         const sendFiles = await getFilesMetadata(paths);
 
         setFiles((pre) => {

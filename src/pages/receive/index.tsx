@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Button, Empty, Progress, Dropdown, Row, Col } from "antd";
+import { Button, Empty, Dropdown, Row, Col } from "antd";
 import type { MenuProps } from "antd";
 import { appWindow } from "@tauri-apps/api/window";
 import { OrderedSet } from "~/utils";
@@ -11,29 +11,8 @@ import {
 } from "~/api";
 import { open } from "@tauri-apps/api/shell";
 import { open as pick } from "@tauri-apps/api/dialog";
+import FileListItem from "./fileListItem";
 import "./index.scss";
-
-interface FileListItemProps {
-  name: string;
-  percent: number;
-  speed?: number;
-}
-
-const FileListItem = ({ name, percent, speed }: FileListItemProps) => (
-  <div>
-    <div
-      style={{
-        textAlign: "left",
-        fontSize: "0.8rem",
-        color: percent < 100 ? "#959595" : "var(--ant-color-text-base)",
-      }}
-    >
-      {name}
-      {speed ? `(${speed.toFixed(1)} MB/s)` : ""}
-    </div>
-    <Progress percent={percent} />
-  </div>
-);
 
 const Receive = () => {
   const [downloadDir, setDownloadDir] = useState<string | undefined>(undefined);
