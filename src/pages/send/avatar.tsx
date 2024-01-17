@@ -31,6 +31,7 @@ const avatar = (ext: string) => {
     case "GIF":
       return <FileGifOutlined />;
     case "PNG":
+    case "APNG":
     case "WEBP":
     case "AVIF":
     case "SVG":
