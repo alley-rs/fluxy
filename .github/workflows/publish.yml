@@ -58,7 +58,7 @@ jobs:
       - name: install frontend dependencies
         run: pnpm install:all
 
-      - uses: thep0y/tauri-action@v0.1.3
+      - uses: thep0y/tauri-action@v0.1.4
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAURI_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
