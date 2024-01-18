@@ -34,12 +34,19 @@ jobs:
         if: matrix.platform == 'macos-latest'
         run: rustup target add aarch64-apple-darwin
 
-      - name: Delete alpha or beta on Windows
+      - name: Get version with alpha or beta deleted on Windows
         if: matrix.platform == 'windows-latest'
-        id: build-version
         run: |
           cd src-tauri
-          echo "BUILD_VERSION=$(node ./before-build.js)" >> $GITHUB_ENV
+          $version = node before-build.js
+          echo "BUILD_VERSION=$version" >> $Env:GITHUB_ENV
+
+      - name: Get version
+        if: matrix.platform != 'windows-latest'
+        run: |
+          cd src-tauri
+          version=$(node before-build.js)
+          echo "BUILD_VERSION=$version" >> $GITHUB_ENV
 
       - name: install dependencies (ubuntu only)
         if: matrix.platform == 'ubuntu-22.04'
