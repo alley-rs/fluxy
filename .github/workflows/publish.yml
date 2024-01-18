@@ -40,7 +40,7 @@ jobs:
           cd src-tauri
           $version = node before-build.js
           echo "BUILD_VERSION=$version" >> $Env:GITHUB_ENV
-          echo "PACKAGE_VERSION=$(node -p "require('./package.json').version")" >> $Env:GITHUB_ENV
+          echo "PACKAGE_VERSION=$(node -p "require('../package.json').version")" >> $Env:GITHUB_ENV
 
       - name: Get version
         if: matrix.platform != 'windows-latest'
