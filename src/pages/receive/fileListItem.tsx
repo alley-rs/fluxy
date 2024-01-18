@@ -21,9 +21,13 @@ const FileListItem = ({ name, percent, speed, size }: FileListItemProps) => (
           <h4 className="filename">{name}</h4>
         </Col>
 
-        {speed ? <Col span={6}>{`${speed.toFixed(1)} MB/s`}</Col> : null}
+        {speed ? (
+          <Col span={6} className="speed">{`${speed.toFixed(1)} MB/s`}</Col>
+        ) : null}
 
-        <Col span={6}>{size}</Col>
+        <Col span={6} className="filesize">
+          {size}
+        </Col>
       </Row>
     </div>
     <Progress percent={percent} />

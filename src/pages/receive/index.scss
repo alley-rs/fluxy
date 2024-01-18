@@ -31,6 +31,16 @@
   &-item {
     max-width: 100vw;
 
+    .filename {
+      white-space: normal;
+      word-break: break-all;
+    }
+
+    .speed,
+    .filesize {
+      text-align: right;
+    }
+
     .ant-progress-line {
       margin-inline-end: 0;
     }
