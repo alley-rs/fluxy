@@ -7,6 +7,11 @@ const updateVersion = () => {
 
   const { version } = info
 
+  if (process.platform !== 'win32') {
+    return version
+  }
+
+
   if (version.indexOf('-') === -1) {
     return
   }

@@ -63,9 +63,9 @@ jobs:
           TAURI_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
           TAURI_KEY_PASSWORD: ${{ secrets.TAURI_KEY_PASSWORD }}
         with:
-          tagName: ${{ format('v{0}', env.BUILD_VERSION == '' && '__VERSION__' || env.BUILD_VERSION) }}
-          releaseName: ${{ format('v{0}', env.BUILD_VERSION == '' && '__VERSION__' || env.BUILD_VERSION) }}
+          tagName: ${{ format('v{0}',  env.BUILD_VERSION) }}
+          releaseName: ${{ format('v{0}', env.BUILD_VERSION) }}
           releaseBody: "See the assets to download this version and install."
           releaseDraft: true
-          prerelease: false
+          prerelease: ${{ contains(env.BUILD_VERSION, 'alpha') }}
           args: ${{matrix.platform == 'macos-latest' && '-t aarch64-apple-darwin' || matrix.platform == 'windows-latest' && '-t x86_64-pc-windows-msvc' || '-t x86_64-unknown-linux-gnu'}}
