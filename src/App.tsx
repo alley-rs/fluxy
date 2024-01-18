@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Button, Space } from "antd";
 import { suspense } from "~/advance/index";
-import { LazyHomeButton, LazyReceive, LazySend } from "~/lazy";
+import { LazyReceive, LazySend } from "~/lazy";
 import "~/App.scss";
 
 enum Mode {
@@ -12,7 +12,7 @@ enum Mode {
 const App = () => {
   const [mode, setMode] = useState<Mode | null>(null);
 
-  const backToHome = () => setMode(null);
+  const toHome = () => setMode(null);
 
   if (mode === null)
     return (
@@ -29,15 +29,9 @@ const App = () => {
       </div>
     );
   else
-    return (
-      <>
-        {mode === Mode.Send
-          ? suspense(<LazySend />)
-          : suspense(<LazyReceive />)}
-
-        {suspense(<LazyHomeButton onClick={backToHome} />)}
-      </>
-    );
+    return mode === Mode.Send
+      ? suspense(<LazySend toHome={toHome} />)
+      : suspense(<LazyReceive toHome={toHome} />);
 };
 
 export default App;

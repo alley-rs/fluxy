@@ -56,6 +56,8 @@ const Upload = ({ action, headers, withCredentials, method }: UploadProps) => {
     const target = e.target as HTMLElement;
 
     if (target && target.tagName === "BUTTON") {
+      setFileItems([]);
+      setRequestTasks([]);
       fileInput.current?.click();
       target.blur();
     }

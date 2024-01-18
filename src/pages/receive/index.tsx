@@ -6,9 +6,13 @@ import { getUploadQrCode, getQrCodeState } from "~/api";
 import FileListItem from "./fileListItem";
 import "./index.scss";
 import { suspense } from "~/advance";
-import { LazyReceiveHeader, LazyReceiveQrCode } from "~/lazy";
+import { LazyReceiveHeader, LazyReceiveQrCode, LazyFloatButtons } from "~/lazy";
 
-const Receive = () => {
+interface ReceiveProps {
+  toHome: () => void;
+}
+
+const Receive = ({ toHome }: ReceiveProps) => {
   const [qrcode, setQrcode] = useState<QrCode | null>(null);
 
   const [progressList, setProgressList] = useState<OrderedSet<TaskMessage>>(
@@ -65,44 +69,62 @@ const Receive = () => {
     return (
       <div className="container">
         {suspense(<LazyReceiveQrCode qrcode={qrcode} />)}
+
+        {suspense(<LazyFloatButtons onClick={toHome} />)}
       </div>
     );
   else if (progressList.empty() && !fileList.length) {
     return (
-      <Flex vertical align="center" style={{ height: "100vh", padding: 0 }}>
-        {suspense(<LazyReceiveHeader />)}
-        <Flex style={{ flexGrow: 14 }} align="center" justify="center">
-          <Empty description="请在手机端上传文件" />
+      <>
+        <Flex vertical align="center" style={{ height: "100vh", padding: 0 }}>
+          {suspense(<LazyReceiveHeader />)}
+          <Flex style={{ flexGrow: 14 }} align="center" justify="center">
+            <Empty description="请在手机端上传文件" />
+          </Flex>
         </Flex>
-      </Flex>
+
+        {suspense(<LazyFloatButtons onClick={toHome} />)}
+      </>
     );
   }
 
   return (
-    <Flex vertical style={{ height: "100vh" }}>
-      {suspense(<LazyReceiveHeader />)}
+    <>
+      <Flex vertical style={{ height: "100vh" }}>
+        {suspense(<LazyReceiveHeader />)}
 
-      <ul className="receive-file-list">
-        {fileList.map((t) => (
-          <FileListItem
-            key={t.name}
-            name={t.name}
-            percent={100}
-            size={t.size}
-          />
-        ))}
+        <ul className="receive-file-list">
+          {fileList.map((t) => (
+            <FileListItem
+              key={t.name}
+              name={t.name}
+              percent={100}
+              size={t.size}
+            />
+          ))}
 
-        {progressList.map((progress) => (
-          <FileListItem
-            key={progress.name}
-            name={progress.name}
-            percent={Math.round(progress.percent)}
-            speed={progress.speed}
-            size={progress.size}
-          />
-        ))}
-      </ul>
-    </Flex>
+          {progressList.map((progress) => (
+            <FileListItem
+              key={progress.name}
+              name={progress.name}
+              percent={Math.round(progress.percent)}
+              speed={progress.speed}
+              size={progress.size}
+            />
+          ))}
+        </ul>
+      </Flex>
+
+      {suspense(
+        <LazyFloatButtons
+          onClick={toHome}
+          clear={() => {
+            setProgressList(new OrderedSet("name"));
+            setFileList([]);
+          }}
+        />,
+      )}
+    </>
   );
 };
 

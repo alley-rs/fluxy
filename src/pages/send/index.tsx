@@ -1,14 +1,18 @@
 import { useState, useEffect } from "react";
 import { appWindow } from "@tauri-apps/api/window";
 import { TauriEvent } from "@tauri-apps/api/event";
-import { Avatar, Button, Empty, Flex, List, Space } from "antd";
+import { Button, Empty, Flex } from "antd";
+import { suspense } from "~/advance";
+import { LazyFloatButtons, LazySendFileList } from "~/lazy";
 import "./index.scss";
-import { DeleteOutlined } from "@ant-design/icons";
 import { getFilesMetadata, getSendFilesUrlQrCode, getQrCodeState } from "~/api";
-import avatar from "./avatar";
 import { deleteRepetition } from "./utils";
 
-const Send = () => {
+interface SendProps {
+  toHome: () => void;
+}
+
+const Send = ({ toHome }: SendProps) => {
   const [files, setFiles] = useState<SendFile[] | null>(null);
 
   const [qrcode, setQrcode] = useState<QrCode | null>(null);
@@ -62,6 +66,8 @@ const Send = () => {
       <div className="container">
         <h2>扫码连接</h2>
         <div dangerouslySetInnerHTML={{ __html: qrcode.svg }} />
+
+        {suspense(<LazyFloatButtons onClick={toHome} />)}
       </div>
     );
   }
@@ -77,30 +83,7 @@ const Send = () => {
           vertical
         >
           {files && files.length ? (
-            <List
-              style={{ padding: "0 5px" }}
-              itemLayout="horizontal"
-              dataSource={files}
-              renderItem={(item, index) => (
-                <List.Item
-                  key={index}
-                  actions={[
-                    <a
-                      className="delete-button"
-                      onClick={() => removeFile(item.path)}
-                    >
-                      {<DeleteOutlined />}{" "}
-                    </a>,
-                  ]}
-                >
-                  <List.Item.Meta
-                    avatar={<Avatar icon={avatar(item.extension)} />}
-                    title={item.name}
-                    description={<Space>大小:{item.size}</Space>}
-                  />
-                </List.Item>
-              )}
-            />
+            suspense(<LazySendFileList data={files} removeFile={removeFile} />)
           ) : (
             <Empty description="将文件拖到此处" />
           )}
@@ -114,6 +97,19 @@ const Send = () => {
           确认
         </Button>
       </Flex>
+
+      {suspense(
+        <LazyFloatButtons
+          onClick={toHome}
+          clear={
+            files && files.length
+              ? () => {
+                setFiles(null);
+              }
+              : undefined
+          }
+        />,
+      )}
     </>
   );
 };
