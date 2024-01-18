@@ -14,12 +14,12 @@
 
 - 体积小
 
-  | 平台及格式                              | 体积（v0.1.0-alpha.5） |
+  | 平台及格式                              | 体积（v0.1.0-alpha.7） |
   | --------------------------------------- | ---------------------- |
-  | macOS aarch64 - dmg                     | 4.3 MB                 |
-  | Linux(Debian/Ubuntu/Deepin) amd64 - deb | 6.53 MB                |
-  | Windows amd64 - msi                     | 4.27 MB                |
-  | Windows amd64 - exe                     | 4.08 MB                |
+  | macOS aarch64 - dmg                     | 4.29 MB                |
+  | Linux(Debian/Ubuntu/Deepin) amd64 - deb | 6.45 MB                |
+  | Windows amd64 - msi                     | 4.29 MB                |
+  | Windows amd64 - exe                     | 4.07 MB                |
 
 - 页面丑（缺少设计天份）
 
