@@ -16,7 +16,7 @@ const updateVersion = () => {
 
   fs.writeFileSync('../package.json', JSON.stringify(info))
 
-  return `BUILD_VERSION=${version}`
+  return version
 }
 
 console.log(updateVersion())
