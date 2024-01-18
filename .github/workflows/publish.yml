@@ -37,7 +37,9 @@ jobs:
       - name: Delete alpha or beta on Windows
         if: matrix.platform == 'windows-latest'
         id: build-version
-        run: cd src-tauri && node ./before-build.js >> "$GITHUB_OUTPUT"
+        run: |
+          cd src-tauri
+          echo "BUILD_VERSION=$(node ./before-build.js)" >> $GITHUB_ENV
 
       - name: install dependencies (ubuntu only)
         if: matrix.platform == 'ubuntu-22.04'
@@ -53,10 +55,9 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAURI_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
           TAURI_KEY_PASSWORD: ${{ secrets.TAURI_KEY_PASSWORD }}
-          BUILD_VERSION: ${{ steps.build-version.outputs.BUILD_VERSION || '__VERSION__' }}
         with:
-          tagName: v$BUILD_VERSION
-          releaseName: "v$BUILD_VERSION"
+          tagName: ${{ format('v{0}}', env.BUILD_VERSION == '' && '__VERSION__' || env.BUILD_VERSION) }}
+          releaseName: ${{ format('v{0}}', env.BUILD_VERSION == '' && '__VERSION__' || env.BUILD_VERSION) }}
           releaseBody: "See the assets to download this version and install."
           releaseDraft: true
           prerelease: false
