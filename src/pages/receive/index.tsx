@@ -80,7 +80,7 @@ const Receive = () => {
 
   return (
     <Flex vertical style={{ height: "100vh" }}>
-      <div style={{ flexGrow: 1 }}>{suspense(<LazyReceiveHeader />)}</div>
+      {suspense(<LazyReceiveHeader />)}
 
       <ul className="receive-file-list">
         {fileList.map((t) => (
