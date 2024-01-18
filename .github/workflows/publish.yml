@@ -53,7 +53,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAURI_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
           TAURI_KEY_PASSWORD: ${{ secrets.TAURI_KEY_PASSWORD }}
-          BUILD_VERSION: ${{ steps.build-version.outputs.BUILD_VERSION || "__VERSION__" }}
+          BUILD_VERSION: ${{ steps.build-version.outputs.BUILD_VERSION || '__VERSION__' }}
         with:
           tagName: v$BUILD_VERSION
           releaseName: "v$BUILD_VERSION"
