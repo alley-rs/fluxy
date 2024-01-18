@@ -54,18 +54,16 @@ const Receive = () => {
               description={
                 <Space style={{ "--gap": "24px" }}>
                   <span>大小：{f.size}</span>
-                  <span>
-                    类型：{fileType(f.extension) + ` - ${f.extension}`}
-                  </span>
+                  <span>类型：{fileType(f.extension)}</span>
                 </Space>
               }
               extra={
-                <a download={f.name} href={url} className="download-url">
+                <a download={f.name} href={url}>
                   <DownlandOutline fontSize={20} />
                 </a>
               }
             >
-              <a download={f.name} href={url}>
+              <a download={f.name} href={url} className="download-url">
                 {f.name}
               </a>
             </List.Item>

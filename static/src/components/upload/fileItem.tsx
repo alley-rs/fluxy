@@ -1,4 +1,4 @@
-import { Grid, Space } from "antd-mobile";
+import { Grid, Space, DotLoading } from "antd-mobile";
 import fileType from "~/pages/receive/fileType";
 import formatFileSize from "./fileSize";
 
@@ -44,17 +44,13 @@ const FileItem = ({ file, speed, percent }: FileItemProps) => {
           <h3 className="filename">{file.name}</h3>
           <Space style={{ "--gap": "24px" }}>
             <span>大小：{formatFileSize(file.size)}</span>
-            <span>
-              类型：{fileType(extension)} - {extension}
-            </span>
+            <span>类型：{fileType(extension)}</span>
           </Space>
         </Grid.Item>
 
-        {percent ? (
-          <Grid.Item span={uploading ? 1 : 3} className="data">
-            {Math.round(percent)}%
-          </Grid.Item>
-        ) : null}
+        <Grid.Item span={uploading ? 1 : 3} className="data">
+          {percent ? Math.round(percent) + "%" : <DotLoading />}
+        </Grid.Item>
 
         {uploading && speed ? (
           <Grid.Item span={2} className="data">

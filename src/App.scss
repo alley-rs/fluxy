@@ -15,22 +15,3 @@
   justify-content: center;
   align-items: center;
 }
-
-.header {
-  .directory-button-label {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-
-  .directory-button {
-    max-width: 100%;
-    padding-left: 0;
-
-    span {
-      max-width: 100%;
-      overflow-wrap: break-word;
-      white-space: normal;
-    }
-  }
-}

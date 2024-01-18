@@ -5,7 +5,7 @@ interface FileType {
 
 const FILE_TYPES: FileType[] = [
   {
-    extensions: ["JPG", "JPEG", "PNG", "GIF", "WEBP", "BMP"],
+    extensions: ["JPG", "JPEG", "PNG", "GIF", "WEBP", "BMP", "SVG", "ICNS"],
     name: "图片",
   },
   {
@@ -59,6 +59,10 @@ const FILE_TYPES: FileType[] = [
       "GO",
     ],
     name: "代码文件",
+  },
+  {
+    extensions: ["APK", "EXE", "MSI", "DMG", "IPA", "DEB", "RPM", "APPIMAGE"],
+    name: "应用程序",
   },
 ];
 

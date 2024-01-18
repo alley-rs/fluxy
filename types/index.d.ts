@@ -2,6 +2,7 @@ interface TaskMessage {
   name: string;
   percent: number;
   speed: number;
+  size: string;
 }
 
 interface QrCode {

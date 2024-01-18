@@ -1,8 +1,8 @@
-import { Button, Space } from "antd";
-import "./App.scss";
 import { useState } from "react";
-import Receive from "./pages/receive";
-import Send from "./pages/send";
+import { Button, Space } from "antd";
+import { suspense } from "~/advance/index";
+import { LazyReceive, LazySend } from "~/lazy";
+import "~/App.scss";
 
 enum Mode {
   Send,
@@ -12,7 +12,7 @@ enum Mode {
 const App = () => {
   const [mode, setMode] = useState<Mode | null>(null);
 
-  console.log(mode);
+  const toHome = () => setMode(null);
 
   if (mode === null)
     return (
@@ -28,8 +28,10 @@ const App = () => {
         </Space>
       </div>
     );
-  else if (mode === Mode.Receive) return <Receive />;
-  else return <Send />;
+  else
+    return mode === Mode.Send
+      ? suspense(<LazySend toHome={toHome} />)
+      : suspense(<LazyReceive toHome={toHome} />);
 };
 
 export default App;

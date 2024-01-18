@@ -9,6 +9,7 @@
     height: 80%;
     border-radius: 5px;
     flex-grow: 14;
+    overflow-y: auto;
 
     .file-list-item {
       list-style-type: none;
