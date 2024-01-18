@@ -58,7 +58,7 @@ jobs:
       - name: install frontend dependencies
         run: pnpm install:all
 
-      - uses: thep0y/tauri-action@v0.1.1
+      - uses: thep0y/tauri-action@v0.1.2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAURI_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
@@ -68,6 +68,8 @@ jobs:
           releaseName: ${{ format('v{0}', env.BUILD_VERSION) }}
           releaseBody: "See the assets to download this version and install."
           releaseDraft: true
-          rename: ${{ matrix.platform == 'windows-latest' && format('{0},{1}', env.PACKAGE_VERSION, env.BUILD_VERSION) || '' }}
+          rename: |
+            ${{ matrix.platform == 'windows-latest' && env.PACKAGE_VERSION || env.BUILD_VERSION }}
+            $BUILD_VERSION
           prerelease: ${{ contains(env.BUILD_VERSION, 'alpha') }}
           args: ${{ format('-t {0}', matrix.platform == 'macos-latest' && 'aarch64-apple-darwin' || matrix.platform == 'windows-latest' && 'x86_64-pc-windows-msvc' || 'x86_64-unknown-linux-gnu') }}
