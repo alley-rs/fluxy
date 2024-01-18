@@ -2,7 +2,7 @@ import fs from 'fs'
 
 const updateVersion = () => {
   const infoBuffer = fs.readFileSync('../package.json')
-  const info =JSON.parse(infoBuffer.toString())
+  const info = JSON.parse(infoBuffer.toString())
   
 
   const { version } = info
@@ -15,6 +15,8 @@ const updateVersion = () => {
   info.version = newVersion
 
   fs.writeFileSync('../package.json', JSON.stringify(info))
+
+  return `BUILD_VERSION=${version}`
 }
 
-updateVersion()
+console.log(updateVersion())
