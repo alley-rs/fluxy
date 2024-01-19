@@ -39,8 +39,9 @@ jobs:
         run: |
           cd src-tauri
           $version = node before-build.js
+          $package_verion = node -p "require('../package.json').version"
           echo "BUILD_VERSION=$version" >> $Env:GITHUB_ENV
-          echo "PACKAGE_VERSION=$(node -p "require('../package.json').version")" >> $Env:GITHUB_ENV
+          echo "PACKAGE_VERSION=$package_verion" >> $Env:GITHUB_ENV
 
       - name: Get version
         if: matrix.platform != 'windows-latest'
@@ -58,18 +59,18 @@ jobs:
       - name: install frontend dependencies
         run: pnpm install:all
 
-      - uses: thep0y/tauri-action@v0.1.4
+      - uses: thep0y/tauri-action@v0.1.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAURI_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
           TAURI_KEY_PASSWORD: ${{ secrets.TAURI_KEY_PASSWORD }}
+          RENAME_RULE: '{"searchValue": "$PACKAGE_VERSION", "replaceValue": "$BUILD_VERSION"}'
         with:
           tagName: ${{ format('v{0}',  env.BUILD_VERSION) }}
           releaseName: ${{ format('v{0}', env.BUILD_VERSION) }}
           releaseBody: "See the assets to download this version and install."
           releaseDraft: true
-          rename: |
-            ${{ matrix.platform == 'windows-latest' && env.PACKAGE_VERSION || env.BUILD_VERSION }}
-            ${{ env.BUILD_VERSION }}
+          rename: ${{ matrix.platform == 'windows-latest' && env.RENAME_RULE || '' }}
+
           prerelease: ${{ contains(env.BUILD_VERSION, 'alpha') }}
           args: ${{ format('-t {0}', matrix.platform == 'macos-latest' && 'aarch64-apple-darwin' || matrix.platform == 'windows-latest' && 'x86_64-pc-windows-msvc' || 'x86_64-unknown-linux-gnu') }}
