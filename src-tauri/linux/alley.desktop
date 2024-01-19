@@ -1,0 +1,8 @@
+[Desktop Entry]
+Categories=Office;Network;Utility
+Comment=局域网内终端间文件互传
+Exec={{exec}}
+Icon={{icon}}
+Name=小路速传
+Terminal=false
+Type=Application
