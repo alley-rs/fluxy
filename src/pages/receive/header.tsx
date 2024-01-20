@@ -21,6 +21,7 @@ const Header = () => {
       directory: true,
       defaultPath: downloadDir,
       multiple: false,
+      title: "选择其他目录", // https://github.com/tauri-apps/tauri/issues/6675
     })) as string | null;
 
     if (!dir) return;
