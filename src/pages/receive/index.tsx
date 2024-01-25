@@ -1,5 +1,11 @@
-import { useEffect, useState } from "react";
-import { Empty, Flex } from "antd";
+import {
+  Match,
+  Switch,
+  createEffect,
+  createSignal,
+  onCleanup,
+  onMount,
+} from "solid-js";
 import { appWindow } from "@tauri-apps/api/window";
 import { OrderedSet } from "~/utils";
 import { getUploadQrCode, getQrCodeState } from "~/api";
@@ -7,54 +13,60 @@ import FileListItem from "./fileListItem";
 import "./index.scss";
 import { suspense } from "~/advance";
 import { LazyReceiveHeader, LazyReceiveQrCode, LazyFloatButtons } from "~/lazy";
+import Flex from "~/components/flex";
+import Empty from "~/components/empty";
+import { TbHome } from "solid-icons/tb";
 
 interface ReceiveProps {
   toHome: () => void;
 }
 
 const Receive = ({ toHome }: ReceiveProps) => {
-  const [qrcode, setQrcode] = useState<QrCode | null>(null);
+  const [qrcode, setQrcode] = createSignal<QrCode | null>(null);
 
-  const [progressList, setProgressList] = useState<OrderedSet<TaskMessage>>(
+  const [taskList, setTaskList] = createSignal<OrderedSet<TaskMessage>>(
     new OrderedSet("name"),
   );
-  const [fileList, setFileList] = useState<Omit<TaskMessage, "speed">[]>([]);
+  const [fileList, setFileList] = createSignal<Omit<TaskMessage, "speed">[]>(
+    [],
+  );
 
-  useEffect(() => {
+  onMount(() => {
+    if (qrcode() || !taskList().empty() || fileList().length) return;
+
+    getUploadQrCode().then((c) => setQrcode(c));
+  });
+
+  createEffect(() => {
     const unlisten = appWindow.listen<TaskMessage>("upload://progress", (e) => {
-      if (qrcode) setQrcode(null);
+      if (qrcode()) setQrcode(null);
 
-      setProgressList((pre) => pre.push(e.payload));
+      setTaskList((pre) => pre.push(e.payload));
 
-      const { name, percent, size } = e.payload;
+      const { name, percent } = e.payload;
 
       if (percent === 100) {
-        setProgressList((pre) => pre.remove(e.payload));
+        setTaskList((pre) => pre.remove(e.payload));
 
         setFileList((pre) => {
           const t = pre.find((v) => v.name === name);
 
-          return t ? pre : [...pre, { name, percent, size }];
+          return t ? pre : [...pre, e.payload];
         });
       }
     });
 
-    return () => {
+    onCleanup(() => {
       unlisten.then((f) => f());
-    };
-  }, [qrcode]);
+    });
+  });
 
-  useEffect(() => {
-    if (qrcode || !progressList.empty() || fileList.length) return;
-
-    getUploadQrCode().then((c) => setQrcode(c));
-  }, []);
-
-  useEffect(() => {
-    if (!qrcode) return;
+  createEffect(() => {
+    const code = qrcode();
+    if (!code) return;
 
     const timer = setInterval(async () => {
-      const used = await getQrCodeState(qrcode.id);
+      const used = await getQrCodeState(code.id);
 
       if (used) {
         clearTimeout(timer);
@@ -62,69 +74,76 @@ const Receive = ({ toHome }: ReceiveProps) => {
       }
     }, 500);
 
-    return () => clearTimeout(timer);
-  }, [qrcode]);
+    onCleanup(() => clearTimeout(timer));
+  });
 
-  if (qrcode)
-    return (
-      <div className="container">
-        {suspense(<LazyReceiveQrCode qrcode={qrcode} />)}
+  const homeButton = suspense(
+    <LazyFloatButtons tooltip="回到主页" icon={<TbHome />} onClick={toHome} />,
+  );
 
-        {suspense(<LazyFloatButtons onClick={toHome} />)}
-      </div>
-    );
-  else if (progressList.empty() && !fileList.length) {
-    return (
-      <>
-        <Flex vertical align="center" style={{ height: "100vh", padding: 0 }}>
+  return (
+    <Switch>
+      <Match when={qrcode() !== null}>
+        <Flex class="send" align="center" justify="center" direction="vertical">
+          {suspense(<LazyReceiveQrCode qrcode={qrcode()!} />)}
+
+          {homeButton}
+        </Flex>
+      </Match>
+      <Match when={taskList().empty() && !fileList().length}>
+        <Flex
+          direction="vertical"
+          align="center"
+          style={{ height: "100vh", padding: 0 }}
+        >
           {suspense(<LazyReceiveHeader />)}
-          <Flex style={{ flexGrow: 14 }} align="center" justify="center">
+          <Flex flex={8} align="center" justify="center">
             <Empty description="请在手机端上传文件" />
           </Flex>
         </Flex>
 
-        {suspense(<LazyFloatButtons onClick={toHome} />)}
-      </>
-    );
-  }
+        {homeButton}
+      </Match>
+      <Match
+        when={qrcode() === null && (!taskList().empty() || fileList().length)}
+      >
+        <Flex direction="vertical" style={{ height: "100vh" }}>
+          {suspense(<LazyReceiveHeader />)}
 
-  return (
-    <>
-      <Flex vertical style={{ height: "100vh" }}>
-        {suspense(<LazyReceiveHeader />)}
+          <ul class="receive-file-list">
+            {fileList().map((t) => (
+              <FileListItem
+                name={t.name}
+                percent={100}
+                size={t.size}
+                path={t.path}
+              />
+            ))}
 
-        <ul className="receive-file-list">
-          {fileList.map((t) => (
-            <FileListItem
-              key={t.name}
-              name={t.name}
-              percent={100}
-              size={t.size}
-            />
-          ))}
+            {taskList().map((task) => (
+              <FileListItem
+                path={task.path}
+                name={task.name}
+                percent={Math.round(task.percent)}
+                speed={task.speed}
+                size={task.size}
+              />
+            ))}
+          </ul>
+        </Flex>
 
-          {progressList.map((progress) => (
-            <FileListItem
-              key={progress.name}
-              name={progress.name}
-              percent={Math.round(progress.percent)}
-              speed={progress.speed}
-              size={progress.size}
-            />
-          ))}
-        </ul>
-      </Flex>
-
-      {suspense(
-        <LazyFloatButtons
-          onClick={toHome}
-          clear={() => {
-            setProgressList(new OrderedSet("name"));
-            setFileList([]);
-          }}
-        />,
-      )}
-    </>
+        {suspense(
+          <LazyFloatButtons
+            tooltip="回到主页"
+            onClick={() => {
+              setTaskList(new OrderedSet<TaskMessage>("name"));
+              setFileList([]);
+              toHome();
+            }}
+          />,
+        )}
+      </Match>
+    </Switch>
   );
 };
 

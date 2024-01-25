@@ -3,7 +3,7 @@ mod logger;
 use std::collections::HashMap;
 #[cfg(all(not(debug_assertions), any(target_os = "windows", target_os = "macos")))]
 use std::env;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 use std::process;
 use std::sync::OnceLock;
 use std::time::Instant;
@@ -83,6 +83,7 @@ impl Writer for ServerError {
 
 #[derive(Debug, Serialize, Clone)]
 struct Task<'a> {
+    path: &'a Path,
     name: &'a str,
     percent: f64,
     speed: f64, // MB/s
@@ -90,8 +91,9 @@ struct Task<'a> {
 }
 
 impl<'a> Task<'a> {
-    fn new(name: &'a str, size: &'a str, percent: f64, speed: f64) -> Self {
+    fn new(path: &'a Path, name: &'a str, size: &'a str, percent: f64, speed: f64) -> Self {
         Self {
+            path,
             name,
             percent,
             speed,
@@ -290,6 +292,7 @@ async fn upload(req: &mut Request) -> Result<()> {
     let start = Instant::now();
 
     let formatted_size = format_file_size(size);
+    let path: PathBuf = DOWNLOADS_DIR.read().await.as_path().join(&name);
 
     let body = req.take_body();
     let stream = ReadProgressStream::new(
@@ -310,7 +313,7 @@ async fn upload(req: &mut Request) -> Result<()> {
                 if let Some(w) = MAIN_WINDOW.get() {
                     let _ = w.emit(
                         UPLOAD_EVENT,
-                        Task::new(&name, &formatted_size, percent, speed),
+                        Task::new(&path, &name, &formatted_size, percent, speed),
                     );
                 }
             }

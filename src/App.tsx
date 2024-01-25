@@ -1,8 +1,9 @@
-import { useState } from "react";
-import { Button, Space } from "antd";
-import { suspense } from "~/advance/index";
-import { LazyReceive, LazySend } from "~/lazy";
+import { Match, Switch, createSignal } from "solid-js";
+import { TbArrowsTransferUp, TbArrowsTransferDown } from "solid-icons/tb";
+import Button from "~/components/button";
 import "~/App.scss";
+import { LazyReceive, LazySend } from "./lazy";
+import { suspense } from "./advance";
 
 enum Mode {
   Send,
@@ -10,28 +11,42 @@ enum Mode {
 }
 
 const App = () => {
-  const [mode, setMode] = useState<Mode | null>(null);
+  const [mode, setMode] = createSignal<Mode | null>(null);
 
   const toHome = () => setMode(null);
 
-  if (mode === null)
-    return (
-      <div className="container index">
-        <Space direction="vertical" size="large" style={{ width: "100%" }}>
-          <span>选择文件传输方式</span>
-          <Button block size="large" onClick={() => setMode(Mode.Receive)}>
+  return (
+    <Switch
+      fallback={
+        <div id="index">
+          <div>选择传输方式</div>
+
+          <Button
+            class="fill"
+            icon={<TbArrowsTransferDown />}
+            onClick={() => setMode(Mode.Receive)}
+          >
             接收
           </Button>
-          <Button block size="large" onClick={() => setMode(Mode.Send)}>
+
+          <Button
+            class="fill"
+            icon={<TbArrowsTransferUp />}
+            onClick={() => setMode(Mode.Send)}
+          >
             发送
           </Button>
-        </Space>
-      </div>
-    );
-  else
-    return mode === Mode.Send
-      ? suspense(<LazySend toHome={toHome} />)
-      : suspense(<LazyReceive toHome={toHome} />);
+        </div>
+      }
+    >
+      <Match when={mode() === Mode.Receive}>
+        {suspense(<LazyReceive toHome={toHome} />)}
+      </Match>
+      <Match when={mode() === Mode.Send}>
+        {suspense(<LazySend toHome={toHome} />)}
+      </Match>
+    </Switch>
+  );
 };
 
 export default App;

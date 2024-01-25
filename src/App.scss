@@ -1,17 +1,21 @@
-.container {
-  margin: 0;
-  padding: 10vh;
+#root {
+  height: 100vh;
+  width: 100vw;
+  text-align: center;
+  display: flex;
+}
+
+#index {
+  flex: 1;
+  height: 100%;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  text-align: center;
+  align-items: center;
+  gap: 20px;
+  padding: 0 3rem;
 }
 
-.index {
-  padding: 0 10vh;
-  margin: 0;
-  height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+.alley-button.fill {
+  width: 100%;
 }

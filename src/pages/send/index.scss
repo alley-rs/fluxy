@@ -1,31 +1,16 @@
-.file-list-container {
+.send {
   padding: 10px;
-  height: calc(100vh - 20px);
+  flex: 1;
 
   .file-list {
-    border: 1px dashed #b8b8b8;
-    border-radius: 10px;
-    overflow-y: auto;
+    width: 100%;
+    border: 1px #999 dashed;
+    border-radius: 15px;
+    flex-grow: 14;
+    margin-bottom: 10px;
 
     &:hover {
-      border: 1px dashed var(--ant-color-primary);
-    }
-
-    .delete-button {
-      color: #b8b8b8;
-
-      &:hover {
-        color: red;
-      }
-    }
-
-    .ant-list-item-meta {
-      align-items: center;
-    }
-
-    h4 {
-      white-space: normal;
-      word-wrap: break-word;
+      border-color: var(--hover-color);
     }
   }
 }

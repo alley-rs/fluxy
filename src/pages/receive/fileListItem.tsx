@@ -1,36 +1,42 @@
-import { Col, Progress, Row } from "antd";
+import { open } from "@tauri-apps/api/shell";
+import Row from "~/components/row";
+import Col from "~/components/col";
+import Progress from "~/components/progress";
 
 interface FileListItemProps {
+  path: string;
   name: string;
   percent: number;
   speed?: number;
   size: string;
 }
 
-const FileListItem = ({ name, percent, speed, size }: FileListItemProps) => (
-  <li className="receive-file-list-item">
+const FileListItem = (props: FileListItemProps) => (
+  <li class="receive-file-list-item">
     <div
       style={{
-        textAlign: "left",
-        fontSize: "0.8rem",
-        color: percent < 100 ? "#959595" : "var(--ant-color-text-base)",
+        "text-align": "left",
+        "font-size": "0.8rem",
+        color: props.percent < 100 ? "#959595" : "var(--text-color)",
+        position: "relative",
       }}
     >
-      <Row gutter={10}>
-        <Col span={speed ? 12 : 18}>
-          <h4 className="filename">{name}</h4>
+      <Row gutter={2}>
+        <Col span={props.speed ? 12 : 18} class="filename">
+          <a onClick={() => open(props.path)}>{props.name}</a>
         </Col>
 
-        {speed ? (
-          <Col span={6} className="speed">{`${speed.toFixed(1)} MB/s`}</Col>
+        {props.speed ? (
+          <Col span={6} class="speed">{`${props.speed.toFixed(1)} MB/s`}</Col>
         ) : null}
 
-        <Col span={6} className="filesize">
-          {size}
+        <Col span={6} class="filesize">
+          {props.size}
         </Col>
+
+        <Progress percent={props.percent} />
       </Row>
     </div>
-    <Progress percent={percent} />
   </li>
 );
 

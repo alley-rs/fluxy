@@ -1,25 +1,29 @@
-import { useState, useEffect } from "react";
-import { Row, Col, Dropdown, Button } from "antd";
-import type { MenuProps } from "antd";
 import { open as pick } from "@tauri-apps/api/dialog";
 import { open } from "@tauri-apps/api/shell";
+import { createEffect, createSignal } from "solid-js";
 import { changeDownloadsDir, getDownloadsDir } from "~/api";
+import Col from "~/components/col";
+import Dropdown, { MenuItemProps } from "~/components/dropdown";
 import Loading from "~/components/loading";
+import Row from "~/components/row";
 
 const Header = () => {
-  const [downloadDir, setDownloadDir] = useState<string | undefined>(undefined);
-  const [openDropDown, setOpenDropDown] = useState(false);
+  const [downloadDir, setDownloadDir] = createSignal<string | undefined>(
+    undefined,
+  );
+  const [openDropDown, setOpenDropDown] = createSignal(false);
 
-  useEffect(() => {
-    if (downloadDir) return;
+  createEffect(() => {
+    const dir = downloadDir();
+    if (dir) return;
 
     getDownloadsDir().then((d) => setDownloadDir(d));
-  }, []);
+  });
 
   const pickDirectory = async () => {
     const dir = (await pick({
       directory: true,
-      defaultPath: downloadDir,
+      defaultPath: downloadDir(),
       multiple: false,
       title: "选择其他目录", // https://github.com/tauri-apps/tauri/issues/6675
     })) as string | null;
@@ -31,15 +35,13 @@ const Header = () => {
     setDownloadDir(dir);
   };
 
-  const DirectoryDropdownItems: MenuProps["items"] = [
+  const dropdownItems: MenuItemProps[] = [
     {
-      key: "1",
-      label: <a>打开</a>,
-      onClick: () => open(downloadDir!),
+      label: "打开",
+      onClick: () => open(downloadDir()!),
     },
     {
-      key: "2",
-      label: <a>修改</a>,
+      label: "修改",
       onClick: () => pickDirectory(),
     },
   ];
@@ -47,31 +49,27 @@ const Header = () => {
   if (!downloadDir) return <Loading />;
 
   return (
-    <Row className="header">
-      <Col span={6} className="directory-button-label">
-        <span style={{ fontSize: "0.8rem" }}>保存目录：</span>
+    <Row class="header">
+      <Col span={6} class="directory-button-label">
+        <span style={{ "font-size": "0.8rem" }}>保存目录：</span>
       </Col>
 
-      <Col span={18}>
+      <Col span={18} class="directory-entry">
         <Dropdown
-          open={openDropDown}
+          open={openDropDown()}
           onOpenChange={() => setOpenDropDown((pre) => !pre)}
-          menu={{ items: DirectoryDropdownItems }}
-          placement="bottomRight"
-          arrow
-          overlayStyle={{ minWidth: 0 }}
+          menu={dropdownItems}
         >
-          <Button
-            className="directory-button"
-            type="link"
+          <a
+            // type="link"
             onClick={async () => {
               setOpenDropDown(false);
-              open(downloadDir);
+              open(downloadDir()!);
             }}
-            style={{ textOverflow: "ellipsis" }}
+            style={{ "text-overflow": "ellipsis" }}
           >
-            {downloadDir}
-          </Button>
+            {downloadDir()!}
+          </a>
         </Dropdown>
       </Col>
     </Row>

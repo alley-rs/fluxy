@@ -1,95 +1,146 @@
+import { AiOutlineFileUnknown } from "solid-icons/ai";
 import {
-  AndroidOutlined,
-  AppleOutlined,
-  CodeOutlined,
-  CustomerServiceOutlined,
-  FileExcelOutlined,
-  FileGifOutlined,
-  FileImageOutlined,
-  FileJpgOutlined,
-  FileMarkdownOutlined,
-  FilePdfOutlined,
-  FilePptOutlined,
-  FileTextOutlined,
-  FileUnknownOutlined,
-  FileWordOutlined,
-  FileZipOutlined,
-  VideoCameraOutlined,
-  WindowsOutlined,
-} from "@ant-design/icons";
+  BiLogosCPlusPlus,
+  BiLogosGoLang,
+  BiLogosJavascript,
+  BiLogosPython,
+  BiLogosReact,
+  BiLogosTypescript,
+} from "solid-icons/bi";
+import {
+  BsAndroid2,
+  BsFileCode,
+  BsFileImage,
+  BsFilePdf,
+  BsFileZip,
+  BsFiletypeCss,
+  BsFiletypeDoc,
+  BsFiletypeDocx,
+  BsFiletypeGif,
+  BsFiletypeHtml,
+  BsFiletypeJava,
+  BsFiletypeJpg,
+  BsFiletypeJson,
+  BsFiletypeMov,
+  BsFiletypeMp3,
+  BsFiletypeMp4,
+  BsFiletypePhp,
+  BsFiletypePng,
+  BsFiletypePpt,
+  BsFiletypePptx,
+  BsFiletypeScss,
+  BsFiletypeSql,
+  BsFiletypeSvg,
+  BsFiletypeTxt,
+  BsFiletypeXls,
+  BsFiletypeXlsx,
+  BsFiletypeXml,
+  BsMarkdown,
+  BsWindows,
+} from "solid-icons/bs";
+import { FaBrandsAppStore } from "solid-icons/fa";
+import { ImFileVideo } from "solid-icons/im";
+import { SiLua, SiRust, SiToml } from "solid-icons/si";
+import { TbBrandCSharp } from "solid-icons/tb";
 
 const avatar = (ext: string) => {
   switch (ext) {
     case "MP4":
+      return <BsFiletypeMp4 />;
     case "MOV":
-    case "AVI":
+      return <BsFiletypeMov />;
     case "WEBM":
-      return <VideoCameraOutlined />;
+      return <ImFileVideo />;
     case "JPG":
     case "JPEG":
-      return <FileJpgOutlined />;
+      return <BsFiletypeJpg />;
     case "GIF":
-      return <FileGifOutlined />;
+      return <BsFiletypeGif />;
     case "PNG":
     case "APNG":
+      return <BsFiletypePng />;
+    case "SVG":
+      return <BsFiletypeSvg />;
     case "WEBP":
     case "AVIF":
-    case "SVG":
-      return <FileImageOutlined />;
+      return <BsFileImage />;
     case "PDF":
-      return <FilePdfOutlined />;
+      return <BsFilePdf />;
     case "MP3":
-      return <CustomerServiceOutlined />;
+      return <BsFiletypeMp3 />;
     case "MD":
-      return <FileMarkdownOutlined />;
+      return <BsMarkdown />;
     case "PPT":
-      return <FilePptOutlined />;
+      return <BsFiletypePpt />;
+    case "PPTX":
+      return <BsFiletypePptx />;
     case "XLS":
+      return <BsFiletypeXls />;
     case "XLSX":
-      return <FileExcelOutlined />;
+      return <BsFiletypeXlsx />;
     case "DOC":
+      return <BsFiletypeDoc />;
     case "DOCX":
-      return <FileWordOutlined />;
+      return <BsFiletypeDocx />;
     case "ZIP":
     case "RAR":
     case "7Z":
     case "TAR":
-      return <FileZipOutlined />;
+      return <BsFileZip />;
     case "DMG":
     case "IPA":
-      return <AppleOutlined />;
+      return <FaBrandsAppStore />;
     case "EXE":
     case "MSI":
-      return <WindowsOutlined />;
+      return <BsWindows />;
     case "APK":
-      return <AndroidOutlined />;
+      return <BsAndroid2 />;
     case "PY":
+      return <BiLogosPython />;
     case "JS":
+      return <BiLogosJavascript />;
     case "JSX":
+      return <BiLogosReact />;
     case "TS":
+      return <BiLogosTypescript />;
     case "TSX":
+      return <BiLogosReact />;
     case "RS":
+      return <SiRust />;
     case "CPP":
-    case "C":
+      return <BiLogosCPlusPlus />;
     case "JAVA":
+      return <BsFiletypeJava />;
     case "LUA":
+      return <SiLua />;
     case "CSS":
+      return <BsFiletypeCss />;
     case "GO":
+      return <BiLogosGoLang />;
     case "SCSS":
+      return <BsFiletypeScss />;
     case "PHP":
+      return <BsFiletypePhp />;
     case "SQL":
+      return <BsFiletypeSql />;
     case "CS":
-      return <CodeOutlined />;
-    case "TXT":
+      return <TbBrandCSharp />;
+    case "C":
+      return <BsFileCode />;
     case "JSON":
-    case "YAML":
-    case "TOML":
-    case "HTML":
-    case "XML":
+      return <BsFiletypeJson />;
+    case "TXT":
     case "YML":
-      return <FileTextOutlined />;
+    case "YAML":
+      return <BsFiletypeTxt />;
+    case "TOML":
+      return <SiToml />;
+    case "HTML":
+      return <BsFiletypeHtml />;
+    case "XML":
+      return <BsFiletypeXml />;
     default:
-      return <FileUnknownOutlined />;
+      return <AiOutlineFileUnknown />;
   }
 };
 
