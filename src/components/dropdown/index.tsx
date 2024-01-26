@@ -1,11 +1,10 @@
-import { createSignal, For, type JSXElement } from "solid-js";
+import { createEffect, createSignal, For, type JSXElement } from "solid-js";
 import "./index.scss";
 import { addClassNames } from "../utils/class";
 
 interface DropdownProps {
   class?: string;
   open?: boolean;
-  onOpenChange?: () => void;
   children: JSXElement;
   menu: MenuItemProps[];
 }
@@ -13,19 +12,21 @@ interface DropdownProps {
 const baseClassName = "dropdown";
 
 const Dropdown = (props: DropdownProps) => {
-  const [isOpen, setOpen] = createSignal(true);
-  // const [isOpen, setOpen] = createSignal(props.open);
+  const [isOpen, setOpen] = createSignal(props.open);
+
+  createEffect(() => {
+    console.log(props.open);
+    if (props.open !== undefined) setOpen(props.open);
+  });
 
   const className = () => addClassNames(baseClassName, props.class || "");
 
   const handleMouseEnter = () => {
     setOpen(true);
-    // props.onOpenChange?.();
   };
 
   const handleMouseLeave = () => {
     setOpen(false);
-    // props.onOpenChange?.();
   };
 
   return (
@@ -37,7 +38,17 @@ const Dropdown = (props: DropdownProps) => {
         >
           <div class={`${baseClassName}-menu`}>
             {isOpen() && (
-              <For each={props.menu}>{(item) => <MenuItem {...item} />}</For>
+              <For each={props.menu}>
+                {(item) => (
+                  <MenuItem
+                    {...item}
+                    onClick={() => {
+                      item.onClick();
+                      setOpen(false);
+                    }}
+                  />
+                )}
+              </For>
             )}
           </div>
         </div>

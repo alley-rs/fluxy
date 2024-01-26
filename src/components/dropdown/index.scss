@@ -3,17 +3,17 @@
   --arrow-y: 115px;
   inset: auto auto -892.917px 744.25px;
   box-sizing: border-box;
-  min-width: 77.5167px;
+  min-width: 57.5167px;
   margin: 0;
   padding: 0;
   color: var(--text-color);
   font-size: 14px;
   list-style: none;
   position: fixed;
-  top: 24px;
-  left: 280px;
+  top: 20px;
+  left: 290px;
   display: block;
-  height: 90px;
+  height: 62px;
   z-index: 99;
 
   &-menu {
@@ -46,7 +46,7 @@
 
     &:hover {
       background-color: var(--control-item-bg-hover);
-      color: var(--hover-color);
+      color: var(--control-item-text-hover);
     }
   }
 
@@ -57,9 +57,13 @@
     // line-height: 1.5;
     cursor: pointer;
 
-    > a {
+    >a {
       cursor: inherit;
       transition: all var(--motion-duration-mid);
+
+      &:hover {
+        color: #fff;
+      }
     }
   }
 }
