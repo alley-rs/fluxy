@@ -1,5 +1,5 @@
 import { open } from "@tauri-apps/api/shell";
-import Link from "~/components/link";
+import { LazyLink } from "~/lazy";
 
 interface QRCodeProps {
   qrcode: QrCode;
@@ -13,9 +13,9 @@ const QRCode = ({ qrcode }: QRCodeProps) => {
 
       <div>或在另一台电脑中通过浏览器中访问</div>
 
-      <Link class="send-link" onClick={async () => await open(qrcode.url)}>
+      <LazyLink class="send-link" onClick={async () => await open(qrcode.url)}>
         {qrcode.url}
-      </Link>
+      </LazyLink>
     </>
   );
 };

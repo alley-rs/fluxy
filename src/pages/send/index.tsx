@@ -6,19 +6,21 @@ import {
   Show,
 } from "solid-js";
 import { TiDeleteOutline } from "solid-icons/ti";
+import { TbHome, TbTrash } from "solid-icons/tb";
 import { appWindow } from "@tauri-apps/api/window";
 import { TauriEvent } from "@tauri-apps/api/event";
-import Flex from "~/components/flex";
-import Empty from "~/components/empty";
-import Button from "~/components/button";
 import "./index.scss";
 import { getFilesMetadata, getSendFilesUrlQrCode, getQrCodeState } from "~/api";
 import { deleteRepetition } from "./utils";
-import List from "~/components/list";
 import avatar from "./avatar";
-import { TbHome, TbTrash } from "solid-icons/tb";
 import { suspense } from "~/advance";
-import { LazyFloatButtons } from "~/lazy";
+import {
+  LazyButton,
+  LazyEmpty,
+  LazyFlex,
+  LazyFloatButtons,
+  LazyList,
+} from "~/lazy";
 
 interface SendProps {
   toHome: () => void;
@@ -82,7 +84,7 @@ const Send = (props: SendProps) => {
       <Show
         when={!qrcode()}
         fallback={
-          <Flex
+          <LazyFlex
             class="send"
             align="center"
             justify="center"
@@ -90,20 +92,25 @@ const Send = (props: SendProps) => {
           >
             <h2>扫码连接</h2>
             <div innerHTML={qrcode()!.svg} />
-          </Flex>
+          </LazyFlex>
         }
       >
-        <Flex class="send" align="center" justify="center" direction="vertical">
-          <Flex
+        <LazyFlex
+          class="send"
+          align="center"
+          justify="center"
+          direction="vertical"
+        >
+          <LazyFlex
             class="file-list"
             align={filesPostion()}
             justify={filesPostion()}
           >
             {files().length ? (
-              <List
+              <LazyList
                 dataSource={files()}
                 renderItem={(file) => (
-                  <List.Item
+                  <LazyList.Item
                     avatar={avatar(file.extension)}
                     title={file.name}
                     description={
@@ -114,7 +121,7 @@ const Send = (props: SendProps) => {
                       </>
                     }
                     extra={[
-                      <Button
+                      <LazyButton
                         type="danger"
                         shape="circle"
                         icon={<TiDeleteOutline />}
@@ -125,14 +132,14 @@ const Send = (props: SendProps) => {
                 )}
               />
             ) : (
-              <Empty description="将文件拖到此处" />
+              <LazyEmpty description="将文件拖到此处" />
             )}
-          </Flex>
+          </LazyFlex>
 
-          <Button onClick={newSendFilesQrCode} block disabled={isEmpty()}>
+          <LazyButton onClick={newSendFilesQrCode} block disabled={isEmpty()}>
             确认
-          </Button>
-        </Flex>
+          </LazyButton>
+        </LazyFlex>
       </Show>
 
       {isEmpty()

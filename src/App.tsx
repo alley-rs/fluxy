@@ -1,9 +1,8 @@
 import { Match, Switch, createSignal } from "solid-js";
 import { TbArrowsTransferUp, TbArrowsTransferDown } from "solid-icons/tb";
-import Button from "~/components/button";
-import "~/App.scss";
-import { LazyReceive, LazySend } from "./lazy";
+import { LazyButton, LazyReceive, LazySend } from "./lazy";
 import { suspense } from "./advance";
+import "~/App.scss";
 
 enum Mode {
   Send,
@@ -21,21 +20,25 @@ const App = () => {
         <div id="index">
           <div>选择传输方式</div>
 
-          <Button
-            class="fill"
-            icon={<TbArrowsTransferDown />}
-            onClick={() => setMode(Mode.Receive)}
-          >
-            接收
-          </Button>
+          {suspense(
+            <LazyButton
+              class="fill"
+              icon={<TbArrowsTransferDown />}
+              onClick={() => setMode(Mode.Receive)}
+            >
+              接收
+            </LazyButton>,
+          )}
 
-          <Button
-            class="fill"
-            icon={<TbArrowsTransferUp />}
-            onClick={() => setMode(Mode.Send)}
-          >
-            发送
-          </Button>
+          {suspense(
+            <LazyButton
+              class="fill"
+              icon={<TbArrowsTransferUp />}
+              onClick={() => setMode(Mode.Send)}
+            >
+              发送
+            </LazyButton>,
+          )}
         </div>
       }
     >

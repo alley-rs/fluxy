@@ -1,7 +1,6 @@
 import { open } from "@tauri-apps/api/shell";
-import Row from "~/components/row";
-import Col from "~/components/col";
-import Progress from "~/components/progress";
+import { suspense } from "~/advance";
+import { LazyCol, LazyProgress, LazyRow } from "~/lazy";
 
 interface FileListItemProps {
   path: string;
@@ -21,21 +20,25 @@ const FileListItem = (props: FileListItemProps) => (
         position: "relative",
       }}
     >
-      <Row gutter={2}>
-        <Col span={props.speed ? 12 : 18} class="filename">
-          <a onClick={() => open(props.path)}>{props.name}</a>
-        </Col>
+      {suspense(
+        <LazyRow gutter={2}>
+          <LazyCol span={props.speed ? 12 : 18} class="filename">
+            <a onClick={() => open(props.path)}>{props.name}</a>
+          </LazyCol>
 
-        {props.speed ? (
-          <Col span={6} class="speed">{`${props.speed.toFixed(1)} MB/s`}</Col>
-        ) : null}
+          {props.speed ? (
+            <LazyCol span={6} class="speed">{`${props.speed.toFixed(
+              1,
+            )} MB/s`}</LazyCol>
+          ) : null}
 
-        <Col span={6} class="filesize">
-          {props.size}
-        </Col>
+          <LazyCol span={6} class="filesize">
+            {props.size}
+          </LazyCol>
 
-        <Progress percent={props.percent} />
-      </Row>
+          <LazyProgress percent={props.percent} />
+        </LazyRow>,
+      )}
     </div>
   </li>
 );

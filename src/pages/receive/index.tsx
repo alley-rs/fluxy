@@ -12,9 +12,13 @@ import { getUploadQrCode, getQrCodeState } from "~/api";
 import FileListItem from "./fileListItem";
 import "./index.scss";
 import { suspense } from "~/advance";
-import { LazyReceiveHeader, LazyReceiveQrCode, LazyFloatButtons } from "~/lazy";
-import Flex from "~/components/flex";
-import Empty from "~/components/empty";
+import {
+  LazyReceiveHeader,
+  LazyReceiveQrCode,
+  LazyFloatButtons,
+  LazyFlex,
+  LazyEmpty,
+} from "~/lazy";
 import { TbHome } from "solid-icons/tb";
 
 interface ReceiveProps {
@@ -84,30 +88,35 @@ const Receive = ({ toHome }: ReceiveProps) => {
   return (
     <Switch>
       <Match when={qrcode() !== null}>
-        <Flex class="send" align="center" justify="center" direction="vertical">
+        <LazyFlex
+          class="send"
+          align="center"
+          justify="center"
+          direction="vertical"
+        >
           {suspense(<LazyReceiveQrCode qrcode={qrcode()!} />)}
 
           {homeButton}
-        </Flex>
+        </LazyFlex>
       </Match>
       <Match when={taskList().empty() && !fileList().length}>
-        <Flex
+        <LazyFlex
           direction="vertical"
           align="center"
           style={{ height: "100vh", padding: 0 }}
         >
           {suspense(<LazyReceiveHeader />)}
-          <Flex flex={8} align="center" justify="center">
-            <Empty description="请在手机端上传文件" />
-          </Flex>
-        </Flex>
+          <LazyFlex flex={8} align="center" justify="center">
+            <LazyEmpty description="请在手机端上传文件" />
+          </LazyFlex>
+        </LazyFlex>
 
         {homeButton}
       </Match>
       <Match
         when={qrcode() === null && (!taskList().empty() || fileList().length)}
       >
-        <Flex direction="vertical" style={{ height: "100vh" }}>
+        <LazyFlex direction="vertical" style={{ height: "100vh" }}>
           {suspense(<LazyReceiveHeader />)}
 
           <ul class="receive-file-list">
@@ -130,7 +139,7 @@ const Receive = ({ toHome }: ReceiveProps) => {
               />
             ))}
           </ul>
-        </Flex>
+        </LazyFlex>
 
         {suspense(
           <LazyFloatButtons

@@ -2,10 +2,9 @@ import { open as pick } from "@tauri-apps/api/dialog";
 import { open } from "@tauri-apps/api/shell";
 import { createEffect, createSignal } from "solid-js";
 import { changeDownloadsDir, getDownloadsDir } from "~/api";
-import Col from "~/components/col";
-import Dropdown, { MenuItemProps } from "~/components/dropdown";
+import type { MenuItemProps } from "~/components/dropdown";
 import Loading from "~/components/loading";
-import Row from "~/components/row";
+import { LazyCol, LazyDropdown, LazyRow } from "~/lazy";
 
 const Header = () => {
   const [downloadDir, setDownloadDir] = createSignal<string | undefined>(
@@ -49,13 +48,13 @@ const Header = () => {
   if (!downloadDir) return <Loading />;
 
   return (
-    <Row class="header">
-      <Col span={6} class="directory-button-label">
+    <LazyRow class="header">
+      <LazyCol span={6} class="directory-button-label">
         <span style={{ "font-size": "0.8rem" }}>保存目录：</span>
-      </Col>
+      </LazyCol>
 
-      <Col span={18} class="directory-entry">
-        <Dropdown
+      <LazyCol span={18} class="directory-entry">
+        <LazyDropdown
           open={openDropDown()}
           onOpenChange={() => setOpenDropDown((pre) => !pre)}
           menu={dropdownItems}
@@ -70,9 +69,9 @@ const Header = () => {
           >
             {downloadDir()!}
           </a>
-        </Dropdown>
-      </Col>
-    </Row>
+        </LazyDropdown>
+      </LazyCol>
+    </LazyRow>
   );
 };
 
