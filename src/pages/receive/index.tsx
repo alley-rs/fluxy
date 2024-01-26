@@ -15,7 +15,7 @@ import { suspense } from "~/advance";
 import {
   LazyReceiveHeader,
   LazyReceiveQrCode,
-  LazyFloatButtons,
+  LazyFloatButton,
   LazyFlex,
   LazyEmpty,
 } from "~/lazy";
@@ -82,7 +82,7 @@ const Receive = ({ toHome }: ReceiveProps) => {
   });
 
   const homeButton = suspense(
-    <LazyFloatButtons tooltip="回到主页" icon={<TbHome />} onClick={toHome} />,
+    <LazyFloatButton tooltip="回到主页" icon={<TbHome />} onClick={toHome} />,
   );
 
   return (
@@ -142,7 +142,7 @@ const Receive = ({ toHome }: ReceiveProps) => {
         </LazyFlex>
 
         {suspense(
-          <LazyFloatButtons
+          <LazyFloatButton
             tooltip="回到主页"
             onClick={() => {
               setTaskList(new OrderedSet<TaskMessage>("name"));
