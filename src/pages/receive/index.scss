@@ -16,6 +16,10 @@
     cursor: pointer;
     text-decoration: underline;
 
+    >div {
+      display: flex;
+    }
+
     &:hover {
       color: var(--hover-color);
       text-decoration: none;

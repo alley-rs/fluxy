@@ -13,7 +13,8 @@ interface DropdownProps {
 const baseClassName = "dropdown";
 
 const Dropdown = (props: DropdownProps) => {
-  const [isOpen, setOpen] = createSignal(props.open);
+  const [isOpen, setOpen] = createSignal(true);
+  // const [isOpen, setOpen] = createSignal(props.open);
 
   const className = () => addClassNames(baseClassName, props.class || "");
 

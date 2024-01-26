@@ -4,7 +4,7 @@ import { createEffect, createSignal } from "solid-js";
 import { changeDownloadsDir, getDownloadsDir } from "~/api";
 import type { MenuItemProps } from "~/components/dropdown";
 import Loading from "~/components/loading";
-import { LazyCol, LazyDropdown, LazyRow } from "~/lazy";
+import { LazyCol, LazyDropdown, LazyLink, LazyRow } from "~/lazy";
 
 const Header = () => {
   const [downloadDir, setDownloadDir] = createSignal<string | undefined>(
@@ -59,16 +59,15 @@ const Header = () => {
           onOpenChange={() => setOpenDropDown((pre) => !pre)}
           menu={dropdownItems}
         >
-          <a
-            // type="link"
+          <LazyLink
             onClick={async () => {
               setOpenDropDown(false);
               open(downloadDir()!);
             }}
-            style={{ "text-overflow": "ellipsis" }}
+            // style={{ "text-overflow": "ellipsis" }}
           >
             {downloadDir()!}
-          </a>
+          </LazyLink>
         </LazyDropdown>
       </LazyCol>
     </LazyRow>
