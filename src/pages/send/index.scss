@@ -13,5 +13,16 @@
     &:hover {
       border-color: var(--hover-color);
     }
+
+    .link {
+      font-size: 24px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      &:hover {
+        color: var(--danger-color);
+      }
+    }
   }
 }

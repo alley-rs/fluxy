@@ -20,6 +20,7 @@ import {
   LazyFlex,
   LazyFloatButton,
   LazyFloatButtonGroup,
+  LazyLink,
   LazyList,
 } from "~/lazy";
 import List from "~/components/list";
@@ -122,12 +123,9 @@ const Send = (props: SendProps) => {
                       </>
                     }
                     extra={[
-                      <LazyButton
-                        type="danger"
-                        shape="circle"
-                        icon={<TiDeleteOutline />}
-                        onClick={() => removeFile(file.path)}
-                      />,
+                      <LazyLink onClick={() => removeFile(file.path)}>
+                        <TiDeleteOutline />
+                      </LazyLink>,
                     ]}
                   />
                 )}
