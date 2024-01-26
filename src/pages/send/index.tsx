@@ -12,15 +12,18 @@ import { TauriEvent } from "@tauri-apps/api/event";
 import "./index.scss";
 import { getFilesMetadata, getSendFilesUrlQrCode, getQrCodeState } from "~/api";
 import { deleteRepetition } from "./utils";
-import avatar from "./avatar";
 import { suspense } from "~/advance";
 import {
   LazyButton,
   LazyEmpty,
+  LazyFileTypeIcon,
   LazyFlex,
-  LazyFloatButtons,
+  LazyFloatButton,
+  LazyFloatButtonGroup,
   LazyList,
 } from "~/lazy";
+import List from "~/components/list";
+import Flex from "~/components/flex";
 
 interface SendProps {
   toHome: () => void;
@@ -35,7 +38,7 @@ const Send = (props: SendProps) => {
     const unlisten = appWindow.listen<string[]>(
       TauriEvent.WINDOW_FILE_DROP,
       async (e) => {
-        const paths = deleteRepetition(e.payload, files() ?? []);
+        const paths = deleteRepetition(e.payload, files());
         const sendFiles = await getFilesMetadata(paths);
 
         setFiles((pre) => [...pre, ...sendFiles]);
@@ -67,24 +70,22 @@ const Send = (props: SendProps) => {
   });
 
   const removeFile = (path: string) =>
-    setFiles((pre) => pre!.filter((f) => f.path !== path));
+    setFiles((pre) => pre.filter((f) => f.path !== path));
 
   const newSendFilesQrCode = async () => {
-    const code = await getSendFilesUrlQrCode(files()!);
+    const code = await getSendFilesUrlQrCode(files());
     setQrcode(code);
   };
 
   const isEmpty = createMemo(() => files().length === 0);
   const filesPostion = () => (isEmpty() ? "center" : "start");
 
-  createEffect(() => console.log("数量", files().length, isEmpty()));
-
   return (
     <>
       <Show
         when={!qrcode()}
         fallback={
-          <LazyFlex
+          <Flex
             class="send"
             align="center"
             justify="center"
@@ -92,7 +93,7 @@ const Send = (props: SendProps) => {
           >
             <h2>扫码连接</h2>
             <div innerHTML={qrcode()!.svg} />
-          </LazyFlex>
+          </Flex>
         }
       >
         <LazyFlex
@@ -110,8 +111,8 @@ const Send = (props: SendProps) => {
               <LazyList
                 dataSource={files()}
                 renderItem={(file) => (
-                  <LazyList.Item
-                    avatar={avatar(file.extension)}
+                  <List.Item
+                    avatar={LazyFileTypeIcon(file.extension)}
                     title={file.name}
                     description={
                       <>
@@ -144,30 +145,30 @@ const Send = (props: SendProps) => {
 
       {isEmpty()
         ? suspense(
-            <LazyFloatButtons
-              icon={<TbHome />}
-              onClick={props.toHome}
-              tooltip="回到主页"
-              bottom={60}
-            />,
-          )
+          <LazyFloatButton
+            icon={<TbHome />}
+            onClick={props.toHome}
+            tooltip="回到主页"
+            bottom={60}
+          />,
+        )
         : suspense(
-            <LazyFloatButtons.Group
-              bottom={60}
-              options={[
-                {
-                  icon: <TbTrash />,
-                  onClick: () => setFiles([]),
-                  tooltip: "清空文件",
-                },
-                {
-                  icon: <TbHome />,
-                  onClick: props.toHome,
-                  tooltip: "回到主页",
-                },
-              ]}
-            />,
-          )}
+          <LazyFloatButtonGroup
+            bottom={60}
+            options={[
+              {
+                icon: <TbTrash />,
+                onClick: () => setFiles([]),
+                tooltip: "清空文件",
+              },
+              {
+                icon: <TbHome />,
+                onClick: props.toHome,
+                tooltip: "回到主页",
+              },
+            ]}
+          />,
+        )}
     </>
   );
 };

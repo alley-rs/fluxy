@@ -43,7 +43,7 @@ import { ImFileVideo } from "solid-icons/im";
 import { SiLua, SiRust, SiToml } from "solid-icons/si";
 import { TbBrandCSharp } from "solid-icons/tb";
 
-const avatar = (ext: string) => {
+const FileTypeIcon = (ext: string) => {
   switch (ext) {
     case "MP4":
       return <BsFiletypeMp4 />;
@@ -144,4 +144,4 @@ const avatar = (ext: string) => {
   }
 };
 
-export default avatar;
+export default FileTypeIcon;

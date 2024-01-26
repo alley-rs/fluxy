@@ -17,30 +17,31 @@ $class-name: "alley-button";
 
   &:not(.disabled):hover {
     border-color: var(--button-hover-color);
+    color: var(--hover-color);
   }
 
   &:focus,
   &:focus-visible {
     outline: 4px auto -webkit-focus-ring-color;
   }
-}
 
-.block {
-  display: block;
-  width: 100%;
-}
+  &.block {
+    display: block;
+    width: 100%;
+  }
 
-.disabled {
-  cursor: not-allowed;
-  color: var(--text-disabled-color);
-}
+  &.disabled {
+    cursor: not-allowed;
+    color: var(--text-disabled-color);
+  }
 
-.circle {
-  border-radius: 50%;
-  padding: 0.6rem;
-}
+  &.circle {
+    border-radius: 50%;
+    padding: 0.6rem;
+  }
 
-.danger:not(.disabled):hover {
-  color: var(--danger-color);
-  border-color: var(--danger-color);
+  &.danger:not(.disabled):hover {
+    color: var(--danger-color);
+    border-color: var(--danger-color);
+  }
 }

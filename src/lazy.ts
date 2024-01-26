@@ -9,8 +9,15 @@ export const LazyLink = lazy(() => import("~/components/link"));
 export const LazyFlex = lazy(() => import("~/components/flex"));
 export const LazyEmpty = lazy(() => import("~/components/empty"));
 export const LazyList = lazy(() => import("~/components/list"));
-
-export const LazyFloatButtons = lazy(() => import("~/components/floatButton"));
+export const LazyFileTypeIcon = lazy(
+  () => import("~/components/file-type-icon"),
+);
+export const LazyFloatButton = lazy(
+  () => import("~/components/floatButton/button"),
+);
+export const LazyFloatButtonGroup = lazy(
+  () => import("~/components/floatButton/group"),
+);
 
 export const LazySend = lazy(() => import("~/pages/send"));
 // export const LazySendFileList = lazy(() => import("~/pages/send/list"));
