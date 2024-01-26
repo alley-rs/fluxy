@@ -59,6 +59,14 @@
       align-items: center;
     }
 
+    .receiving>div {
+      color: #000;
+    }
+
+    .done>div {
+      color: #fff;
+    }
+
     .col {
       display: flex;
       align-items: center;
@@ -82,6 +90,7 @@
 
     .speed,
     .filesize {
+      justify-content: end;
       text-align: right;
     }
 
@@ -93,10 +102,6 @@
 
     .ant-progress-line {
       margin-inline-end: 0;
-    }
-
-    .filesize {
-      justify-content: end;
     }
   }
 }

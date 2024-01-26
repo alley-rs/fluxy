@@ -17,6 +17,7 @@
   --dropdown-padding-block: 5px;
   --control-padding-horizontal: 12px;
   --control-item-bg-hover: rgba(255, 255, 255, 0.08);
+  --control-item-text-hover: #fff;
   --motion-duration-mid: 0.2s;
   --border-radius-sm: 4px;
   --border-radius-lg: 8px;
@@ -74,7 +75,8 @@
     --button-backgroud-color: #f9f9f9;
     --button-text-color: #213547;
     --color-bg-elevated: #fff;
-    --control-item-bg-hover: #f0f0f0;
+    // --control-item-bg-hover: #f0f0f0;
+    --control-item-bg-hover: var(--color-primary);
   }
 
   a:hover {

@@ -54,11 +54,7 @@ const Header = () => {
       </LazyCol>
 
       <LazyCol span={18} class="directory-entry">
-        <LazyDropdown
-          open={openDropDown()}
-          onOpenChange={() => setOpenDropDown((pre) => !pre)}
-          menu={dropdownItems}
-        >
+        <LazyDropdown open={openDropDown()} menu={dropdownItems}>
           <LazyLink
             onClick={async () => {
               setOpenDropDown(false);

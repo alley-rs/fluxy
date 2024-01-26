@@ -16,12 +16,11 @@ const FileListItem = (props: FileListItemProps) => (
       style={{
         "text-align": "left",
         "font-size": "0.8rem",
-        color: props.percent < 100 ? "#959595" : "var(--text-color)",
         position: "relative",
       }}
     >
       {suspense(
-        <LazyRow gutter={2}>
+        <LazyRow gutter={2} class={props.percent < 100 ? "receiving" : "done"}>
           <LazyCol span={props.speed ? 12 : 18} class="filename">
             <a onClick={() => open(props.path)}>{props.name}</a>
           </LazyCol>
