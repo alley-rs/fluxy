@@ -8,6 +8,7 @@
     border-radius: 15px;
     flex-grow: 14;
     margin-bottom: 10px;
+    overflow-y: auto;
 
     &:hover {
       border-color: var(--hover-color);
