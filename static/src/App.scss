@@ -16,3 +16,15 @@
     align-items: center;
   }
 }
+
+.filename {
+  .label {
+    font-weight: normal;
+    font-size: var(--font-size-4);
+    margin-right: 4px;
+    color: var(--color-weak);
+    text-shadow:
+      0.1px 0.1px 0.1px var(--color-weak),
+      -0.1px -0.1px 0.1px var(--color-light);
+  }
+}

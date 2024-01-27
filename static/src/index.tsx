@@ -1,7 +1,8 @@
-import ReactDOM from "react-dom/client";
-import "antd-mobile/es/global";
-import App from "./App.tsx";
+/* @refresh reload */
+import { render } from "solid-js/web";
+
 import "./index.scss";
+import App from "./App";
 
 if (matchMedia("(prefers-color-scheme: dark)").matches) {
   document.documentElement.setAttribute("data-prefers-color-scheme", "dark");
@@ -9,4 +10,6 @@ if (matchMedia("(prefers-color-scheme: dark)").matches) {
   document.documentElement.setAttribute("data-prefers-color-scheme", "light");
 }
 
-ReactDOM.createRoot(document.getElementById("root")!).render(<App />);
+const root = document.getElementById("root");
+
+render(() => <App />, root!);

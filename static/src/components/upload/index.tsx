@@ -1,10 +1,13 @@
-import { useEffect, useRef, useState } from "react";
-import { Button, ErrorBlock } from "antd-mobile";
-import "./index.scss";
-import FileItem from "./fileItem";
-import { getFileItem, updateFileList } from "./util";
+import { JSX, createEffect, createSignal } from "solid-js";
+import { createStore } from "solid-js/store";
+import { getFileItemIndex } from "./util";
 import request from "./request";
 import asyncPool from "~/components/upload/asyncPool";
+import Button from "../button";
+import ErrorBlock from "../error-block";
+import List from "../list";
+import FileItem from "./fileItem";
+import "./index.scss";
 
 interface UploadProps {
   action: string;
@@ -14,51 +17,57 @@ interface UploadProps {
 }
 
 const Upload = ({ action, headers, withCredentials, method }: UploadProps) => {
-  const fileInput = useRef<HTMLInputElement>(null);
+  let fileInput: HTMLInputElement | undefined;
 
-  const [fileItems, setFileItems] = useState<FileListItem[]>([]);
+  const [fileItems, setFileItems] = createStore<FileListItem[]>([]);
 
-  const [requestTasks, setRequestTasks] = useState<RequestTask[]>([]);
+  const [requestTasks, setRequestTasks] = createSignal<RequestTask[]>([]);
 
   const appendTask = (task: RequestTask) =>
     setRequestTasks((pre) => [...pre, task]);
 
   const onProgress = (e: { percent?: number; speed?: number }, file: File) => {
-    // removed
-    if (!getFileItem(file, fileItems)) {
+    const idx = getFileItemIndex(file, fileItems);
+    if (idx === -1) {
       return;
     }
 
-    const item: FileListItem = {
-      file,
-      percent: e.percent,
-      speed: e.speed,
-    };
-
-    setFileItems((pre) => updateFileList(item, pre));
+    setFileItems(idx, () => ({ percent: e.percent, speed: e.speed }));
   };
 
   const onSuccess = (fileItem: FileListItem) => {
-    // removed
-    if (!getFileItem(fileItem.file, fileItems)) {
+    const idx = getFileItemIndex(fileItem.file, fileItems);
+    if (idx === -1) {
       return;
     }
 
-    const item: FileListItem = {
-      ...fileItem,
-      percent: 100,
-    };
-
-    setFileItems((pre) => updateFileList(item, pre));
+    setFileItems(idx, () => ({ percent: 100, speed: undefined }));
   };
 
-  const onClick = (e: React.MouseEvent<HTMLDivElement>) => {
+  const onChange: JSX.ChangeEventHandlerUnion<HTMLInputElement, Event> = (
+    e,
+  ) => {
+    const { files } = e.target;
+
+    if (!files) return;
+
+    const fileItems: FileListItem[] = [];
+    for (const file of files) {
+      fileItems.push({ file });
+    }
+
+    fileItems.forEach((f) => send(f));
+
+    setFileItems(fileItems);
+  };
+
+  const onClick: JSX.EventHandlerUnion<HTMLDivElement, MouseEvent> = (e) => {
     const target = e.target as HTMLElement;
 
     if (target && target.tagName === "BUTTON") {
       setFileItems([]);
       setRequestTasks([]);
-      fileInput.current?.click();
+      fileInput?.click();
       target.blur();
     }
   };
@@ -71,7 +80,7 @@ const Upload = ({ action, headers, withCredentials, method }: UploadProps) => {
       headers,
       withCredentials,
       onProgress,
-      onError: function (): void {
+      onError: function(): void {
         // todo: 反馈上传错误
       },
       onSuccess: () => {
@@ -82,45 +91,30 @@ const Upload = ({ action, headers, withCredentials, method }: UploadProps) => {
     request(option, appendTask);
   };
 
-  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { files } = e.target;
+  createEffect(() => {
+    // 任务数量与文件数量相等后才发送请求
+    if (!fileItems.length || fileItems.length !== requestTasks().length) return;
 
-    if (!files) return;
-
-    const fileItems: FileListItem[] = [];
-    for (const file of files) {
-      fileItems.push({ file });
-    }
-
-    setFileItems(fileItems);
-  };
-
-  useEffect(() => {
-    fileItems.forEach((item) => send(item));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [fileItems.length]);
-
-  useEffect(() => {
     asyncPool(
       2, // 并发数量，应该根据实际场景判断，比如通过 fileList 中的文件尺寸进行判断，当超过某个阈值时减小并发量
-      requestTasks,
+      requestTasks(),
       (item) =>
         new Promise<void>((resolve) => {
           const xhr = item.xhr;
 
           item.done = resolve;
-          item.start = Math.round(new Date().getTime() / 1000);
+          item.start = new Date().getTime() / 1000;
 
           xhr.send(item.data);
-        })
+        }),
     );
-  }, [requestTasks]);
+  });
 
   return (
     <div id="upload" onClick={onClick}>
-      <div className="upload-file-list">
-        {!fileItems?.length ? (
-          <div className="empty">
+      <div class="upload-file-list">
+        {!fileItems.length ? (
+          <div class="empty">
             <ErrorBlock
               status="empty"
               title="未选择文件"
@@ -128,14 +122,17 @@ const Upload = ({ action, headers, withCredentials, method }: UploadProps) => {
             />
           </div>
         ) : (
-          fileItems.map((item, index) => (
-            <FileItem
-              key={index}
-              file={item.file}
-              percent={item.percent}
-              speed={item.speed}
-            />
-          ))
+          <List
+            dataSource={fileItems}
+            renderItem={(item, index) => (
+              <FileItem
+                index={index}
+                file={item.file}
+                percent={item.percent}
+                speed={item.speed}
+              />
+            )}
+          />
         )}
       </div>
       <input
@@ -145,7 +142,8 @@ const Upload = ({ action, headers, withCredentials, method }: UploadProps) => {
         style={{ display: "none" }}
         onChange={onChange}
       />
-      <Button block className="submit-button">
+
+      <Button block class="submit-button">
         选择文件
       </Button>
     </div>

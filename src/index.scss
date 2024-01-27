@@ -1,0 +1,85 @@
+:root {
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-text-size-adjust: 100%;
+
+  --text-color: rgba(255, 255, 255, 0.87);
+  --text-disabled-color: #c4c4c4;
+  --background-color: #242424;
+  --hover-color: #646cff;
+  --danger-color: #ff7875;
+  --hover-text-color: var(--hover-color);
+  --button-backgroud-color: #1a1a1a;
+  --button-text-color: rgba(255, 255, 255, 0.87);
+  --button-hover-color: var(--hover-text-color);
+  --dropdown-padding-block: 5px;
+  --control-padding-horizontal: 12px;
+  --control-item-bg-hover: rgba(255, 255, 255, 0.08);
+  --control-item-text-hover: #fff;
+  --motion-duration-mid: 0.2s;
+  --border-radius-sm: 4px;
+  --border-radius-lg: 8px;
+  --box-shadow-secondary: rgba(0, 0, 0, 0.08) 0px 6px 16px 0px,
+    rgba(0, 0, 0, 0.12) 0px 3px 6px -4px, rgba(0, 0, 0, 0.05) 0px 9px 28px 8px;
+  --dropdown-z-index-popup: 1050;
+
+  --padding-xxs: 4px;
+
+  --color-bg-elevated: #2f2f2f;
+
+  --color-primary: #646cff;
+  --color-success: #34b368;
+
+  color-scheme: light dark;
+  color: var(--text-color);
+  background-color: var(--background-color);
+
+  font-synthesis: none;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji",
+    "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.1);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+::-webkit-scrollbar-track {
+  background-color: #fff0;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --text-color: #213547;
+    --background-color: #ffffff;
+    --button-backgroud-color: #f9f9f9;
+    --button-text-color: #213547;
+    --color-bg-elevated: #fff;
+    // --control-item-bg-hover: #f0f0f0;
+    --control-item-bg-hover: var(--color-primary);
+  }
+
+  a:hover {
+    color: #747bff;
+  }
+}

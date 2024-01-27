@@ -1,36 +1,44 @@
-import { Col, Progress, Row } from "antd";
+import { open } from "@tauri-apps/api/shell";
+import { suspense } from "~/advance";
+import { LazyCol, LazyProgress, LazyRow } from "~/lazy";
 
 interface FileListItemProps {
+  path: string;
   name: string;
   percent: number;
   speed?: number;
   size: string;
 }
 
-const FileListItem = ({ name, percent, speed, size }: FileListItemProps) => (
-  <li className="receive-file-list-item">
+const FileListItem = (props: FileListItemProps) => (
+  <li class="receive-file-list-item">
     <div
       style={{
-        textAlign: "left",
-        fontSize: "0.8rem",
-        color: percent < 100 ? "#959595" : "var(--ant-color-text-base)",
+        "text-align": "left",
+        "font-size": "0.8rem",
+        position: "relative",
       }}
     >
-      <Row gutter={10}>
-        <Col span={speed ? 12 : 18}>
-          <h4 className="filename">{name}</h4>
-        </Col>
+      {suspense(
+        <LazyRow gutter={2} class={props.percent < 100 ? "receiving" : "done"}>
+          <LazyCol span={props.speed ? 12 : 18} class="filename">
+            <a onClick={() => open(props.path)}>{props.name}</a>
+          </LazyCol>
 
-        {speed ? (
-          <Col span={6} className="speed">{`${speed.toFixed(1)} MB/s`}</Col>
-        ) : null}
+          {props.speed ? (
+            <LazyCol span={6} class="speed">{`${props.speed.toFixed(
+              1,
+            )} MB/s`}</LazyCol>
+          ) : null}
 
-        <Col span={6} className="filesize">
-          {size}
-        </Col>
-      </Row>
+          <LazyCol span={6} class="filesize">
+            {props.size}
+          </LazyCol>
+
+          <LazyProgress percent={props.percent} />
+        </LazyRow>,
+      )}
     </div>
-    <Progress percent={percent} />
   </li>
 );
 

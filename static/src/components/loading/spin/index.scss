@@ -1,0 +1,89 @@
+.spin-loading {
+  --spin-content-height: 400px;
+  --spin-dot-size: 20px;
+  --spin-dot-size-sm: 14px;
+  --spin-dot-size-lg: 32px;
+  position: static;
+  display: inline-block;
+  opacity: 1;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  color: var(--ant-color-primary);
+  font-size: 0;
+  line-height: var(--ant-line-height);
+  list-style: none;
+  font-family: var(--ant-font-family);
+  text-align: center;
+  vertical-align: middle;
+  transition: transform var(--motion-duration-slow) var(--motion-ease-in-out-circ);
+
+  &-dot {
+    position: relative;
+    display: inline-block;
+    font-size: var(--spin-dot-size);
+    width: 1em;
+    height: 1em;
+  }
+
+  &-dot-spin {
+    transform: rotate(45deg);
+    animation-name: antRotate;
+    animation-duration: 1.2s;
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
+  }
+
+  &-dot-item {
+    position: absolute;
+    display: block;
+    width: calc((var(--ant-spin-dot-size) - var(--ant-margin-xxs) / 2) / 2);
+    height: calc((var(--ant-spin-dot-size) - var(--ant-margin-xxs) / 2) / 2);
+    background-color: var(--ant-color-primary);
+    border-radius: 100%;
+    transform: scale(0.75);
+    transform-origin: 50% 50%;
+    opacity: 0.3;
+    animation-name: antSpinMove;
+    animation-duration: 1s;
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
+    animation-direction: alternate;
+
+    &:nth-child(1) {
+      top: 0;
+      inset-inline-start: 0;
+      animation-delay: 0s;
+    }
+
+    &:nth-child(2) {
+      top: 0;
+      inset-inline-end: 0;
+      animation-delay: 0.4s;
+    }
+
+    &:nth-child(3) {
+      inset-inline-end: 0;
+      bottom: 0;
+      animation-delay: 0.8s;
+    }
+
+    &:nth-child(4) {
+      bottom: 0;
+      inset-inline-start: 0;
+      animation-delay: 1.2s;
+    }
+  }
+}
+
+@keyframes antSpinMove {
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes antRotate {
+  to {
+    transform: rotate(405deg);
+  }
+}

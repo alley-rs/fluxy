@@ -1,0 +1,47 @@
+.list {
+  width: 100%;
+  padding: 0 10px;
+
+  &-item {
+    width: 100%;
+    list-style: none;
+    display: flex;
+    flex-direction: row;
+    padding: 8px 0;
+
+    &:not(:first-child) {
+      border-top: 1px dashed #999;
+    }
+
+    &__avatar {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 24px;
+    }
+
+    &__texts {
+      padding: 0 5px;
+      flex-grow: 8;
+      text-align: left;
+    }
+
+    &__title {
+      font-size: 1rem;
+      line-height: calc(1rem + 4px);
+      font-weight: bold;
+      word-wrap: break-word;
+      word-break: break-all;
+    }
+
+    &__description {
+      font-size: 0.8rem;
+    }
+
+    &__extra {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+  }
+}

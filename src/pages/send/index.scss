@@ -1,31 +1,28 @@
-.file-list-container {
+.send {
   padding: 10px;
-  height: calc(100vh - 20px);
+  flex: 1;
 
   .file-list {
-    border: 1px dashed #b8b8b8;
-    border-radius: 10px;
+    width: 100%;
+    border: 1px #999 dashed;
+    border-radius: 15px;
+    flex-grow: 14;
+    margin-bottom: 10px;
     overflow-y: auto;
 
     &:hover {
-      border: 1px dashed var(--ant-color-primary);
+      border-color: var(--hover-color);
     }
 
-    .delete-button {
-      color: #b8b8b8;
+    .link {
+      font-size: 24px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
 
       &:hover {
-        color: red;
+        color: var(--danger-color);
       }
-    }
-
-    .ant-list-item-meta {
-      align-items: center;
-    }
-
-    h4 {
-      white-space: normal;
-      word-wrap: break-word;
     }
   }
 }

@@ -1,0 +1,27 @@
+.progress-bar {
+  --fill-color: #bec1ff;
+  --height: 100%;
+  width: calc(100% - 10px);
+  height: calc(100% - 10px);
+  position: absolute;
+  z-index: -1;
+
+  &-trail {
+    flex: auto;
+    overflow: hidden;
+    height: var(--height);
+    border-radius: 15px;
+  }
+
+  &-fill {
+    transition: width 0.3s;
+    background: var(--fill-color);
+    height: var(--height);
+  }
+
+  &-fill-success {
+    background-color: var(--color-success);
+    height: var(--height);
+    transition: width 0.3s;
+  }
+}

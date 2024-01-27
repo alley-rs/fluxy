@@ -1,25 +1,28 @@
-import { useState, useEffect } from "react";
-import { Row, Col, Dropdown, Button } from "antd";
-import type { MenuProps } from "antd";
 import { open as pick } from "@tauri-apps/api/dialog";
 import { open } from "@tauri-apps/api/shell";
+import { createEffect, createSignal } from "solid-js";
 import { changeDownloadsDir, getDownloadsDir } from "~/api";
+import type { MenuItemProps } from "~/components/dropdown";
 import Loading from "~/components/loading";
+import { LazyCol, LazyDropdown, LazyLink, LazyRow } from "~/lazy";
 
 const Header = () => {
-  const [downloadDir, setDownloadDir] = useState<string | undefined>(undefined);
-  const [openDropDown, setOpenDropDown] = useState(false);
+  const [downloadDir, setDownloadDir] = createSignal<string | undefined>(
+    undefined,
+  );
+  const [openDropDown, setOpenDropDown] = createSignal(false);
 
-  useEffect(() => {
-    if (downloadDir) return;
+  createEffect(() => {
+    const dir = downloadDir();
+    if (dir) return;
 
     getDownloadsDir().then((d) => setDownloadDir(d));
-  }, []);
+  });
 
   const pickDirectory = async () => {
     const dir = (await pick({
       directory: true,
-      defaultPath: downloadDir,
+      defaultPath: downloadDir(),
       multiple: false,
       title: "选择其他目录", // https://github.com/tauri-apps/tauri/issues/6675
     })) as string | null;
@@ -31,15 +34,13 @@ const Header = () => {
     setDownloadDir(dir);
   };
 
-  const DirectoryDropdownItems: MenuProps["items"] = [
+  const dropdownItems: MenuItemProps[] = [
     {
-      key: "1",
-      label: <a>打开</a>,
-      onClick: () => open(downloadDir!),
+      label: "打开",
+      onClick: () => open(downloadDir()!),
     },
     {
-      key: "2",
-      label: <a>修改</a>,
+      label: "修改",
       onClick: () => pickDirectory(),
     },
   ];
@@ -47,34 +48,25 @@ const Header = () => {
   if (!downloadDir) return <Loading />;
 
   return (
-    <Row className="header">
-      <Col span={6} className="directory-button-label">
-        <span style={{ fontSize: "0.8rem" }}>保存目录：</span>
-      </Col>
+    <LazyRow class="header">
+      <LazyCol span={6} class="directory-button-label">
+        <span style={{ "font-size": "0.8rem" }}>保存目录：</span>
+      </LazyCol>
 
-      <Col span={18}>
-        <Dropdown
-          open={openDropDown}
-          onOpenChange={() => setOpenDropDown((pre) => !pre)}
-          menu={{ items: DirectoryDropdownItems }}
-          placement="bottomRight"
-          arrow
-          overlayStyle={{ minWidth: 0 }}
-        >
-          <Button
-            className="directory-button"
-            type="link"
+      <LazyCol span={18} class="directory-entry">
+        <LazyDropdown open={openDropDown()} menu={dropdownItems}>
+          <LazyLink
             onClick={async () => {
               setOpenDropDown(false);
-              open(downloadDir);
+              open(downloadDir()!);
             }}
-            style={{ textOverflow: "ellipsis" }}
+            // style={{ "text-overflow": "ellipsis" }}
           >
-            {downloadDir}
-          </Button>
-        </Dropdown>
-      </Col>
-    </Row>
+            {downloadDir()!}
+          </LazyLink>
+        </LazyDropdown>
+      </LazyCol>
+    </LazyRow>
   );
 };
 
