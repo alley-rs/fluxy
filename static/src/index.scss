@@ -40,6 +40,9 @@
   --motion-ease-in-out-circ: cubic-bezier(0.78, 0.14, 0.15, 0.86);
 
   --border-radius: 5px;
+
+  color: var(--color-text);
+  background-color: var(--color-background);
 }
 
 * {
@@ -63,4 +66,12 @@
 
 ::-webkit-scrollbar-track {
   background-color: #fff0;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-text: var(--color-light);
+    --color-background: #2f2f2f;
+    --color-shadow: #000;
+  }
 }
