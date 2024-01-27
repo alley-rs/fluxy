@@ -1,0 +1,36 @@
+$base: ".result";
+
+#{$base} {
+  padding: 32px 12px;
+  background-color: var(--color-background);
+
+  &-icon {
+    font-size: 52px;
+    box-sizing: border-box;
+    width: 64px;
+    height: 64px;
+    margin: 0 auto 20px;
+    padding: 6px;
+  }
+
+  &-title {
+    color: var(--color-text);
+    font-size: var(--font-size-10);
+    line-height: 1.4;
+    text-align: center;
+  }
+
+  &-description {
+    margin-top: 8px;
+    color: var(--color-weak);
+    font-size: var(--font-size-7);
+    line-height: 1.4;
+    text-align: center;
+  }
+}
+
+#{$base}-error {
+  #{$base}-icon {
+    color: var(--color-danger);
+  }
+}

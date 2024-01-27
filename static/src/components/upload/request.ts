@@ -22,9 +22,8 @@ function getBody(xhr: XMLHttpRequest) {
 
 const upload = (
   option: UploadRequestOption,
-  appendTask: (task: RequestTask) => void
+  appendTask: (task: RequestTask) => void,
 ) => {
-  // eslint-disable-next-line no-undef
   const xhr = new XMLHttpRequest();
 
   const task: RequestTask = { xhr, data: option.file };
@@ -33,9 +32,11 @@ const upload = (
     xhr.upload.onprogress = function progress(e: UploadProgressEvent) {
       if (e.total! > 0) {
         e.percent = (e.loaded! / e.total!) * 100;
-        const now = Math.round(new Date().getTime() / 1000);
+
+        const now = new Date().getTime() / 1000;
         const delta = now - task.start!;
-        if (delta) e.speed = e.loaded! / 1024 / 1024 / (now - task.start!);
+
+        if (delta) e.speed = e.loaded! / 1024 / 1024 / delta;
         else e.speed = 0;
       }
       option.onProgress(e, option.file);
@@ -82,9 +83,6 @@ const upload = (
   });
 
   appendTask(task);
-
-  // 上传文件流,而非 FormData
-  // xhr.send(option.file);
 };
 
 export default upload;

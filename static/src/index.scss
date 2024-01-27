@@ -1,4 +1,66 @@
+:root {
+  --color-text: #333;
+  --color-background: #fff;
+  --color-shadow: #edeef1;
+
+  --color-weak: #999;
+  --color-light: #ccc;
+  --color-border: #eee;
+
+  --color-primary: #646cff;
+  --color-success: #34b368;
+  --color-warning: #ff8f1f;
+  --color-error: #ff3141;
+  --color-danger: var(--color-error);
+
+  --color-status-success: var(--color-success);
+  --color-status-waiting: var(--color-primary);
+  --color-status-info: var(--color-primary);
+  --color-status-warning: #000;
+  --color-status-error: #000;
+
+  --font-size-1: 9px;
+  --font-size-2: 10px;
+  --font-size-3: 11px;
+  --font-size-4: 12px;
+  --font-size-5: 13px;
+  --font-size-6: 14px;
+  --font-size-7: 15px;
+  --font-size-8: 16px;
+  --font-size-9: 17px;
+  --font-size-10: 18px;
+
+  --font-size-main: var(--adm-font-size-5);
+
+  --font-family: -apple-system, blinkmacsystemfont, "Helvetica Neue", helvetica,
+    segoe ui, arial, roboto, "PingFang SC", "miui", "Hiragino Sans GB",
+    "Microsoft Yahei", sans-serif;
+
+  --motion-duration-slow: 0.3s;
+  --motion-ease-in-out-circ: cubic-bezier(0.78, 0.14, 0.15, 0.86);
+
+  --border-radius: 5px;
+}
+
 * {
   padding: 0;
   margin: 0;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.1);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+::-webkit-scrollbar-track {
+  background-color: #fff0;
 }

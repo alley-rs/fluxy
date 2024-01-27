@@ -1,7 +1,8 @@
-import { Result } from "antd-mobile";
-import "./App.scss";
+import Result from "~/components/result";
 import Send from "./pages/send";
 import Receive from "./pages/receive";
+import "./App.scss";
+import { Match, Switch } from "solid-js";
 
 type Mode = "receive" | "send";
 
@@ -11,23 +12,27 @@ const App = () => {
   const params = new URLSearchParams(url.search);
   const mode = params.get("mode") as Mode | null;
 
-  if (!mode) {
-    return (
-      <div className="container result">
-        <Result
-          status="error"
-          title="无效的请求"
-          description="缺少查询参数: mode"
-        />
-      </div>
-    );
-  }
+  return (
+    <Switch>
+      <Match when={!mode}>
+        <div class="container result">
+          <Result
+            status="error"
+            title="无效的请求"
+            description="缺少查询参数: mode"
+          />
+        </div>
+      </Match>
 
-  if (mode === "send") {
-    return <Send />;
-  } else {
-    return <Receive />;
-  }
+      <Match when={mode === "send"}>
+        <Send />
+      </Match>
+
+      <Match when={mode === "receive"}>
+        <Receive />
+      </Match>
+    </Switch>
+  );
 };
 
 export default App;
