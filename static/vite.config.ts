@@ -1,5 +1,5 @@
 import { defineConfig } from "vite";
-import react from "@vitejs/plugin-react";
+import solid from "vite-plugin-solid";
 import path from "path";
 
 const pathSrc = path.resolve(__dirname, "src");
@@ -26,5 +26,5 @@ export default defineConfig({
     outDir: "../src-tauri/static",
   },
 
-  plugins: [react()],
+  plugins: [solid()],
 });

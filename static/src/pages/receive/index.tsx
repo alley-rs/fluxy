@@ -1,76 +1,92 @@
-import { useEffect, useState } from "react";
-import { Result, SpinLoading, List, Space, Toast } from "antd-mobile";
-import { DownlandOutline } from "antd-mobile-icons";
-import "./index.scss";
+import { Match, Switch, createResource } from "solid-js";
+import { AiOutlineCloudDownload } from "solid-icons/ai";
+import Result from "~/components/result";
+import SpinLoading from "~/components/loading/spin";
+import Space from "~/components/space";
+import Toast from "~/components/toast";
+import List from "~/components/list";
 import fileType from "./fileType";
+import Link from "~/components/link";
+import "./index.scss";
+
+type ResponseData = SendFile[] | BadRequest;
+
+const fetchData = async (): Promise<ResponseData> => {
+  const response = await fetch("/files");
+
+  if (response.status !== 200) {
+    const msg = await response.json();
+    return msg;
+  }
+
+  const body: SendFile[] = await response.json();
+  return body;
+};
 
 const Receive = () => {
-  const [files, setFiles] = useState<SendFile[] | null>(null);
-  const [error, setError] = useState<BadRequest | null>(null);
-
-  useEffect(() => {
-    if (files) return;
-
-    const fetchData = async () => {
-      const response = await fetch("/files");
-
-      if (response.status !== 200) {
-        const msg = await response.json();
-        setError(msg);
-      }
-
-      const body: SendFile[] = await response.json();
-      setFiles(body);
-      Toast.show({ content: "不要刷新此页面，否则文件列表将会被清空" });
-    };
-
-    fetchData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  if (error) {
-    return (
-      <div className="container result">
-        <Result status="error" title={error.error} description={error.advice} />
-      </div>
-    );
-  }
-
-  if (!files) {
-    return <SpinLoading />;
-  }
+  const [data] = createResource(fetchData);
 
   return (
-    <div className="container">
-      <List
-        className="receive-file-list"
-        header="点击文件名或右侧下载按钮即可下载文件"
-      >
-        {files.map((f) => {
-          const url = "/download/" + encodeURIComponent(f.path);
-          return (
-            <List.Item
-              key={f.path}
-              description={
-                <Space style={{ "--gap": "24px" }}>
-                  <span>大小：{f.size}</span>
-                  <span>类型：{fileType(f.extension)}</span>
-                </Space>
-              }
-              extra={
-                <a download={f.name} href={url}>
-                  <DownlandOutline fontSize={20} />
-                </a>
-              }
-            >
-              <a download={f.name} href={url} className="download-url">
-                {f.name}
-              </a>
-            </List.Item>
-          );
-        })}
-      </List>
-    </div>
+    <Switch>
+      <Match when={data.loading || !data()}>
+        <SpinLoading />
+      </Match>
+
+      <Match when={"error" in data()!}>
+        <div class="container">
+          <Result
+            status="error"
+            title={(data()! as BadRequest).error}
+            description={(data()! as BadRequest).advice ?? undefined}
+          />
+        </div>
+      </Match>
+
+      <Match when={(data() as SendFile[]).length}>
+        <div class="container">
+          <Toast
+            message="不要刷新此页面，否则文件列表将会被清空"
+            duration={3000}
+          />
+
+          <List
+            class="receive-file-list"
+            header="点击文件名或右侧按钮即可下载"
+            dataSource={data() as SendFile[]}
+            renderItem={(item, index) => {
+              const url = "/download/" + encodeURIComponent(item.path);
+              return (
+                <List.Item
+                  title={
+                    <span class="filename">
+                      <span class="label">{index + 1}.</span>
+                      <Link
+                        download={item.name}
+                        href={url}
+                        class="download-url"
+                      >
+                        {item.name}
+                      </Link>
+                    </span>
+                  }
+                  description={
+                    <Space gap={12} class="file-description">
+                      <span>大小：{item.size}</span>
+                      <span>类型：{fileType(item.extension)}</span>
+                    </Space>
+                  }
+                  extra={[
+                    <Link download={item.name} href={url} class="download-icon">
+                      <AiOutlineCloudDownload />
+                    </Link>,
+                  ]}
+                />
+              );
+            }}
+          />
+        </div>
+      </Match>
+    </Switch>
   );
 };
 

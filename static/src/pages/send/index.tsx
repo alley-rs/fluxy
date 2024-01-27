@@ -3,7 +3,7 @@ import "./index.scss";
 
 const Send = () => {
   return (
-    <div className="container">
+    <div class="container">
       <Upload action="/upload" />
     </div>
   );

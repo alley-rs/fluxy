@@ -1,0 +1,35 @@
+$base: ".divider";
+
+#{$base} {
+  &-horizontal {
+    display: flex;
+    align-items: center;
+    margin: 16px 0;
+    border: 0 solid var(--color-border);
+    color: var(--color-weak);
+    font-size: 14px;
+
+    &:before,
+    &:after {
+      flex: auto;
+      display: block;
+      content: "";
+      border-style: inherit;
+      border-color: inherit;
+      border-width: 1px 0 0;
+    }
+
+    #{$base}-content {
+      flex: none;
+      padding: 0 16px;
+    }
+  }
+
+  #{$base}-left#{$base}-horizontal:before {
+    max-width: 10%;
+  }
+
+  #{$base}-right#{$base}-horizontal:after {
+    max-width: 10%;
+  }
+}

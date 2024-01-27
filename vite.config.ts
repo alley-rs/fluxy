@@ -1,5 +1,5 @@
 import { defineConfig } from "vite";
-import react from "@vitejs/plugin-react";
+import solid from "vite-plugin-solid";
 import path from "path";
 
 const pathSrc = path.resolve(__dirname, "src");
@@ -14,9 +14,10 @@ export default defineConfig(async () => ({
     alias: {
       "~/": `${pathSrc}/`,
     },
+    conditions: ["development", "browser"],
   },
 
-  plugins: [react()],
+  plugins: [solid()],
 
   // Vite options tailored for Tauri development and only applied in `tauri dev` or `tauri build`
   //

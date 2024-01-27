@@ -1,4 +1,5 @@
 interface TaskMessage {
+  path: string;
   name: string;
   percent: number;
   speed: number;
@@ -17,3 +18,5 @@ interface SendFile {
   extension: string;
   size: string;
 }
+
+type CSSProperties = JSX.CSSProperties;

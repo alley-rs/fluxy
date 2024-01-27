@@ -5,65 +5,31 @@
   display: flex;
 
   .upload-file-list {
-    border: 1px #999 dashed;
     height: 80%;
     border-radius: 5px;
     flex-grow: 14;
     overflow-y: auto;
 
-    .file-list-item {
-      list-style-type: none;
-      padding: 5px;
-      position: relative;
-      background-color: transparent;
+    .waiting,
+    .done {
+      margin-right: 10px;
+      font-size: var(--font-size-8);
+    }
 
-      &:not(:last-child) {
-        border-bottom: 1px #999 dashed;
-      }
+    .done {
+      color: var(--color-success);
+    }
 
-      .progress-bar {
-        --fill-color: #ccc;
-        width: calc(100% - 10px);
-        height: calc(100% - 10px);
-        position: absolute;
-        z-index: -1;
+    .speed {
+      width: 64px;
+    }
 
-        &-trail {
-          flex: auto;
-          overflow: hidden;
-          height: 8px;
-          height: 100%;
-          border-radius: 15px;
-        }
+    .list {
+      width: inherit;
+      padding: 0 5px;
 
-        &-fill {
-          transition: width 0.3s;
-          background: var(--fill-color);
-          height: 8px;
-          height: 100%;
-        }
-
-        &-fill-success {
-          background-color: var(--adm-color-success);
-          height: 8px;
-          height: 100%;
-          transition: width 0.3s;
-        }
-      }
-
-      .file-detail {
-        padding: 5px;
-
-        .filename {
-          white-space: normal;
-          word-break: break-all;
-        }
-
-        .data {
-          display: flex;
-          justify-content: center;
-          align-items: center;
-        }
+      &-item {
+        position: relative;
       }
     }
   }

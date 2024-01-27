@@ -1,6 +1,10 @@
-import { Grid, Space, DotLoading } from "antd-mobile";
+import { AiFillCheckCircle } from "solid-icons/ai";
 import fileType from "~/pages/receive/fileType";
 import formatFileSize from "./fileSize";
+import Space from "~/components/space";
+import DotLoading from "~/components/loading/dot";
+import List from "~/components/list";
+import Progress from "../progress";
 
 const getExtension = (name: string): string => {
   const dotIndex = name.lastIndexOf(".");
@@ -11,54 +15,44 @@ const getExtension = (name: string): string => {
 };
 
 interface FileItemProps {
+  index: number;
   file: File;
   speed?: number;
   percent?: number;
 }
 
-const FileItem = ({ file, speed, percent }: FileItemProps) => {
-  const extension = getExtension(file.name);
-
-  const fillStyle = {
-    width: `${percent ?? 0}%`,
-  };
-
-  const uploading = percent && percent < 100;
+const FileItem = (props: FileItemProps) => {
+  const extension = getExtension(props.file.name);
 
   return (
-    <li className={"file-list-item" + (percent === 100 ? " success" : "")}>
-      <div className="progress-bar">
-        <div className={"progress-bar-trail"}>
-          <div
-            className={
-              percent === 100
-                ? " progress-bar-fill-success"
-                : "progress-bar-fill"
-            }
-            style={fillStyle}
-          />
-        </div>
-      </div>
-      <Grid columns={10} className="file-detail">
-        <Grid.Item span={7}>
-          <h3 className="filename">{file.name}</h3>
-          <Space style={{ "--gap": "24px" }}>
-            <span>大小：{formatFileSize(file.size)}</span>
-            <span>类型：{fileType(extension)}</span>
-          </Space>
-        </Grid.Item>
-
-        <Grid.Item span={uploading ? 1 : 3} className="data">
-          {percent ? Math.round(percent) + "%" : <DotLoading />}
-        </Grid.Item>
-
-        {uploading && speed ? (
-          <Grid.Item span={2} className="data">
-            {speed.toFixed(1)} MB/s
-          </Grid.Item>
-        ) : null}
-      </Grid>
-    </li>
+    <List.Item
+      title={
+        <span class="filename">
+          <span class="label">{props.index + 1}.</span>
+          {props.file.name}
+        </span>
+      }
+      description={
+        <Space gap={24}>
+          <span>大小: {formatFileSize(props.file.size)}</span>
+          <span>类型：{fileType(extension)}</span>
+        </Space>
+      }
+      extra={
+        props.speed ? (
+          <span class="speed">{props.speed.toFixed(1)} MB/s</span>
+        ) : props.percent === undefined ? (
+          <span class="waiting">
+            <DotLoading />
+          </span>
+        ) : (
+          <span class="done">
+            <AiFillCheckCircle />
+          </span>
+        )
+      }
+      foot={<Progress percent={props.percent} />}
+    />
   );
 };
 
