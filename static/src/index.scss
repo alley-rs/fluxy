@@ -19,6 +19,10 @@
   --color-status-warning: #000;
   --color-status-error: #000;
 
+  --color-button-text: #fff;
+
+  --color-progress-text: var(--color-button-text);
+
   --font-size-1: 9px;
   --font-size-2: 10px;
   --font-size-3: 11px;
@@ -73,5 +77,7 @@
     --color-text: var(--color-light);
     --color-background: #2f2f2f;
     --color-shadow: #000;
+    --color-button-text: var(--color-light);
+    --color-progress-text: var(--color-button-text);
   }
 }

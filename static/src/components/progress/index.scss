@@ -24,7 +24,7 @@
 
     &::after {
       content: attr(data-percent) "%";
-      color: var(--color-text);
+      color: var(--color-progress-text);
       position: absolute;
       right: 0;
       top: -5px;
