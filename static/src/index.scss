@@ -72,6 +72,17 @@
   background-color: #fff0;
 }
 
+.dark {
+  --color-text: var(--color-light);
+  --color-background: #2f2f2f;
+  --color-shadow: #000;
+  --color-button-text: var(--color-light);
+  --color-progress-text: var(--color-button-text);
+
+  color: var(--color-text);
+  background-color: var(--color-background);
+}
+
 @media (prefers-color-scheme: dark) {
   :root {
     --color-text: var(--color-light);

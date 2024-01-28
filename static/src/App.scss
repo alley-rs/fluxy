@@ -8,7 +8,21 @@
     height: 100vh;
     width: 100vw;
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+
+    .header {
+      margin-top: 10px;
+      height: 30px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: var(--color-weak);
+    }
+
+    .content {
+      flex-grow: 10;
+      display: flex;
+    }
   }
 
   .result,
@@ -27,4 +41,10 @@
       0.1px 0.1px 0.1px var(--color-weak),
       -0.1px -0.1px 0.1px var(--color-light);
   }
+}
+
+.dark-switch {
+  position: fixed;
+  right: 20px;
+  top: 10px;
 }
