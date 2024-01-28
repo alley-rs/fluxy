@@ -36,14 +36,18 @@
 
   --font-size-main: var(--adm-font-size-5);
 
-  --font-family: -apple-system, blinkmacsystemfont, "Helvetica Neue", helvetica,
-    segoe ui, arial, roboto, "PingFang SC", "miui", "Hiragino Sans GB",
-    "Microsoft Yahei", sans-serif;
+  --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji",
+    "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 
   --motion-duration-slow: 0.3s;
   --motion-ease-in-out-circ: cubic-bezier(0.78, 0.14, 0.15, 0.86);
 
   --border-radius: 5px;
+
+  font-family: var(--font-family);
+
+  color-scheme: light dark;
 
   color: var(--color-text);
   background-color: var(--color-background);
@@ -78,17 +82,4 @@
   --color-shadow: #000;
   --color-button-text: var(--color-light);
   --color-progress-text: var(--color-button-text);
-
-  color: var(--color-text);
-  background-color: var(--color-background);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --color-text: var(--color-light);
-    --color-background: #2f2f2f;
-    --color-shadow: #000;
-    --color-button-text: var(--color-light);
-    --color-progress-text: var(--color-button-text);
-  }
 }

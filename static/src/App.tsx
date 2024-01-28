@@ -1,10 +1,10 @@
-import { Match, Switch, createSignal, onMount } from "solid-js";
+import { Match, Switch, createEffect, createSignal, onMount } from "solid-js";
 import { BiRegularSun, BiSolidMoon } from "solid-icons/bi";
 import Result from "~/components/result";
-import Send from "./pages/send";
-import Receive from "./pages/receive";
-import SwitchDark from "./components/switch";
-import "./App.scss";
+import Send from "~/pages/send";
+import Receive from "~/pages/receive";
+import SwitchDark from "~/components/switch";
+import "~/App.scss";
 
 type Mode = "receive" | "send";
 
@@ -17,6 +17,7 @@ const App = () => {
   const [isDark, setIsDark] = createSignal(false);
 
   onMount(() => {
+    // 设置默认主题色
     if (matchMedia("(prefers-color-scheme: dark)").matches) {
       setIsDark(true);
     } else {
@@ -35,12 +36,22 @@ const App = () => {
       });
   });
 
+  // 手动切换主题色
+  createEffect(() => {
+    if (isDark()) window.document.documentElement.setAttribute("class", "dark");
+    else window.document.documentElement.removeAttribute("class");
+  });
+
   return (
-    <div class={isDark() ? "dark" : undefined}>
+    <div>
       <SwitchDark
         class="dark-switch"
         checked={isDark()}
-        setChecked={() => setIsDark((pre) => !pre)}
+        setChecked={() => {
+          setIsDark((pre) => {
+            return !pre;
+          });
+        }}
         uncheckedChild={<BiRegularSun />}
         checkedChild={<BiSolidMoon />}
       />
