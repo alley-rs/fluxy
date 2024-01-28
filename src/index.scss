@@ -104,9 +104,10 @@
 .dark {
   --color-text: var(--color-light);
   --color-background: #242424;
+  --color-text-disabled: #6a6a6a;
 
   --color-button-backgroud: #1a1a1a;
-  --color-button-text: var(--color-weak);
+  --color-button-text: var(--color-text);
   --color-bg-elevated: #2f2f2f;
 
   --color-scrollbar: rgba(255, 255, 255, 0.1);
