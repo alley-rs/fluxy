@@ -6,12 +6,12 @@
   min-width: 57.5167px;
   margin: 0;
   padding: 0;
-  color: var(--text-color);
+  color: var(--color-text);
   font-size: 14px;
   list-style: none;
   position: fixed;
-  top: 20px;
-  left: 290px;
+  top: 30px;
+  left: 280px;
   display: block;
   height: 62px;
   z-index: 99;
@@ -33,10 +33,9 @@
     clear: both;
     margin: 0;
     padding: var(--dropdown-padding-block) var(--control-padding-horizontal);
-    color: var(--text-color);
+    color: var(--color-text);
     font-weight: normal;
     font-size: 14px;
-    // line-height: var(--line-height);
     cursor: pointer;
     transition: all var(--motion-duration-mid);
     border-radius: var(--border-radius-sm);
@@ -46,7 +45,7 @@
 
     &:hover {
       background-color: var(--control-item-bg-hover);
-      color: var(--control-item-text-hover);
+      color: #fff;
     }
   }
 

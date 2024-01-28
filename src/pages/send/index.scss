@@ -2,6 +2,12 @@
   padding: 10px;
   flex: 1;
 
+  &-header {
+    height: 31px;
+    line-height: 31px;
+    margin-bottom: 5px;
+  }
+
   .file-list {
     width: 100%;
     border: 1px #999 dashed;
@@ -11,7 +17,7 @@
     overflow-y: auto;
 
     &:hover {
-      border-color: var(--hover-color);
+      border-color: var(--color-hover);
     }
 
     .link {
@@ -21,7 +27,7 @@
       align-items: center;
 
       &:hover {
-        color: var(--danger-color);
+        color: var(--color-danger);
       }
     }
   }

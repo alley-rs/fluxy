@@ -106,7 +106,12 @@ const Receive = ({ toHome }: ReceiveProps) => {
           style={{ height: "100vh", padding: 0 }}
         >
           {suspense(<LazyReceiveHeader />)}
-          <LazyFlex flex={8} align="center" justify="center">
+          <LazyFlex
+            class="receive-file-list-empty"
+            flex={8}
+            align="center"
+            justify="center"
+          >
             <LazyEmpty description="请在手机端上传文件" />
           </LazyFlex>
         </LazyFlex>

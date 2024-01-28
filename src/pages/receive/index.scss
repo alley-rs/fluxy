@@ -1,4 +1,5 @@
 .header {
+  margin-top: 10px;
   width: 100vw;
 
   .directory-button-label {
@@ -21,7 +22,7 @@
     }
 
     &:hover {
-      color: var(--hover-color);
+      color: var(--color-hover);
       text-decoration: none;
     }
 
@@ -45,6 +46,10 @@
   padding: 10px;
   border: 1px #666 dashed;
   border-radius: 10px;
+
+  &-empty {
+    width: 100vw;
+  }
 
   &-item {
     max-width: 100vw;
@@ -83,7 +88,7 @@
         cursor: pointer;
 
         &:hover {
-          color: var(--hover-color);
+          color: var(--color-hover);
         }
       }
     }

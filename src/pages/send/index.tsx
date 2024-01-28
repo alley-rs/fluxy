@@ -103,6 +103,8 @@ const Send = (props: SendProps) => {
           justify="center"
           direction="vertical"
         >
+          <div class="send-header">发送文件</div>
+
           <LazyFlex
             class="file-list"
             align={filesPostion()}
@@ -143,30 +145,30 @@ const Send = (props: SendProps) => {
 
       {isEmpty() || qrcode()
         ? suspense(
-            <LazyFloatButton
-              icon={<TbHome />}
-              onClick={props.toHome}
-              tooltip="回到主页"
-              bottom={qrcode() ? 20 : 60}
-            />,
-          )
+          <LazyFloatButton
+            icon={<TbHome />}
+            onClick={props.toHome}
+            tooltip="回到主页"
+            bottom={qrcode() ? 20 : 60}
+          />,
+        )
         : suspense(
-            <LazyFloatButtonGroup
-              bottom={60}
-              options={[
-                {
-                  icon: <TbTrash />,
-                  onClick: () => setFiles([]),
-                  tooltip: "清空文件",
-                },
-                {
-                  icon: <TbHome />,
-                  onClick: props.toHome,
-                  tooltip: "回到主页",
-                },
-              ]}
-            />,
-          )}
+          <LazyFloatButtonGroup
+            bottom={60}
+            options={[
+              {
+                icon: <TbTrash />,
+                onClick: () => setFiles([]),
+                tooltip: "清空文件",
+              },
+              {
+                icon: <TbHome />,
+                onClick: props.toHome,
+                tooltip: "回到主页",
+              },
+            ]}
+          />,
+        )}
     </>
   );
 };

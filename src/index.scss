@@ -5,44 +5,77 @@
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
 
-  --text-color: rgba(255, 255, 255, 0.87);
-  --text-disabled-color: #c4c4c4;
-  --background-color: #242424;
-  --hover-color: #646cff;
-  --danger-color: #ff7875;
-  --hover-text-color: var(--hover-color);
-  --button-backgroud-color: #1a1a1a;
-  --button-text-color: rgba(255, 255, 255, 0.87);
-  --button-hover-color: var(--hover-text-color);
+  --color-text: #333;
+  --color-text-disabled: #c4c4c4;
+  --color-background: #fff;
+  --color-shadow: #edeef1;
+  --color-bg-elevated: #fff;
+
+  --color-weak: #999;
+  --color-light: #ccc;
+  --color-border: #eee;
+
+  --color-primary: #646cff;
+  --color-success: #34b368;
+  --color-warning: #ff8f1f;
+  --color-error: #ff3141;
+  --color-danger: var(--color-error);
+
+  --color-hover: var(--color-primary);
+  --color-hover-text: var(--color-hover);
+
+  --color-button-backgroud: #f9f9f9;
+  --color-button-text: #213547;
+  --color-button-hover: var(--hover-text-color);
+
+  --color-status-success: var(--color-success);
+  --color-status-waiting: var(--color-primary);
+  --color-status-info: var(--color-primary);
+  --color-status-warning: #000;
+  --color-status-error: #000;
+
+  --color-progress-text: var(--color-button-text);
+
+  --color-scrollbar: rgba(0, 0, 0, 0.1);
+  --color-scrollbar-hover: rgba(0, 0, 0, 0.2);
+
+  --font-size-1: 9px;
+  --font-size-2: 10px;
+  --font-size-3: 11px;
+  --font-size-4: 12px;
+  --font-size-5: 13px;
+  --font-size-6: 14px;
+  --font-size-7: 15px;
+  --font-size-8: 16px;
+  --font-size-9: 17px;
+  --font-size-10: 18px;
+
+  --font-size-main: var(--adm-font-size-5);
+
   --dropdown-padding-block: 5px;
+
   --control-padding-horizontal: 12px;
-  --control-item-bg-hover: rgba(255, 255, 255, 0.08);
+  --control-item-bg-hover: var(--color-primary);
   --control-item-text-hover: #fff;
+
   --motion-duration-mid: 0.2s;
+
   --border-radius-sm: 4px;
   --border-radius-lg: 8px;
+
   --box-shadow-secondary: rgba(0, 0, 0, 0.08) 0px 6px 16px 0px,
     rgba(0, 0, 0, 0.12) 0px 3px 6px -4px, rgba(0, 0, 0, 0.05) 0px 9px 28px 8px;
   --dropdown-z-index-popup: 1050;
 
   --padding-xxs: 4px;
 
-  --color-bg-elevated: #2f2f2f;
-
-  --color-primary: #646cff;
-  --color-success: #34b368;
-
   color-scheme: light dark;
-  color: var(--text-color);
-  background-color: var(--background-color);
+  color: var(--color-text);
+  background-color: var(--color-background);
 
-  font-synthesis: none;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
     "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji",
     "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
 }
 
 * {
@@ -57,27 +90,30 @@
 
 ::-webkit-scrollbar-thumb {
   border-radius: 10px;
-  background: rgba(0, 0, 0, 0.1);
+  background: var(--color-scrollbar);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(0, 0, 0, 0.3);
+  background: var(--color-scrollbar-hover);
 }
 
 ::-webkit-scrollbar-track {
   background-color: #fff0;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    --text-color: #213547;
-    --background-color: #ffffff;
-    --button-backgroud-color: #f9f9f9;
-    --button-text-color: #213547;
-    --color-bg-elevated: #fff;
-    // --control-item-bg-hover: #f0f0f0;
-    --control-item-bg-hover: var(--color-primary);
-  }
+.dark {
+  --color-text: var(--color-light);
+  --color-background: #242424;
+
+  --color-button-backgroud: #1a1a1a;
+  --color-button-text: var(--color-weak);
+  --color-bg-elevated: #2f2f2f;
+
+  --color-scrollbar: rgba(255, 255, 255, 0.1);
+  --color-scrollbar-hover: rgba(255, 255, 255, 0.2);
+
+  --control-item-bg-hover: rgba(255, 255, 255, 0.08);
+  --control-item-text-hover: var(--color-hover-text);
 
   a:hover {
     color: #747bff;
