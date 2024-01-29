@@ -27,7 +27,9 @@
 
 打开软件后需要选择传输模式：
 
-![传输模式选择](./docs/images/home.png)
+| 亮色                                          | 暗色                                           |
+| --------------------------------------------- | ---------------------------------------------- |
+| ![传输模式选择](./docs/images/light/home.png) | ![传输模式选择](./docs/images/dark/1-home.png) |
 
 ### 接收模式
 
@@ -37,9 +39,10 @@
 
 > 点击图片可查看大图。
 
-| PC 端扫描前                                 | 手机端                                         | PC 端扫描后                                   | 手机上传                                      | PC端接收                                  |
-| ------------------------------------------- | ---------------------------------------------- | --------------------------------------------- | --------------------------------------------- | ----------------------------------------- |
-| ![output](./docs/images/receive-qrcode.png) | ![output](./docs/images/mobile-send-index.png) | ![output](./docs/images/pc-receive-empty.png) | ![output](./docs/images/mobile-uploading.png) | ![output](./docs/images/pc-receiving.png) |
+|      | PC 端扫描前                                        | 手机端                                                       | PC 端扫描后                                                  | 手机上传                                                     | PC端接收                                                     |
+| ---- | -------------------------------------------------- | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
+| 亮色 | ![output](./docs/images/light/receive-qrcode.png)  | ![output](./docs/images/light/mobile-send-index.png)         | ![output](./docs/images/light/pc-receive-empty.png)          | ![output](./docs/images/light/mobile-uploading.png)          | ![output](./docs/images/light/pc-receiving.png)              |
+| 暗色 | ![output](./docs/images/dark/2-receive-qrcode.png) | ![3-mobile-send-index](./docs/images/dark/3-mobile-send-index.png) | ![4-pc-receive-empty](./docs/images/dark/4-pc-receive-empty.png) | ![5-mobile-uploading](./docs/images/dark/5-mobile-uploading.png) | ![6-pc-receiving.png](./docs/images/dark/6-pc-receiving.png.png) |
 
 所有平台的 PC 端接收到的文件默认保存路径均为`~/Downloads/alley`，你可以自行修改保存目录。
 
@@ -51,6 +54,7 @@ _受限于手机操作系统的限制，手机浏览器无法实现批量下载�
 
 > 点击图片可查看大图。
 
-| PC 端待选文件                               | PC 端待发文件列表                     | PC 端发送二维码                          | 手机端接收页                                      |
-| ------------------------------------------- | ------------------------------------- | ---------------------------------------- | ------------------------------------------------- |
-| ![output](./docs/images/wait-selecting.png) | ![output](./docs/images/selected.png) | ![output](./docs/images/send-qrcode.png) | ![output](./docs/images/mobile-download-list.png) |
+|      | PC 端待选文件                                                | PC 端待发文件列表                                | PC 端发送二维码                                        | 手机端接收页                                                 |
+| ---- | ------------------------------------------------------------ | ------------------------------------------------ | ------------------------------------------------------ | ------------------------------------------------------------ |
+| 亮色 | ![output](./docs/images/light/wait-selecting.png)            | ![output](./docs/images/light/selected.png)      | ![output](./docs/images/light/send-qrcode.png)         | ![output](./docs/images/light/mobile-download-list.png)      |
+| 暗色 | ![7-wait-selecting](./docs/images/dark/7-wait-selecting.png) | ![8-selected](./docs/images/dark/8-selected.png) | ![9-send-qrcode](./docs/images/dark/9-send-qrcode.png) | ![10-mobile-download-list](./docs/images/dark/10-mobile-download-list.png) |
