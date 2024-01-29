@@ -65,7 +65,7 @@ const Receive = () => {
                   <List.Item
                     title={
                       <span class="filename">
-                        <span class="label">{index + 1}.</span>
+                        <span class="label">{index() + 1}.</span>
                         <Link
                           download={item.name}
                           href={url}

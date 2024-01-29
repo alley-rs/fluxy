@@ -1,4 +1,5 @@
 interface RequestTask {
+  id: string;
   xhr: XMLHttpRequest;
   data: File;
   start?: number;

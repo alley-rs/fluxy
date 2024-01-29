@@ -45,7 +45,7 @@ interface ListProps<T> {
   header?: JSXElement;
   class?: string;
   dataSource: T[];
-  renderItem: (item: T, index: number) => JSXElement;
+  renderItem: (item: T, index: () => number) => JSXElement;
 }
 
 const baseClassName = "list";
@@ -61,7 +61,7 @@ const List = <T extends object>(props: ListProps<T>) => {
 
       <ul>
         <For each={props.dataSource}>
-          {(item, index) => props.renderItem(item, index())}
+          {(item, index) => props.renderItem(item, index)}
         </For>
       </ul>
     </div>
