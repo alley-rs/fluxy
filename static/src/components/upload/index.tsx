@@ -80,7 +80,7 @@ const Upload = ({ action, headers, withCredentials, method }: UploadProps) => {
       headers,
       withCredentials,
       onProgress,
-      onError: function(): void {
+      onError: function (): void {
         // todo: 反馈上传错误
       },
       onSuccess: () => {
@@ -143,7 +143,11 @@ const Upload = ({ action, headers, withCredentials, method }: UploadProps) => {
         onChange={onChange}
       />
 
-      <Button block class="submit-button">
+      <Button
+        block
+        class="submit-button"
+        disabled={fileItems.findIndex((f) => f.speed !== undefined) >= 0}
+      >
         选择文件
       </Button>
     </div>

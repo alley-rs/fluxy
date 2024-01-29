@@ -6,16 +6,26 @@ interface ButtonProps {
   class?: string;
   children?: JSXElement;
   block?: boolean;
+  disabled?: boolean;
   onClick?: () => void;
 }
 
 const baseClassName = "button";
 
 const Button = (props: ButtonProps) => {
-  const classNames = () => addClassNames(baseClassName, props.class);
+  const classNames = () =>
+    addClassNames(
+      baseClassName,
+      props.class,
+      props.disabled ? `${baseClassName}-disabled` : undefined,
+    );
 
   return (
-    <button class={classNames()} onClick={props.onClick}>
+    <button
+      class={classNames()}
+      onClick={props.onClick}
+      disabled={props.disabled}
+    >
       {props.children}
     </button>
   );

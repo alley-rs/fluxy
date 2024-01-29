@@ -20,6 +20,8 @@
   --color-status-error: #000;
 
   --color-button-text: #fff;
+  --color-button-disabled-background: #353991;
+  --color-button-disabled-text: var(--color-light);
 
   --color-progress-text: var(--color-button-text);
 
@@ -81,5 +83,7 @@
   --color-background: #2f2f2f;
   --color-shadow: #000;
   --color-button-text: var(--color-light);
+  --color-button-disabled-background: #2c307e;
+  --color-button-disabled-text: #3e3e3e;
   --color-progress-text: var(--color-button-text);
 }
