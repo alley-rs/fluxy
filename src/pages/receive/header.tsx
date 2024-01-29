@@ -49,18 +49,18 @@ const Header = () => {
 
   return (
     <LazyRow class="header">
-      <LazyCol span={6} class="directory-button-label">
+      <LazyCol span={5} class="directory-button-label">
         <span style={{ "font-size": "0.8rem" }}>保存目录：</span>
       </LazyCol>
 
-      <LazyCol span={18} class="directory-entry">
+      <LazyCol span={14} class="directory-entry">
         <LazyDropdown open={openDropDown()} menu={dropdownItems}>
           <LazyLink
             onClick={async () => {
               setOpenDropDown(false);
               open(downloadDir()!);
             }}
-            // style={{ "text-overflow": "ellipsis" }}
+          // style={{ "text-overflow": "ellipsis" }}
           >
             {downloadDir()!}
           </LazyLink>

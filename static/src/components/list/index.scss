@@ -5,6 +5,7 @@
   &-header {
     text-align: center;
     color: var(--color-weak);
+    font-size: var(--font-size-5);
   }
 
   &-item {
@@ -17,6 +18,7 @@
     border-radius: var(--border-radius);
     margin: 10px 0;
     flex-wrap: wrap;
+    background-color: var(--color-background);
 
     &__content {
       display: flex;

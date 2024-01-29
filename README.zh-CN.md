@@ -16,12 +16,12 @@
 
 - 体积小
 
-  | 平台及格式                              | 体积（v0.1.0-alpha.8） |
-  | --------------------------------------- | ---------------------- |
-  | macOS aarch64 - dmg                     | 4.29 MB                |
-  | Linux(Debian/Ubuntu/Deepin) amd64 - deb | 6.45 MB                |
-  | Windows amd64 - msi                     | 4.29 MB                |
-  | Windows amd64 - exe                     | 4.07 MB                |
+  | 平台及格式                              | 体积（v0.1.0-alpha.10） |
+  | --------------------------------------- | ----------------------- |
+  | macOS aarch64 - dmg                     | 3.83 MB                 |
+  | Linux(Debian/Ubuntu/Deepin) amd64 - deb | 5.63 MB                 |
+  | Windows amd64 - msi                     | 3.63 MB                 |
+  | Windows amd64 - exe                     | 3.1 MB                  |
 
 - 页面丑（缺少设计天份）
 
@@ -55,4 +55,4 @@ _受限于手机操作系统的限制，手机浏览器无法实现批量下载�
 
 | PC 端待选文件                               | PC 端待发文件列表                     | PC 端发送二维码                          | 手机端接收页                                      |
 | ------------------------------------------- | ------------------------------------- | ---------------------------------------- | ------------------------------------------------- |
-| ![output](./docs/images/wait-selecting.png) | ![output](./docs/images/selected.png) | ![output](./docs/images/send-qrcode.png) | ![output](./docs/images/mobile-download-list.png) |
+| ![output](./docs/images/wait-selecting.png) | ![output](./docs/images/selected.png) | ![output](./docs/images/send-qrcode.png) | ![output](./docs/images/mobile-download-list.jpg) |

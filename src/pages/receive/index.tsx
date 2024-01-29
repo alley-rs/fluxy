@@ -81,9 +81,18 @@ const Receive = ({ toHome }: ReceiveProps) => {
     onCleanup(() => clearTimeout(timer));
   });
 
-  const homeButton = suspense(
-    <LazyFloatButton tooltip="回到主页" icon={<TbHome />} onClick={toHome} />,
-  );
+  const homeButton = () =>
+    suspense(
+      <LazyFloatButton
+        tooltip="回到主页"
+        icon={<TbHome />}
+        onClick={() => {
+          setTaskList(new OrderedSet<TaskMessage>("name"));
+          setFileList([]);
+          toHome();
+        }}
+      />,
+    );
 
   return (
     <Switch>
@@ -96,7 +105,7 @@ const Receive = ({ toHome }: ReceiveProps) => {
         >
           {suspense(<LazyReceiveQrCode qrcode={qrcode()!} />)}
 
-          {homeButton}
+          {homeButton()}
         </LazyFlex>
       </Match>
       <Match when={taskList().empty() && !fileList().length}>
@@ -106,12 +115,17 @@ const Receive = ({ toHome }: ReceiveProps) => {
           style={{ height: "100vh", padding: 0 }}
         >
           {suspense(<LazyReceiveHeader />)}
-          <LazyFlex flex={8} align="center" justify="center">
+          <LazyFlex
+            class="receive-file-list-empty"
+            flex={8}
+            align="center"
+            justify="center"
+          >
             <LazyEmpty description="请在手机端上传文件" />
           </LazyFlex>
         </LazyFlex>
 
-        {homeButton}
+        {homeButton()}
       </Match>
       <Match
         when={qrcode() === null && (!taskList().empty() || fileList().length)}
@@ -120,8 +134,9 @@ const Receive = ({ toHome }: ReceiveProps) => {
           {suspense(<LazyReceiveHeader />)}
 
           <ul class="receive-file-list">
-            {fileList().map((t) => (
+            {fileList().map((t, i) => (
               <FileListItem
+                index={i}
                 name={t.name}
                 percent={100}
                 size={t.size}
@@ -141,16 +156,7 @@ const Receive = ({ toHome }: ReceiveProps) => {
           </ul>
         </LazyFlex>
 
-        {suspense(
-          <LazyFloatButton
-            tooltip="回到主页"
-            onClick={() => {
-              setTaskList(new OrderedSet<TaskMessage>("name"));
-              setFileList([]);
-              toHome();
-            }}
-          />,
-        )}
+        {homeButton()}
       </Match>
     </Switch>
   );

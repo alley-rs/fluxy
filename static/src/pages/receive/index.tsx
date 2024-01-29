@@ -27,66 +27,77 @@ const Receive = () => {
   const [data] = createResource(fetchData);
 
   return (
-    <Switch>
-      <Match when={data.loading || !data()}>
-        <SpinLoading />
-      </Match>
+    <div class="container">
+      <div class="header">接收文件</div>
 
-      <Match when={"error" in data()!}>
-        <div class="container">
-          <Result
-            status="error"
-            title={(data()! as BadRequest).error}
-            description={(data()! as BadRequest).advice ?? undefined}
-          />
-        </div>
-      </Match>
+      <Switch>
+        <Match when={data.loading || !data()}>
+          <SpinLoading />
+        </Match>
 
-      <Match when={(data() as SendFile[]).length}>
-        <div class="container">
-          <Toast
-            message="不要刷新此页面，否则文件列表将会被清空"
-            duration={3000}
-          />
+        <Match when={"error" in data()!}>
+          <div
+            class="content"
+            style={{ "justify-content": "center", "align-items": "center" }}
+          >
+            <Result
+              status="error"
+              title={(data()! as BadRequest).error}
+              description={(data()! as BadRequest).advice ?? undefined}
+            />
+          </div>
+        </Match>
 
-          <List
-            class="receive-file-list"
-            header="点击文件名或右侧按钮即可下载"
-            dataSource={data() as SendFile[]}
-            renderItem={(item, index) => {
-              const url = "/download/" + encodeURIComponent(item.path);
-              return (
-                <List.Item
-                  title={
-                    <span class="filename">
-                      <span class="label">{index + 1}.</span>
+        <Match when={(data() as SendFile[]).length}>
+          <div class="content">
+            <Toast
+              message="不要刷新此页面，否则文件列表将会被清空"
+              duration={3000}
+            />
+
+            <List
+              class="receive-file-list"
+              header="点击文件名或右侧按钮即可下载"
+              dataSource={data() as SendFile[]}
+              renderItem={(item, index) => {
+                const url = "/download/" + encodeURIComponent(item.path);
+                return (
+                  <List.Item
+                    title={
+                      <span class="filename">
+                        <span class="label">{index + 1}.</span>
+                        <Link
+                          download={item.name}
+                          href={url}
+                          class="download-url"
+                        >
+                          {item.name}
+                        </Link>
+                      </span>
+                    }
+                    description={
+                      <Space gap={12} class="file-description">
+                        <span>大小：{item.size}</span>
+                        <span>类型：{fileType(item.extension)}</span>
+                      </Space>
+                    }
+                    extra={[
                       <Link
                         download={item.name}
                         href={url}
-                        class="download-url"
+                        class="download-icon"
                       >
-                        {item.name}
-                      </Link>
-                    </span>
-                  }
-                  description={
-                    <Space gap={12} class="file-description">
-                      <span>大小：{item.size}</span>
-                      <span>类型：{fileType(item.extension)}</span>
-                    </Space>
-                  }
-                  extra={[
-                    <Link download={item.name} href={url} class="download-icon">
-                      <AiOutlineCloudDownload />
-                    </Link>,
-                  ]}
-                />
-              );
-            }}
-          />
-        </div>
-      </Match>
-    </Switch>
+                        <AiOutlineCloudDownload />
+                      </Link>,
+                    ]}
+                  />
+                );
+              }}
+            />
+          </div>
+        </Match>
+      </Switch>
+    </div>
   );
 };
 

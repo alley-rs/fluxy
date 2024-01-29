@@ -7,17 +7,17 @@ $class-name: "alley-button";
   font-size: 1em;
   font-weight: 500;
   font-family: inherit;
-  background-color: var(--button-backgroud-color);
+  background-color: var(--color-button-backgroud);
   cursor: pointer;
   transition: border-color 0.25s;
-  color: var(--button-text-color);
+  color: var(--color-button-text);
   display: flex;
   justify-content: center;
   align-items: center;
 
   &:not(.disabled):hover {
-    border-color: var(--button-hover-color);
-    color: var(--hover-color);
+    border-color: var(--color-button-hover);
+    color: var(--color-hover);
   }
 
   &:focus,
@@ -32,7 +32,7 @@ $class-name: "alley-button";
 
   &.disabled {
     cursor: not-allowed;
-    color: var(--text-disabled-color);
+    color: var(--color-text-disabled);
   }
 
   &.circle {
@@ -41,7 +41,7 @@ $class-name: "alley-button";
   }
 
   &.danger:not(.disabled):hover {
-    color: var(--danger-color);
-    border-color: var(--danger-color);
+    color: var(--color-danger);
+    border-color: var(--color-danger);
   }
 }

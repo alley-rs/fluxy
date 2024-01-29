@@ -3,6 +3,12 @@
   width: 100vw;
   text-align: center;
   display: flex;
+
+  .dark-switch {
+    position: fixed;
+    right: 20px;
+    top: 10px;
+  }
 }
 
 #index {

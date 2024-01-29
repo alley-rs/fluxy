@@ -5,8 +5,11 @@ import {
   createMemo,
   Show,
 } from "solid-js";
-import { TiDeleteOutline } from "solid-icons/ti";
-import { TbHome, TbTrash } from "solid-icons/tb";
+import {
+  AiOutlineClear,
+  AiOutlineCloseCircle,
+  AiOutlineHome,
+} from "solid-icons/ai";
 import { appWindow } from "@tauri-apps/api/window";
 import { TauriEvent } from "@tauri-apps/api/event";
 import "./index.scss";
@@ -25,6 +28,8 @@ import {
 } from "~/lazy";
 import List from "~/components/list";
 import Flex from "~/components/flex";
+import { addClassNames } from "~/components/utils";
+import { open } from "@tauri-apps/api/shell";
 
 interface SendProps {
   toHome: () => void;
@@ -103,8 +108,13 @@ const Send = (props: SendProps) => {
           justify="center"
           direction="vertical"
         >
+          <div class="send-header">发送文件</div>
+
           <LazyFlex
-            class="file-list"
+            class={addClassNames(
+              "file-list",
+              !files().length ? "file-list-empty" : undefined,
+            )}
             align={filesPostion()}
             justify={filesPostion()}
           >
@@ -114,7 +124,11 @@ const Send = (props: SendProps) => {
                 renderItem={(file) => (
                   <List.Item
                     avatar={LazyFileTypeIcon(file.extension)}
-                    title={file.name}
+                    title={
+                      <LazyLink onClick={() => open(file.path)}>
+                        {file.name}
+                      </LazyLink>
+                    }
                     description={
                       <>
                         <span>大小: {file.size}</span>
@@ -123,8 +137,11 @@ const Send = (props: SendProps) => {
                       </>
                     }
                     extra={[
-                      <LazyLink onClick={() => removeFile(file.path)}>
-                        <TiDeleteOutline />
+                      <LazyLink
+                        class="delete-file"
+                        onClick={() => removeFile(file.path)}
+                      >
+                        <AiOutlineCloseCircle />
                       </LazyLink>,
                     ]}
                   />
@@ -143,30 +160,30 @@ const Send = (props: SendProps) => {
 
       {isEmpty() || qrcode()
         ? suspense(
-            <LazyFloatButton
-              icon={<TbHome />}
-              onClick={props.toHome}
-              tooltip="回到主页"
-              bottom={qrcode() ? 20 : 60}
-            />,
-          )
+          <LazyFloatButton
+            icon={<AiOutlineHome />}
+            onClick={props.toHome}
+            tooltip="回到主页"
+            bottom={qrcode() ? 20 : 60}
+          />,
+        )
         : suspense(
-            <LazyFloatButtonGroup
-              bottom={60}
-              options={[
-                {
-                  icon: <TbTrash />,
-                  onClick: () => setFiles([]),
-                  tooltip: "清空文件",
-                },
-                {
-                  icon: <TbHome />,
-                  onClick: props.toHome,
-                  tooltip: "回到主页",
-                },
-              ]}
-            />,
-          )}
+          <LazyFloatButtonGroup
+            bottom={60}
+            options={[
+              {
+                icon: <AiOutlineClear />,
+                onClick: () => setFiles([]),
+                tooltip: "清空文件",
+              },
+              {
+                icon: <AiOutlineHome />,
+                onClick: props.toHome,
+                tooltip: "回到主页",
+              },
+            ]}
+          />,
+        )}
     </>
   );
 };
