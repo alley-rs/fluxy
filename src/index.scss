@@ -34,7 +34,7 @@
   --color-status-warning: #000;
   --color-status-error: #000;
 
-  --color-progress-text: var(--color-button-text);
+  --color-progress-text: #fff;
 
   --color-scrollbar: rgba(0, 0, 0, 0.1);
   --color-scrollbar-hover: rgba(0, 0, 0, 0.2);
@@ -105,10 +105,13 @@
   --color-text: var(--color-light);
   --color-background: #242424;
   --color-text-disabled: #6a6a6a;
+  --color-shadow: #000;
 
   --color-button-backgroud: #1a1a1a;
   --color-button-text: var(--color-text);
   --color-bg-elevated: #2f2f2f;
+
+  --color-progress-text: var(--color-light);
 
   --color-scrollbar: rgba(255, 255, 255, 0.1);
   --color-scrollbar-hover: rgba(255, 255, 255, 0.2);

@@ -134,8 +134,9 @@ const Receive = ({ toHome }: ReceiveProps) => {
           {suspense(<LazyReceiveHeader />)}
 
           <ul class="receive-file-list">
-            {fileList().map((t) => (
+            {fileList().map((t, i) => (
               <FileListItem
+                index={i}
                 name={t.name}
                 percent={100}
                 size={t.size}

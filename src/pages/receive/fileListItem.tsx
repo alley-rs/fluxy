@@ -1,8 +1,11 @@
 import { open } from "@tauri-apps/api/shell";
-import { suspense } from "~/advance";
-import { LazyCol, LazyProgress, LazyRow } from "~/lazy";
+import { AiFillCheckCircle } from "solid-icons/ai";
+import fileType from "./fileType";
+import List from "~/components/list";
+import { LazyLink, LazyProgress, LazySpace } from "~/lazy";
 
 interface FileListItemProps {
+  index?: number;
   path: string;
   name: string;
   percent: number;
@@ -10,36 +13,46 @@ interface FileListItemProps {
   size: string;
 }
 
-const FileListItem = (props: FileListItemProps) => (
-  <li class="receive-file-list-item">
-    <div
-      style={{
-        "text-align": "left",
-        "font-size": "0.8rem",
-        position: "relative",
-      }}
-    >
-      {suspense(
-        <LazyRow gutter={2} class={props.percent < 100 ? "receiving" : "done"}>
-          <LazyCol span={props.speed ? 12 : 18} class="filename">
-            <a onClick={() => open(props.path)}>{props.name}</a>
-          </LazyCol>
+const FileListItem = (props: FileListItemProps) => {
+  const extension = getExtension(props.name);
 
-          {props.speed ? (
-            <LazyCol span={6} class="speed">{`${props.speed.toFixed(
-              1,
-            )} MB/s`}</LazyCol>
+  return (
+    <List.Item
+      class="receive-file-list-item"
+      title={
+        <span class="filename">
+          {props.index !== undefined ? (
+            <span class="label">{props.index + 1}.</span>
           ) : null}
+          <LazyLink onClick={() => open(props.path)}>{props.name}</LazyLink>
+        </span>
+      }
+      description={
+        <LazySpace gap={24}>
+          <span>大小: {props.size}</span>
+          <span>类型：{fileType(extension)}</span>
+        </LazySpace>
+      }
+      extra={
+        props.speed ? (
+          <span class="speed">{props.speed.toFixed(1)} MB/s</span>
+        ) : (
+          <span class="done">
+            <AiFillCheckCircle />
+          </span>
+        )
+      }
+      foot={<LazyProgress percent={props.percent} />}
+    />
+  );
+};
 
-          <LazyCol span={6} class="filesize">
-            {props.size}
-          </LazyCol>
+const getExtension = (name: string): string => {
+  const dotIndex = name.lastIndexOf(".");
 
-          <LazyProgress percent={props.percent} />
-        </LazyRow>,
-      )}
-    </div>
-  </li>
-);
+  if (dotIndex === -1) return "UNKOWN";
+
+  return name.slice(dotIndex + 1).toUpperCase();
+};
 
 export default FileListItem;

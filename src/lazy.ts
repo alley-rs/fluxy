@@ -19,6 +19,7 @@ export const LazyFloatButtonGroup = lazy(
   () => import("~/components/floatButton/group"),
 );
 export const LazySwitch = lazy(() => import("~/components/switch"));
+export const LazySpace = lazy(() => import("~/components/space"));
 
 export const LazySend = lazy(() => import("~/pages/send"));
 // export const LazySendFileList = lazy(() => import("~/pages/send/list"));
