@@ -47,7 +47,13 @@ const Receive = ({ toHome }: ReceiveProps) => {
 
       setTaskList((pre) => pre.push(e.payload));
 
-      const { name, percent } = e.payload;
+      const { path, name, percent, aborted } = e.payload;
+
+      if (aborted) {
+        setFileList((pre) => pre.filter((i) => i.path !== path));
+        setTaskList((pre) => pre.remove(e.payload));
+        return;
+      }
 
       if (percent === 100) {
         setTaskList((pre) => pre.remove(e.payload));

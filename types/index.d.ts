@@ -4,6 +4,7 @@ interface TaskMessage {
   percent: number;
   speed: number;
   size: string;
+  aborted: boolean;
 }
 
 interface QrCode {
