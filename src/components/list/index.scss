@@ -23,13 +23,22 @@
     &__content {
       display: flex;
       flex-direction: row;
+      align-items: center;
       width: 100%;
 
       &-avatar {
+        --width: 36px;
+        --height: var(--width);
+        background-color: #b8b8b8;
+        width: var(--width);
+        height: var(--height);
+        border-radius: 50%;
         display: flex;
         justify-content: center;
         align-items: center;
-        font-size: 24px;
+        font-size: 18px;
+        color: #fff;
+        margin-left: 5px;
       }
 
       &-texts {

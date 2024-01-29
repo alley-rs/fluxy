@@ -5,8 +5,11 @@ import {
   createMemo,
   Show,
 } from "solid-js";
-import { TiDeleteOutline } from "solid-icons/ti";
-import { TbHome, TbTrash } from "solid-icons/tb";
+import {
+  AiOutlineClear,
+  AiOutlineCloseCircle,
+  AiOutlineHome,
+} from "solid-icons/ai";
 import { appWindow } from "@tauri-apps/api/window";
 import { TauriEvent } from "@tauri-apps/api/event";
 import "./index.scss";
@@ -25,6 +28,7 @@ import {
 } from "~/lazy";
 import List from "~/components/list";
 import Flex from "~/components/flex";
+import { addClassNames } from "~/components/utils";
 
 interface SendProps {
   toHome: () => void;
@@ -106,7 +110,10 @@ const Send = (props: SendProps) => {
           <div class="send-header">发送文件</div>
 
           <LazyFlex
-            class="file-list"
+            class={addClassNames(
+              "file-list",
+              !files().length ? "file-list-empty" : undefined,
+            )}
             align={filesPostion()}
             justify={filesPostion()}
           >
@@ -125,8 +132,11 @@ const Send = (props: SendProps) => {
                       </>
                     }
                     extra={[
-                      <LazyLink onClick={() => removeFile(file.path)}>
-                        <TiDeleteOutline />
+                      <LazyLink
+                        class="delete-file"
+                        onClick={() => removeFile(file.path)}
+                      >
+                        <AiOutlineCloseCircle />
                       </LazyLink>,
                     ]}
                   />
@@ -146,7 +156,7 @@ const Send = (props: SendProps) => {
       {isEmpty() || qrcode()
         ? suspense(
           <LazyFloatButton
-            icon={<TbHome />}
+            icon={<AiOutlineHome />}
             onClick={props.toHome}
             tooltip="回到主页"
             bottom={qrcode() ? 20 : 60}
@@ -157,12 +167,12 @@ const Send = (props: SendProps) => {
             bottom={60}
             options={[
               {
-                icon: <TbTrash />,
+                icon: <AiOutlineClear />,
                 onClick: () => setFiles([]),
                 tooltip: "清空文件",
               },
               {
-                icon: <TbHome />,
+                icon: <AiOutlineHome />,
                 onClick: props.toHome,
                 tooltip: "回到主页",
               },
