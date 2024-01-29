@@ -38,9 +38,9 @@ import {
   BsMarkdown,
   BsWindows,
 } from "solid-icons/bs";
-import { FaBrandsAppStore } from "solid-icons/fa";
+import { FaBrandsAppStore, FaBrandsLinux } from "solid-icons/fa";
 import { ImFileVideo } from "solid-icons/im";
-import { SiLua, SiRust, SiToml } from "solid-icons/si";
+import { SiDebian, SiLua, SiOpenwrt, SiRust, SiToml } from "solid-icons/si";
 import { TbBrandCSharp } from "solid-icons/tb";
 
 const FileTypeIcon = (ext: string) => {
@@ -63,6 +63,7 @@ const FileTypeIcon = (ext: string) => {
       return <BsFiletypeSvg />;
     case "WEBP":
     case "AVIF":
+    case "ICNS":
       return <BsFileImage />;
     case "PDF":
       return <BsFilePdf />;
@@ -95,6 +96,12 @@ const FileTypeIcon = (ext: string) => {
       return <BsWindows />;
     case "APK":
       return <BsAndroid2 />;
+    case "APPIMAGE":
+      return <FaBrandsLinux />;
+    case "DEB":
+      return <SiDebian />;
+    case "IPK":
+      return <SiOpenwrt />;
     case "PY":
       return <BiLogosPython />;
     case "JS":

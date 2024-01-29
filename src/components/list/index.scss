@@ -29,7 +29,8 @@
       &-avatar {
         --width: 36px;
         --height: var(--width);
-        background-color: #b8b8b8;
+        min-width: var(--width);
+        background-color: var(--color-avatar-backgroud);
         width: var(--width);
         height: var(--height);
         border-radius: 50%;
@@ -37,7 +38,7 @@
         justify-content: center;
         align-items: center;
         font-size: 18px;
-        color: #fff;
+        color: var(--color-avatar);
         margin-left: 5px;
       }
 

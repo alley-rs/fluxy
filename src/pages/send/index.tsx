@@ -29,6 +29,7 @@ import {
 import List from "~/components/list";
 import Flex from "~/components/flex";
 import { addClassNames } from "~/components/utils";
+import { open } from "@tauri-apps/api/shell";
 
 interface SendProps {
   toHome: () => void;
@@ -123,7 +124,11 @@ const Send = (props: SendProps) => {
                 renderItem={(file) => (
                   <List.Item
                     avatar={LazyFileTypeIcon(file.extension)}
-                    title={file.name}
+                    title={
+                      <LazyLink onClick={() => open(file.path)}>
+                        {file.name}
+                      </LazyLink>
+                    }
                     description={
                       <>
                         <span>大小: {file.size}</span>
