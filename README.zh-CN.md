@@ -16,14 +16,12 @@
 
 - 体积小
 
-  | 平台及格式                              | 体积（v0.1.0-alpha.10） |
+  | 平台及格式                              | 体积（v0.1.0-alpha.11） |
   | --------------------------------------- | ----------------------- |
   | macOS aarch64 - dmg                     | 3.83 MB                 |
-  | Linux(Debian/Ubuntu/Deepin) amd64 - deb | 5.63 MB                 |
-  | Windows amd64 - msi                     | 3.63 MB                 |
-  | Windows amd64 - exe                     | 3.1 MB                  |
-
-- 页面丑（缺少设计天份）
+  | Linux(Debian/Ubuntu/Deepin) amd64 - deb | 5.64 MB                 |
+  | Windows amd64 - msi                     | 3.65 MB                 |
+  | Windows amd64 - exe                     | 3.11 MB                 |
 
 ## 使用
 
@@ -41,7 +39,7 @@
 
 | PC 端扫描前                                 | 手机端                                         | PC 端扫描后                                   | 手机上传                                      | PC端接收                                  |
 | ------------------------------------------- | ---------------------------------------------- | --------------------------------------------- | --------------------------------------------- | ----------------------------------------- |
-| ![output](./docs/images/receive-qrcode.png) | ![output](./docs/images/mobile-send-index.jpg) | ![output](./docs/images/pc-receive-empty.png) | ![output](./docs/images/mobile-uploading.png) | ![output](./docs/images/pc-receiving.png) |
+| ![output](./docs/images/receive-qrcode.png) | ![output](./docs/images/mobile-send-index.png) | ![output](./docs/images/pc-receive-empty.png) | ![output](./docs/images/mobile-uploading.png) | ![output](./docs/images/pc-receiving.png) |
 
 所有平台的 PC 端接收到的文件默认保存路径均为`~/Downloads/alley`，你可以自行修改保存目录。
 
@@ -55,4 +53,4 @@ _受限于手机操作系统的限制，手机浏览器无法实现批量下载�
 
 | PC 端待选文件                               | PC 端待发文件列表                     | PC 端发送二维码                          | 手机端接收页                                      |
 | ------------------------------------------- | ------------------------------------- | ---------------------------------------- | ------------------------------------------------- |
-| ![output](./docs/images/wait-selecting.png) | ![output](./docs/images/selected.png) | ![output](./docs/images/send-qrcode.png) | ![output](./docs/images/mobile-download-list.jpg) |
+| ![output](./docs/images/wait-selecting.png) | ![output](./docs/images/selected.png) | ![output](./docs/images/send-qrcode.png) | ![output](./docs/images/mobile-download-list.png) |
