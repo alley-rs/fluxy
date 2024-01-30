@@ -87,3 +87,24 @@ jobs:
           rename: ${{ matrix.platform == 'windows-latest' && env.RENAME_RULE || '' }}
           prerelease: ${{ contains(env.BUILD_VERSION, 'alpha') }}
           args: ${{ format('-t {0}', matrix.platform == 'macos-latest' && 'aarch64-apple-darwin' || matrix.platform == 'windows-latest' && 'x86_64-pc-windows-msvc' || 'x86_64-unknown-linux-gnu') }}
+
+  # update:
+  #   needs: publish-tauri
+  #   runs-on: ubuntu-22
+  #
+  #   steps:
+  #     - uses: actions/checkout@v1
+  #     - name: Run a one-line script
+  #       run: python ./.github/workflows/todo_List.py
+  #     - name: switching from HTTPS to SSH
+  #       run: git remote set-url origin ${{ secrets.ssh }}
+  #     - name: check for changes
+  #       run: git status
+  #     - name: stage changed files
+  #       run: git add .
+  #     - name: commit changed files
+  #       run: git commit -m "Auto updating TODO.txt"
+  #     - name: fetch from master
+  #       run: git fetch origin master
+  #     - name: push code to master
+  #       run: git push origin HEAD:master

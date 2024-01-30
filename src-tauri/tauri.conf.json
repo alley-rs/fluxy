@@ -45,7 +45,7 @@
     "updater": {
       "active": true,
       "endpoints": [
-        "https://github.com/thep0y/alley/raw/release/latest.json"
+        "https://github.com/thep0y/alley/releases/latest/download/latest.json"
       ],
       "dialog": true,
       "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDcxQTQ5NDZBNUIyMEVDRTUKUldUbDdDQmJhcFNrY2RYSkpGNUt0U3cvdEozMXJoN2pXeEFBcUQ4YmZMTi9MS2E2YjNQT1pSbTgK"
