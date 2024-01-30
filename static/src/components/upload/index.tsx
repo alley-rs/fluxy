@@ -1,4 +1,4 @@
-import { JSX, createEffect, createSignal } from "solid-js";
+import { JSX, createEffect, createSignal, createUniqueId } from "solid-js";
 import { createStore } from "solid-js/store";
 import { getFileItemIndex } from "./util";
 import request from "./request";
@@ -53,7 +53,7 @@ const Upload = ({ action, headers, withCredentials, method }: UploadProps) => {
 
     const fileItems: FileListItem[] = [];
     for (const file of files) {
-      fileItems.push({ file });
+      fileItems.push({ file, id: createUniqueId() });
     }
 
     fileItems.forEach((f) => send(f));
@@ -74,13 +74,15 @@ const Upload = ({ action, headers, withCredentials, method }: UploadProps) => {
 
   const send = (fileItem: FileListItem) => {
     const option: UploadRequestOption = {
+      id: fileItem.id,
       action,
       file: fileItem.file,
       method: method || "POST",
       headers,
       withCredentials,
       onProgress,
-      onError: function(): void {
+      onError: function(e): void {
+        console.log(e);
         // todo: 反馈上传错误
       },
       onSuccess: () => {
@@ -126,10 +128,18 @@ const Upload = ({ action, headers, withCredentials, method }: UploadProps) => {
             dataSource={fileItems}
             renderItem={(item, index) => (
               <FileItem
-                index={index}
+                index={index()}
                 file={item.file}
                 percent={item.percent}
                 speed={item.speed}
+                abort={() => {
+                  // 中断请求
+                  requestTasks()
+                    .find((t) => t.id === item.id)
+                    ?.xhr.abort();
+                  // 删除文件
+                  setFileItems((pre) => pre.filter((i) => i.id !== item.id));
+                }}
               />
             )}
           />
@@ -143,7 +153,11 @@ const Upload = ({ action, headers, withCredentials, method }: UploadProps) => {
         onChange={onChange}
       />
 
-      <Button block class="submit-button">
+      <Button
+        block
+        class="submit-button"
+        disabled={fileItems.findIndex((f) => f.speed !== undefined) >= 0}
+      >
         选择文件
       </Button>
     </div>

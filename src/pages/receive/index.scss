@@ -1,17 +1,23 @@
-.header {
+.receive-header {
   margin-top: 10px;
   width: 100vw;
 
-  .directory-button-label {
-    display: flex;
+  &-label {
+    display: flex !important;
     justify-content: right;
     align-items: center;
+
+    span {
+      font-size: 0.8rem;
+      color: var(--color-weak);
+      font-weight: bold;
+    }
   }
 
-  .directory-entry {
+  &-directory-entry {
     max-width: 100%;
     padding-left: 0;
-    display: flex;
+    display: flex !important;
     justify-content: start;
     align-items: center;
     cursor: pointer;

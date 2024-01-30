@@ -26,7 +26,7 @@ const upload = (
 ) => {
   const xhr = new XMLHttpRequest();
 
-  const task: RequestTask = { xhr, data: option.file };
+  const task: RequestTask = { id: option.id, xhr, data: option.file };
 
   if (option.onProgress && xhr.upload) {
     xhr.upload.onprogress = function progress(e: UploadProgressEvent) {
@@ -42,6 +42,10 @@ const upload = (
       option.onProgress(e, option.file);
     };
   }
+
+  xhr.onabort = () => {
+    task.done!();
+  };
 
   xhr.onerror = function error(e) {
     option.onError(e);

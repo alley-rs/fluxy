@@ -48,7 +48,10 @@ enum ServerError {
 }
 
 impl ServerError {
-    fn new<'a, O: Into<Option<&'a str>>>(error: O, advice: O) -> Self {
+    fn new<'a, O1: Into<Option<&'a str>>, O2: Into<Option<&'a str>>>(
+        error: O1,
+        advice: O2,
+    ) -> Self {
         let msg: Option<&str> = error.into();
         let advice: Option<&str> = advice.into();
         let advice = match advice {
@@ -88,16 +91,25 @@ struct Task<'a> {
     percent: f64,
     speed: f64, // MB/s
     size: &'a str,
+    aborted: bool,
 }
 
 impl<'a> Task<'a> {
-    fn new(path: &'a Path, name: &'a str, size: &'a str, percent: f64, speed: f64) -> Self {
+    fn new(
+        path: &'a Path,
+        name: &'a str,
+        size: &'a str,
+        percent: f64,
+        speed: f64,
+        aborted: bool,
+    ) -> Self {
         Self {
             path,
             name,
             percent,
             speed,
             size,
+            aborted,
         }
     }
 }
@@ -299,6 +311,8 @@ async fn upload(req: &mut Request) -> Result<()> {
         body,
         Box::new({
             let name = name.clone();
+            let formatted_size = formatted_size.clone();
+            let path = path.clone();
             move |cost, progress| {
                 let percent = (progress * 1000 / size) as f64 / 10.0;
 
@@ -313,7 +327,7 @@ async fn upload(req: &mut Request) -> Result<()> {
                 if let Some(w) = MAIN_WINDOW.get() {
                     let _ = w.emit(
                         UPLOAD_EVENT,
-                        Task::new(&path, &name, &formatted_size, percent, speed),
+                        Task::new(&path, &name, &formatted_size, percent, speed, false),
                     );
                 }
             }
@@ -332,6 +346,13 @@ async fn upload(req: &mut Request) -> Result<()> {
     if let Err(e) = tokio::io::copy(&mut stream_reader, &mut file).await {
         error!("复制文件流时出错: path={:?} error={}", file_path, e);
 
+        if let Some(w) = MAIN_WINDOW.get() {
+            let _ = w.emit(
+                UPLOAD_EVENT,
+                Task::new(&path, &name, &formatted_size, 0., 0., true),
+            );
+        }
+
         // 上传未完成时删除本地未完成的文件
         fs::remove_file(&file_path).await.map_err(|e| {
             error!("删除未完成文件时出错: path={:?} error={}", file_path, e);
@@ -339,6 +360,8 @@ async fn upload(req: &mut Request) -> Result<()> {
         })?;
 
         info!("已删除未完成文件: {:?}", file_path);
+
+        return Err(ServerError::new("请求中断", None));
     }
 
     let end = Instant::now();

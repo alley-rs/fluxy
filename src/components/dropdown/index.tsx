@@ -15,7 +15,6 @@ const Dropdown = (props: DropdownProps) => {
   const [isOpen, setOpen] = createSignal(props.open);
 
   createEffect(() => {
-    console.log(props.open);
     if (props.open !== undefined) setOpen(props.open);
   });
 

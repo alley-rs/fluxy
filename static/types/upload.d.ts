@@ -1,4 +1,5 @@
 interface FileListItem {
+  id: string;
   file: File;
   speed?: number;
   percent?: number;

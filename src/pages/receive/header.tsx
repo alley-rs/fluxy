@@ -6,6 +6,8 @@ import type { MenuItemProps } from "~/components/dropdown";
 import Loading from "~/components/loading";
 import { LazyCol, LazyDropdown, LazyLink, LazyRow } from "~/lazy";
 
+const baseClassName = "receive-header";
+
 const Header = () => {
   const [downloadDir, setDownloadDir] = createSignal<string | undefined>(
     undefined,
@@ -48,19 +50,19 @@ const Header = () => {
   if (!downloadDir) return <Loading />;
 
   return (
-    <LazyRow class="header">
-      <LazyCol span={5} class="directory-button-label">
-        <span style={{ "font-size": "0.8rem" }}>保存目录：</span>
+    <LazyRow class={baseClassName}>
+      <LazyCol span={5} class={`${baseClassName}-label`}>
+        <span>保存目录：</span>
       </LazyCol>
 
-      <LazyCol span={14} class="directory-entry">
+      <LazyCol span={14} class={`${baseClassName}-directory-entry`}>
         <LazyDropdown open={openDropDown()} menu={dropdownItems}>
           <LazyLink
             onClick={async () => {
               setOpenDropDown(false);
               open(downloadDir()!);
             }}
-          // style={{ "text-overflow": "ellipsis" }}
+            // style={{ "text-overflow": "ellipsis" }}
           >
             {downloadDir()!}
           </LazyLink>

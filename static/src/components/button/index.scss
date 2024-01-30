@@ -12,4 +12,10 @@
   display: flex;
   justify-content: center;
   align-items: center;
+
+  &-disabled {
+    cursor: not-allowed;
+    color: var(--color-button-disabled-text);
+    background-color: var(--color-button-disabled-background);
+  }
 }

@@ -1,3 +1,4 @@
+import { BsStopCircle } from "solid-icons/bs";
 import { AiFillCheckCircle } from "solid-icons/ai";
 import fileType from "~/pages/receive/fileType";
 import formatFileSize from "./fileSize";
@@ -19,6 +20,7 @@ interface FileItemProps {
   file: File;
   speed?: number;
   percent?: number;
+  abort?: () => void;
 }
 
 const FileItem = (props: FileItemProps) => {
@@ -40,7 +42,18 @@ const FileItem = (props: FileItemProps) => {
       }
       extra={
         props.speed ? (
-          <span class="speed">{props.speed.toFixed(1)} MB/s</span>
+          <Space
+            class="uploading"
+            direction="vertical"
+            justify="center"
+            align="center"
+            gap={4}
+          >
+            <span class="abort" onClick={props.abort}>
+              <BsStopCircle />
+            </span>
+            <span class="speed">{props.speed.toFixed(1)} MB/s</span>
+          </Space>
         ) : props.percent === undefined ? (
           <span class="waiting">
             <DotLoading />
