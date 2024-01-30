@@ -42,8 +42,8 @@ const Col = (props: ColProps) => {
   const className = () =>
     addClassNames(
       baseClassName,
-      props.class || "",
       props.span ? `${baseClassName}-${props.span}` : "",
+      props.class || "",
     );
 
   const style: () => CSSProperties = () =>
