@@ -1,9 +1,10 @@
 #upload {
-  flex-grow: 10;
+  flex: 18;
   flex-direction: column;
   padding: 0 10px 10px 10px;
   width: calc(100vw - 20px);
   display: flex;
+  overflow-y: auto;
 
   .upload-file-list {
     height: 80%;
@@ -28,15 +29,6 @@
       .abort {
         color: var(--color-danger);
         font-size: var(--font-size-10);
-      }
-    }
-
-    .list {
-      width: inherit;
-      padding: 0 5px;
-
-      &-item {
-        position: relative;
       }
     }
   }

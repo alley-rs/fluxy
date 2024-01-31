@@ -25,9 +25,9 @@ import {
   LazyFloatButtonGroup,
   LazyLink,
   LazyList,
+  LazyListItem,
+  LazyQrcode,
 } from "~/lazy";
-import List from "~/components/list";
-import Flex from "~/components/flex";
 import { addClassNames } from "~/components/utils";
 import { open } from "@tauri-apps/api/shell";
 
@@ -88,20 +88,7 @@ const Send = (props: SendProps) => {
 
   return (
     <>
-      <Show
-        when={!qrcode()}
-        fallback={
-          <Flex
-            class="send"
-            align="center"
-            justify="center"
-            direction="vertical"
-          >
-            <h2>扫码连接</h2>
-            <div innerHTML={qrcode()!.svg} />
-          </Flex>
-        }
-      >
+      <Show when={!qrcode()} fallback={<LazyQrcode qrcode={qrcode()!} />}>
         <LazyFlex
           class="send"
           align="center"
@@ -122,7 +109,7 @@ const Send = (props: SendProps) => {
               <LazyList
                 dataSource={files()}
                 renderItem={(file) => (
-                  <List.Item
+                  <LazyListItem
                     avatar={LazyFileTypeIcon(file.extension)}
                     title={
                       <LazyLink onClick={() => open(file.path)}>

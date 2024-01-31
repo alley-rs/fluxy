@@ -1,12 +1,19 @@
 import { createSignal, onCleanup, createEffect } from "solid-js";
+import { addClassNames } from "../utils";
+import "./index.scss";
 
 interface ToastProps {
+  class?: string;
   duration?: number;
   message: string;
 }
 
+const baseClassName = "toast";
+
 const Toast = (props: ToastProps) => {
   const [visible, setVisible] = createSignal(true);
+
+  const classNames = () => addClassNames(baseClassName, props.class);
 
   createEffect(() => {
     const timeout = setTimeout(() => {
@@ -20,15 +27,8 @@ const Toast = (props: ToastProps) => {
 
   return (
     <div
+      class={classNames()}
       style={{
-        position: "absolute",
-        top: "50%",
-        left: "50%",
-        transform: "translate(-50%, -50%)",
-        padding: "10px",
-        background: "#333",
-        color: "#fff",
-        "border-radius": "5px",
         display: visible() ? "block" : "none",
       }}
     >

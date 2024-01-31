@@ -16,6 +16,7 @@ import {
   BsFiletypeCss,
   BsFiletypeDoc,
   BsFiletypeDocx,
+  BsFiletypeExe,
   BsFiletypeGif,
   BsFiletypeHtml,
   BsFiletypeJava,
@@ -92,6 +93,7 @@ const FileTypeIcon = (ext: string) => {
     case "IPA":
       return <FaBrandsAppStore />;
     case "EXE":
+      return <BsFiletypeExe />;
     case "MSI":
       return <BsWindows />;
     case "APK":

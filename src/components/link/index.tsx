@@ -1,5 +1,6 @@
 import type { JSXElement } from "solid-js";
 import "./index.scss";
+import { addClassNames } from "../utils";
 
 const baseClassName = "link";
 
@@ -14,6 +15,7 @@ interface ButtonLinkProps {
 interface BaseLinkProps {
   class?: string;
   children: JSXElement;
+  wrap?: boolean;
 }
 
 type LinkProps =
@@ -21,9 +23,16 @@ type LinkProps =
   | (BaseLinkProps & ButtonLinkProps);
 
 const Link = (props: LinkProps) => {
+  const classNames = () =>
+    addClassNames(
+      baseClassName,
+      props.wrap && `${baseClassName}-wrap`,
+      props.class,
+    );
+
   return (
     <a
-      class={props.class ? `${baseClassName} ${props.class}` : baseClassName}
+      class={classNames()}
       href={"href" in props ? props.href : undefined}
       onClick={"onClick" in props ? props.onClick : undefined}
     >

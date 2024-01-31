@@ -1,6 +1,6 @@
-import { For, Show, type JSXElement } from "solid-js";
-import "./index.scss";
+import { Show, type JSXElement } from "solid-js";
 import { addClassNames } from "../utils";
+import "./index.scss";
 
 interface ListItemProps {
   class?: string;
@@ -12,7 +12,7 @@ interface ListItemProps {
 }
 
 const ListItem = (props: ListItemProps) => {
-  const classPrefix = "list-items-item";
+  const classPrefix = "list-item";
   const classNames = () => addClassNames(classPrefix, props.class);
 
   return (
@@ -41,33 +41,4 @@ const ListItem = (props: ListItemProps) => {
   );
 };
 
-interface ListProps<T> {
-  header?: JSXElement;
-  class?: string;
-  dataSource: T[];
-  renderItem: (item: T, index: () => number) => JSXElement;
-}
-
-const baseClassName = "list";
-
-const List = <T extends object>(props: ListProps<T>) => {
-  const classNames = () => addClassNames(baseClassName, props.class);
-
-  return (
-    <div class={classNames()}>
-      <Show when={props.header}>
-        <div class={`${baseClassName}-header`}>{props.header}</div>
-      </Show>
-
-      <ul class={`${baseClassName}-items`}>
-        <For each={props.dataSource}>
-          {(item, index) => props.renderItem(item, index)}
-        </For>
-      </ul>
-    </div>
-  );
-};
-
-List.Item = ListItem;
-
-export default List;
+export default ListItem;

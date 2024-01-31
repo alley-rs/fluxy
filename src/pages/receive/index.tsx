@@ -14,10 +14,10 @@ import "./index.scss";
 import { suspense } from "~/advance";
 import {
   LazyReceiveHeader,
-  LazyReceiveQrCode,
   LazyFloatButton,
   LazyFlex,
   LazyEmpty,
+  LazyQrcode,
 } from "~/lazy";
 import { TbHome } from "solid-icons/tb";
 
@@ -103,16 +103,9 @@ const Receive = ({ toHome }: ReceiveProps) => {
   return (
     <Switch>
       <Match when={qrcode() !== null}>
-        <LazyFlex
-          class="send"
-          align="center"
-          justify="center"
-          direction="vertical"
-        >
-          {suspense(<LazyReceiveQrCode qrcode={qrcode()!} />)}
+        <LazyQrcode qrcode={qrcode()!} />
 
-          {homeButton()}
-        </LazyFlex>
+        {homeButton()}
       </Match>
       <Match when={taskList().empty() && !fileList().length}>
         <LazyFlex

@@ -1,11 +1,15 @@
 .link {
   color: var(--color-text);
   cursor: pointer;
-  font-family: monospace;
+  font-family: var(--font-monospace);
   text-decoration: underline;
 
   &:hover {
     color: var(--color-primary);
     text-decoration: none;
+  }
+
+  &-wrap {
+    word-break: break-all;
   }
 }

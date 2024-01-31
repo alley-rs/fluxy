@@ -27,7 +27,7 @@ const Receive = () => {
   const [data] = createResource(fetchData);
 
   return (
-    <div class="container">
+    <div class="container" id="receive">
       <div class="header">接收文件</div>
 
       <Switch>
@@ -44,6 +44,7 @@ const Receive = () => {
               status="error"
               title={(data()! as BadRequest).error}
               description={(data()! as BadRequest).advice ?? undefined}
+              fullScreen
             />
           </div>
         </Match>

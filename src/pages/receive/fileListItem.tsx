@@ -1,8 +1,7 @@
 import { open } from "@tauri-apps/api/shell";
 import { AiFillCheckCircle } from "solid-icons/ai";
 import fileType from "./fileType";
-import List from "~/components/list";
-import { LazyLink, LazyProgress, LazySpace } from "~/lazy";
+import { LazyLink, LazyListItem, LazyProgress, LazySpace } from "~/lazy";
 
 interface FileListItemProps {
   index?: number;
@@ -17,7 +16,7 @@ const FileListItem = (props: FileListItemProps) => {
   const extension = getExtension(props.name);
 
   return (
-    <List.Item
+    <LazyListItem
       class="receive-file-list-item"
       title={
         <span class="filename">

@@ -20,10 +20,13 @@
   --color-status-error: #000;
 
   --color-button-text: #fff;
-  --color-button-disabled-background: #353991;
-  --color-button-disabled-text: var(--color-light);
+  --color-button-disabled-background: #bdc0ff;
+  --color-button-disabled-text: #eee;
 
   --color-progress-text: var(--color-button-text);
+
+  --color-scrollbar: rgba(0, 0, 0, 0.1);
+  --color-scrollbar-hover: rgba(0, 0, 0, 0.4);
 
   --font-size-1: 9px;
   --font-size-2: 10px;
@@ -47,6 +50,19 @@
 
   --border-radius: 5px;
 
+  --z-index-level-0: 0;
+  --z-index-level-1: 4;
+  --z-index-level-2: 8;
+  --z-index-level-3: 12;
+  --z-index-level-4: 16;
+  --z-index-level-5: 20;
+  --z-index-level-6: 24;
+  --z-index-level-7: 28;
+  --z-index-level-8: 32;
+  --z-index-level-9: 36;
+  --z-index-level-top: var(--z-index-level-9);
+  --z-index-level-bottom: var(--z-index-level-0);
+
   font-family: var(--font-family);
 
   color-scheme: light dark;
@@ -67,11 +83,11 @@
 
 ::-webkit-scrollbar-thumb {
   border-radius: 10px;
-  background: rgba(0, 0, 0, 0.1);
+  background: var(--color-scrollbar);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(0, 0, 0, 0.3);
+  background: var(--color-scrollbar-hover);
 }
 
 ::-webkit-scrollbar-track {
@@ -86,4 +102,7 @@
   --color-button-disabled-background: #2c307e;
   --color-button-disabled-text: #3e3e3e;
   --color-progress-text: var(--color-button-text);
+
+  --color-scrollbar: rgba(255, 255, 255, 0.1);
+  --color-scrollbar-hover: rgba(255, 255, 255, 0.2);
 }
