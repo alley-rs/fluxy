@@ -22,7 +22,7 @@
     align-items: center;
     cursor: pointer;
 
-    > div {
+    >div {
       display: flex;
     }
 
@@ -32,10 +32,6 @@
       white-space: normal;
     }
   }
-}
-
-.qr-code {
-  margin: 10px 0;
 }
 
 .receive-file-list {
@@ -96,10 +92,4 @@
       font-size: var(--font-size-8);
     }
   }
-}
-
-.send-link {
-  white-space: normal;
-  word-wrap: normal;
-  padding: 4px;
 }
