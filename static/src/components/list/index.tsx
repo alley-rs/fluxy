@@ -12,7 +12,7 @@ interface ListItemProps {
 }
 
 const ListItem = (props: ListItemProps) => {
-  const classPrefix = "list-item";
+  const classPrefix = "list-items-item";
   const classNames = () => addClassNames(classPrefix, props.class);
 
   return (
@@ -59,7 +59,7 @@ const List = <T extends object>(props: ListProps<T>) => {
         <div class={`${baseClassName}-header`}>{props.header}</div>
       </Show>
 
-      <ul>
+      <ul class={`${baseClassName}-items`}>
         <For each={props.dataSource}>
           {(item, index) => props.renderItem(item, index)}
         </For>
