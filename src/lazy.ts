@@ -9,6 +9,7 @@ export const LazyLink = lazy(() => import("~/components/link"));
 export const LazyFlex = lazy(() => import("~/components/flex"));
 export const LazyEmpty = lazy(() => import("~/components/empty"));
 export const LazyList = lazy(() => import("~/components/list"));
+export const LazyListItem = lazy(() => import("~/components/list/item"));
 export const LazyFileTypeIcon = lazy(
   () => import("~/components/file-type-icon"),
 );

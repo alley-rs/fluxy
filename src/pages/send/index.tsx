@@ -25,9 +25,9 @@ import {
   LazyFloatButtonGroup,
   LazyLink,
   LazyList,
+  LazyListItem,
   LazyQrcode,
 } from "~/lazy";
-import List from "~/components/list";
 import { addClassNames } from "~/components/utils";
 import { open } from "@tauri-apps/api/shell";
 
@@ -109,7 +109,7 @@ const Send = (props: SendProps) => {
               <LazyList
                 dataSource={files()}
                 renderItem={(file) => (
-                  <List.Item
+                  <LazyListItem
                     avatar={LazyFileTypeIcon(file.extension)}
                     title={
                       <LazyLink onClick={() => open(file.path)}>
