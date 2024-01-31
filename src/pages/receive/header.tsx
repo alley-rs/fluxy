@@ -62,7 +62,8 @@ const Header = () => {
               setOpenDropDown(false);
               open(downloadDir()!);
             }}
-            // style={{ "text-overflow": "ellipsis" }}
+            wrap
+          // style={{ "text-overflow": "ellipsis" }}
           >
             {downloadDir()!}
           </LazyLink>
