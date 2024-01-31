@@ -2,6 +2,7 @@
   color: var(--color-text);
   cursor: pointer;
   font-family: var(--font-monospace);
+  text-decoration: underline;
 
   &:hover {
     color: var(--color-primary);
