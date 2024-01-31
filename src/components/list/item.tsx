@@ -1,5 +1,6 @@
 import { Show, type JSXElement } from "solid-js";
 import { addClassNames } from "../utils";
+import "./index.scss";
 
 interface ListItemProps {
   class?: string;
