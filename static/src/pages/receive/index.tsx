@@ -44,6 +44,7 @@ const Receive = () => {
               status="error"
               title={(data()! as BadRequest).error}
               description={(data()! as BadRequest).advice ?? undefined}
+              fullScreen
             />
           </div>
         </Match>

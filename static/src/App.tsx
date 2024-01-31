@@ -58,11 +58,12 @@ const App = () => {
 
       <Switch>
         <Match when={!mode}>
-          <div class="container result">
+          <div class="container">
             <Result
               status="error"
               title="无效的请求"
               description="缺少查询参数: mode"
+              fullScreen
             />
           </div>
         </Match>

@@ -13,13 +13,19 @@ interface ResultProps {
   status: "info" | "error" | "success";
   title: string;
   description?: string;
+  fullScreen?: boolean;
 }
 
 const baseClassName = "result";
 
 const Result = (props: ResultProps) => {
   const classNames = () =>
-    addClassNames(baseClassName, `${baseClassName}-${props.status}`);
+    addClassNames(
+      baseClassName,
+      `${baseClassName}-${props.status}`,
+      props.fullScreen && `${baseClassName}-full-screen`,
+      props.class,
+    );
 
   return (
     <div class={classNames()}>

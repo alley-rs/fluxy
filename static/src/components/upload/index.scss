@@ -1,15 +1,16 @@
 #upload {
-  flex-grow: 10;
+  flex: 18;
   flex-direction: column;
   padding: 0 10px 10px 10px;
   width: calc(100vw - 20px);
   display: flex;
+  overflow-y: overlay;
 
   .upload-file-list {
     height: 80%;
     border-radius: 5px;
     flex-grow: 14;
-    overflow-y: auto;
+    overflow-y: overlay;
 
     .waiting,
     .done {

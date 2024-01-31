@@ -27,6 +27,22 @@ $base: ".result";
     line-height: 1.4;
     text-align: center;
   }
+
+  &-full-screen {
+    padding: 0;
+    margin: 0;
+    // background-color: red;
+    z-index: 1;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
 }
 
 #{$base}-error {
