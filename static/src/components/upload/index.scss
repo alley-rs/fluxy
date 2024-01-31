@@ -4,13 +4,13 @@
   padding: 0 10px 10px 10px;
   width: calc(100vw - 20px);
   display: flex;
-  overflow-y: overlay;
+  overflow-y: auto;
 
   .upload-file-list {
     height: 80%;
     border-radius: 5px;
     flex-grow: 14;
-    overflow-y: overlay;
+    overflow-y: auto;
 
     .waiting,
     .done {
@@ -29,14 +29,6 @@
       .abort {
         color: var(--color-danger);
         font-size: var(--font-size-10);
-      }
-    }
-
-    .list {
-      width: inherit;
-
-      &-item {
-        position: relative;
       }
     }
   }

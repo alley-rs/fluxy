@@ -81,7 +81,7 @@ const Upload = ({ action, headers, withCredentials, method }: UploadProps) => {
       headers,
       withCredentials,
       onProgress,
-      onError: function(e): void {
+      onError: function (e): void {
         console.log(e);
         // todo: 反馈上传错误
       },
@@ -125,6 +125,7 @@ const Upload = ({ action, headers, withCredentials, method }: UploadProps) => {
           </div>
         ) : (
           <List
+            header="未完成的任务可点击右侧红色按钮中断"
             dataSource={fileItems}
             renderItem={(item, index) => (
               <FileItem
