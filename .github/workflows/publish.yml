@@ -102,7 +102,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAURI_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
           TAURI_KEY_PASSWORD: ${{ secrets.TAURI_KEY_PASSWORD }}
-          RENAME_RULE: '{"searchValue": "${{ needs.create-release.outputs.package_version }}", "replaceValue": "${{ env.BUILD_VERSION }}"}'
+          RENAME_RULE: '{"searchValue": "${{ env.BUILD_VERSION }}", "replaceValue": "${{ needs.create-release.outputs.package_version }}"}'
         with:
           releaseId: ${{ needs.create-release.outputs.release_id }}
           rename: ${{ matrix.platform == 'windows-latest' && env.RENAME_RULE || '' }}
