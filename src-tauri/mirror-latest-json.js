@@ -1,7 +1,7 @@
 import fs from "fs";
 import path from "path";
 
-const run = async ({ release_id, context }) => {
+const run = async () => {
   const text = process.env.TEXT;
   const mirror = text.replaceAll(
     "https://github.com/",
@@ -14,7 +14,7 @@ const run = async ({ release_id, context }) => {
 
   console.log("mirror latest json path: ", filepath);
 
-  fs.writeFileSync(path.join(dir, versionFilename), mirror);
+  fs.writeFileSync(filepath, mirror);
 };
 
 run();
