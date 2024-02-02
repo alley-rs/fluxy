@@ -47,8 +47,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # platform: [macos-latest, ubuntu-22.04, windows-latest]
-        platform: [ubuntu-22.04]
+        platform: [macos-latest, ubuntu-22.04, windows-latest]
 
     runs-on: ${{ matrix.platform }}
     steps:
@@ -185,5 +184,5 @@ jobs:
           server: thepoy.cc
           password: ${{ secrets.TAURI_KEY_PASSWORD }}
           local_path: ./src-tauri/latest.json
-          remote_path: /home/thepoy/app/alley
+          remote_path: /home/thepoy/app/alley-transfer
           sftpArgs: "-o ConnectTimeout=5"
