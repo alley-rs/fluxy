@@ -132,6 +132,8 @@ jobs:
             })
 
   upload_mirror_json:
+    permissions:
+      contents: write
     runs-on: ubuntu-22.04
     needs: [create-release, publish-release]
     env:
