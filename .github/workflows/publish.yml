@@ -186,4 +186,4 @@ jobs:
           password: ${{ secrets.TAURI_KEY_PASSWORD }}
           port: 22
           uploads: |
-            ./latest.json => /home/thepoy/app/alley-transfer.json
+            ./src-tauri/latest.json => /home/thepoy/app/alley-transfer.json
