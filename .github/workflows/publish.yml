@@ -180,11 +180,11 @@ jobs:
           node mirror-latest-json.js
           cat latest.json
 
-      - uses: Dylan700/sftp-upload-action@latest
+      - uses: wlixcc/SFTP-Deploy-Action@v1.2.4
         with:
-          server: thepoy.cc
           username: thepoy
+          server: thepoy.cc
           password: ${{ secrets.TAURI_KEY_PASSWORD }}
-          port: 22
-          uploads: |
-            ./src-tauri/latest.json => /home/thepoy/app/alley-transfer.json
+          local_path: ./src-tauri/latest.json
+          remote_path: /home/thepoy/app/
+          sftpArgs: "-o ConnectTimeout=5"
