@@ -178,6 +178,7 @@ jobs:
         run: |
           cd src-tauri
           node mirror-latest-json.js
+          cat latest.json
 
       - uses: Dylan700/sftp-upload-action@latest
         with:

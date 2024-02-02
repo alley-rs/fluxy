@@ -14,6 +14,8 @@ const run = async () => {
 
   console.log("mirror latest json path: ", filepath);
 
+  console.log(mirror);
+
   fs.writeFileSync(filepath, mirror);
 };
 
