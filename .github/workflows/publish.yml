@@ -170,14 +170,20 @@ jobs:
               },
             );
 
-            console.log(data)
-
             return Buffer.from(data.data).toString()
 
       - name: new mirror latest.json
         env:
           TEXT: ${{ steps.get-latest.outputs.result }}
         run: |
-          ls
           cd src-tauri
           node mirror-latest-json.js
+
+      - uses: Dylan700/sftp-upload-action@latest
+        with:
+          server: thepoy.cc
+          username: thepoy
+          password: ${{ secrets.TAURI_KEY_PASSWORD }}
+          port: 22
+          uploads: |
+            ./latest.json => /home/thepoy/app/alley-transfer.json
