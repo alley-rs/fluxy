@@ -8,15 +8,13 @@ const run = async () => {
     "https://kkgithub.com/",
   );
 
+  const json = JSON.parse(mirror);
+
   const dir = process.cwd();
 
   const filepath = path.join(dir, "latest.json");
 
-  console.log("mirror latest json path: ", filepath);
-
-  console.log(mirror);
-
-  fs.writeFileSync(filepath, mirror);
+  fs.writeFileSync(filepath, JSON.stringify(json));
 };
 
 run();
