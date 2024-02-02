@@ -47,7 +47,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        platform: [macos-latest, ubuntu-22.04, windows-latest]
+        # platform: [macos-latest, ubuntu-22.04, windows-latest]
+        platform: [ubuntu-22.04]
 
     runs-on: ${{ matrix.platform }}
     steps:
@@ -146,7 +147,7 @@ jobs:
             const assets = await github.rest.repos.listReleaseAssets({
               owner: owner,
               repo: repo,
-              release_id,
+              release_id: process.env.release_id,
               per_page: 50,
             });
             const asset = assets.data.find((e) => e.name === 'latest.json');
