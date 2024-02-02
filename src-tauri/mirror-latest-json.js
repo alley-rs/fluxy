@@ -14,7 +14,7 @@ const run = async ({ release_id, context }) => {
 
   console.log("mirror latest json path: ", filepath);
 
-  fs.writeFileSync(path.join(dir, versionFilename), mirror);
+  fs.writeFileSync(filepath, mirror);
 };
 
 run();
