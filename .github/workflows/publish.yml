@@ -132,6 +132,7 @@ jobs:
 
       - name: upload latest.json to remote server
         id: mirror-latest-json
+        uses: actions/github-script@v6
         env:
           release_id: ${{ needs.create-release.outputs.release_id }}
         with:
