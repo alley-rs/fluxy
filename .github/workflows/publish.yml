@@ -176,5 +176,6 @@ jobs:
         env:
           TEXT: ${{ steps.get-latest.outputs.result }}
         run: |
+          ls
           cd src-tauri
           node mirror-latest-json.js
