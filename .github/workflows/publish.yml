@@ -130,4 +130,11 @@ jobs:
               prerelease: process.env.PACKAGE_VERSION.indexOf('alpha') >= 0,
             })
 
-      # - name: upload latest.json to remote server
+      - name: upload latest.json to remote server
+        id: mirror-latest-json
+        env:
+          release_id: ${{ needs.create-release.outputs.release_id }}
+        with:
+          script: |
+            const script = require('./.github/mirror-latest-json.js')
+            script({release_id: process.env.release_id, context})
