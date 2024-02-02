@@ -129,4 +129,4 @@ jobs:
               prerelease: process.env.PACKAGE_VERSION.indexOf('alpha') >= 0,
             })
 
-      - name: upload latest.json to remote server
+      # - name: upload latest.json to remote server
