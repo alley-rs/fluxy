@@ -16,3 +16,5 @@ const run = async ({ release_id, context }) => {
 
   fs.writeFileSync(path.join(dir, versionFilename), mirror);
 };
+
+run();
