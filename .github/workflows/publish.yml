@@ -101,7 +101,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAURI_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
           TAURI_KEY_PASSWORD: ${{ secrets.TAURI_KEY_PASSWORD }}
-          RENAME_RULE: '{"searchValue": "${{ env.PACKAGE_VERSION }}", "replaceValue": "${{ env.BUILD_VERSION }}"}'
+          RENAME_RULE: '{"searchValue": "${{ needs.create-release.env.PACKAGE_VERSION }}", "replaceValue": "${{ env.BUILD_VERSION }}"}'
         with:
           releaseId: ${{ needs.create-release.outputs.release_id }}
           rename: ${{ matrix.platform == 'windows-latest' && env.RENAME_RULE || '' }}
@@ -118,12 +118,15 @@ jobs:
         uses: actions/github-script@v6
         env:
           release_id: ${{ needs.create-release.outputs.release_id }}
+          PACKAGE_VERSION: ${{ needs.create-release.env.PACKAGE_VERSION }}
         with:
           script: |
             github.rest.repos.updateRelease({
               owner: context.repo.owner,
               repo: context.repo.repo,
               release_id: process.env.release_id,
-              draft: false,
-              prerelease: false
+              draft: true,
+              prerelease: process.env.PACKAGE_VERSION.indexOf('alpha') >= 0,
             })
+
+      - name: upload latest.json to remote server
