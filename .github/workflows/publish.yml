@@ -137,5 +137,6 @@ jobs:
           release_id: ${{ needs.create-release.outputs.release_id }}
         with:
           script: |
+            console.log(process.cwd())
             const script = require('./src-tauri/mirror-latest-json.js')
             script({release_id: process.env.release_id, context})
