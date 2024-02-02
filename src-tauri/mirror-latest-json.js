@@ -1,7 +1,7 @@
 import fs from "fs";
 import path from "path";
 
-const run = async ({ release_id, context }) => {
+const run = async () => {
   const text = process.env.TEXT;
   const mirror = text.replaceAll(
     "https://github.com/",
