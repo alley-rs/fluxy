@@ -1,4 +1,3 @@
-import { getOctokit } from "@actions/github";
 import fs from "fs";
 import path from "path";
 

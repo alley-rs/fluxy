@@ -140,6 +140,8 @@ jobs:
       release_id: ${{ needs.create-release.outputs.release_id }}
 
     steps:
+      - uses: actions/checkout@v4
+
       - name: get latest.json
         id: get-latest
         uses: actions/github-script@v6
