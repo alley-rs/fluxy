@@ -118,6 +118,7 @@ jobs:
         uses: actions/github-script@v6
         env:
           release_id: ${{ needs.create-release.outputs.release_id }}
+          PACKAGE_VERSION: ${{ needs.create-release.env.PACKAGE_VERSION }}
         with:
           script: |
             github.rest.repos.updateRelease({
