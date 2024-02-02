@@ -178,7 +178,6 @@ jobs:
         run: |
           cd src-tauri
           node mirror-latest-json.js
-          cat latest.json
 
       - uses: wlixcc/SFTP-Deploy-Action@v1.2.4
         with:
@@ -186,5 +185,5 @@ jobs:
           server: thepoy.cc
           password: ${{ secrets.TAURI_KEY_PASSWORD }}
           local_path: ./src-tauri/latest.json
-          remote_path: /home/thepoy/app/
+          remote_path: /home/thepoy/app/alley-transfer.json
           sftpArgs: "-o ConnectTimeout=5"
