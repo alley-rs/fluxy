@@ -30,7 +30,7 @@ use serde::Serialize;
 use server::{SendFile, DOWNLOADS_DIR, MAIN_WINDOW, QR_CODE_MAP};
 #[cfg(debug_assertions)]
 use simplelog::{ColorChoice, TermLogger, TerminalMode};
-use tauri::Manager;
+use tauri::{Manager, UpdaterEvent};
 use tokio::fs::File;
 #[cfg(not(debug_assertions))]
 use {lazy::APP_CONFIG_DIR, simplelog::WriteLogger, std::fs};
@@ -190,7 +190,7 @@ async fn main() -> AlleyResult<()> {
     tokio::spawn(server::serve());
     info!("已创建 serve 线程");
 
-    tauri::Builder::default()
+    let app = tauri::Builder::default()
         .setup(|app| {
             if let Some(w) = app.get_window("main") {
                 MAIN_WINDOW.set(w).unwrap();
@@ -205,7 +205,41 @@ async fn main() -> AlleyResult<()> {
             get_files_metadata,
             get_send_files_url_qr_code,
         ])
-        .run(tauri::generate_context!())?;
+        .build(tauri::generate_context!())?;
+
+    app.run(|_app_handle, event| match event {
+        tauri::RunEvent::Updater(e) => match e {
+            UpdaterEvent::UpdateAvailable {
+                body,
+                date,
+                version,
+            } => {
+                info!("版本有更新: {} {:?} {}", body, date, version);
+            }
+            UpdaterEvent::Pending => {
+                info!("准备下载新版本");
+            }
+            UpdaterEvent::DownloadProgress {
+                chunk_length,
+                content_length,
+            } => {
+                trace!("正在下载: {}/{:?}", chunk_length, content_length);
+            }
+            UpdaterEvent::Downloaded => {
+                info!("新版本已下载");
+            }
+            UpdaterEvent::Updated => {
+                info!("更新完成");
+            }
+            UpdaterEvent::AlreadyUpToDate => {
+                info!("当前已是最新版本");
+            }
+            UpdaterEvent::Error(error) => {
+                error!("更新失败: {}", error);
+            }
+        },
+        _ => {}
+    });
 
     Ok(())
 }
