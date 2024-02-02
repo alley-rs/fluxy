@@ -5,24 +5,60 @@ on:
       - release
 
 jobs:
-  publish-tauri:
+  create-release:
+    permissions:
+      contents: write
+    runs-on: ubuntu-22.04
+    outputs:
+      release_id: ${{ steps.create-release.outputs.result }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: get version
+        run: echo "PACKAGE_VERSION=$(node -p "require('./package.json').version")" >> $GITHUB_ENV
+
+      - name: create release
+        id: create-release
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const { data } = await github.rest.repos.createRelease({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              tag_name: `v${process.env.PACKAGE_VERSION}`,
+              name: `v${process.env.PACKAGE_VERSION}`,
+              body: 'Take a look at the assets to download and install this app.',
+              draft: true,
+              prerelease: process.env.PACKAGE_VERSION.indexOf('alpha') >= 0,
+            })
+            return data.id
+
+  build-tauri:
+    needs: create-release
     permissions:
       contents: write
     strategy:
       fail-fast: false
       matrix:
-        platform: [macos-latest, windows-latest, ubuntu-22.04]
+        platform: [macos-latest, ubuntu-22.04, windows-latest]
 
     runs-on: ${{ matrix.platform }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
+
       - name: setup node
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: 16
+          node-version: 20
+
       - uses: pnpm/action-setup@v2
-        name: Install pnpm
-        id: pnpm-install
+        name: install pnpm
         with:
           version: 8
           run_install: false
@@ -30,25 +66,9 @@ jobs:
       - name: install Rust stable
         uses: dtolnay/rust-toolchain@stable
 
-      - name: Install missing Rust target for universal Mac build
+      - name: install missing Rust target for universal Mac build
         if: matrix.platform == 'macos-latest'
         run: rustup target add aarch64-apple-darwin
-
-      - name: Get version with alpha or beta deleted on Windows
-        if: matrix.platform == 'windows-latest'
-        run: |
-          cd src-tauri
-          $version = node before-build.js
-          $package_verion = node -p "require('../package.json').version"
-          echo "BUILD_VERSION=$version" >> $Env:GITHUB_ENV
-          echo "PACKAGE_VERSION=$package_verion" >> $Env:GITHUB_ENV
-
-      - name: Get version
-        if: matrix.platform != 'windows-latest'
-        run: |
-          cd src-tauri
-          version=$(node before-build.js)
-          echo "BUILD_VERSION=$version" >> $GITHUB_ENV
 
       - name: install dependencies (ubuntu only)
         if: matrix.platform == 'ubuntu-22.04'
@@ -56,22 +76,25 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y libgtk-3-dev libwebkit2gtk-4.0-dev libappindicator3-dev librsvg2-dev patchelf
 
+      - name: get version with alpha or beta deleted on Windows
+        if: matrix.platform == 'windows-latest'
+        run: |
+          cd src-tauri
+          $version = node before-build.js
+          echo "BUILD_VERSION=$version" >> $Env:GITHUB_ENV
+
       - name: install frontend dependencies
         run: pnpm install:all
 
-      - uses: thep0y/tauri-action@v0.1.0
+      - uses: tauri-apps/tauri-action@v0
         if: matrix.platform == 'macos-latest'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAURI_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
           TAURI_KEY_PASSWORD: ${{ secrets.TAURI_KEY_PASSWORD }}
         with:
-          tagName: v__VERSION__
-          releaseName: v__VERSION__
-          releaseBody: "See the assets to download this version and install."
-          releaseDraft: true
-          prerelease: ${{ contains(env.BUILD_VERSION, 'alpha') }}
-          args: "-t x86_64-apple-darwin"
+          releaseId: ${{ needs.create-release.outputs.release_id }}
+          args: "-t aarch64-apple-darwin"
 
       - uses: thep0y/tauri-action@v0.1.0
         env:
@@ -80,31 +103,27 @@ jobs:
           TAURI_KEY_PASSWORD: ${{ secrets.TAURI_KEY_PASSWORD }}
           RENAME_RULE: '{"searchValue": "${{ env.PACKAGE_VERSION }}", "replaceValue": "${{ env.BUILD_VERSION }}"}'
         with:
-          tagName: ${{ format('v{0}',  env.BUILD_VERSION) }}
-          releaseName: ${{ format('v{0}', env.BUILD_VERSION) }}
-          releaseBody: "See the assets to download this version and install."
-          releaseDraft: true
+          releaseId: ${{ needs.create-release.outputs.release_id }}
           rename: ${{ matrix.platform == 'windows-latest' && env.RENAME_RULE || '' }}
-          prerelease: ${{ contains(env.BUILD_VERSION, 'alpha') }}
-          args: ${{ format('-t {0}', matrix.platform == 'macos-latest' && 'aarch64-apple-darwin' || matrix.platform == 'windows-latest' && 'x86_64-pc-windows-msvc' || 'x86_64-unknown-linux-gnu') }}
 
-  # update:
-  #   needs: publish-tauri
-  #   runs-on: ubuntu-22
-  #
-  #   steps:
-  #     - uses: actions/checkout@v1
-  #     - name: Run a one-line script
-  #       run: python ./.github/workflows/todo_List.py
-  #     - name: switching from HTTPS to SSH
-  #       run: git remote set-url origin ${{ secrets.ssh }}
-  #     - name: check for changes
-  #       run: git status
-  #     - name: stage changed files
-  #       run: git add .
-  #     - name: commit changed files
-  #       run: git commit -m "Auto updating TODO.txt"
-  #     - name: fetch from master
-  #       run: git fetch origin master
-  #     - name: push code to master
-  #       run: git push origin HEAD:master
+  publish-release:
+    permissions:
+      contents: write
+    runs-on: ubuntu-22.04
+    needs: [create-release, build-tauri]
+
+    steps:
+      - name: publish release
+        id: publish-release
+        uses: actions/github-script@v6
+        env:
+          release_id: ${{ needs.create-release.outputs.release_id }}
+        with:
+          script: |
+            github.rest.repos.updateRelease({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              release_id: process.env.release_id,
+              draft: false,
+              prerelease: false
+            })
