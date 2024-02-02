@@ -130,36 +130,46 @@ jobs:
               prerelease: process.env.PACKAGE_VERSION.indexOf('alpha') >= 0,
             })
 
-      - name: upload latest.json to remote server
-        id: mirror-latest-json
+  upload_mirror_json:
+    runs-on: ubuntu-22.04
+    needs: [create-release, publish-release]
+    env:
+      release_id: ${{ needs.create-release.outputs.release_id }}
+
+    steps:
+      - name: get latest.json
+        id: get-latest
         uses: actions/github-script@v6
-        env:
-          release_id: ${{ needs.create-release.outputs.release_id }}
         with:
           script: |
-            import fs from 'fs';
-            import path from 'path';
+            const { owner, repo } = context.repo;
+            const assets = await github.rest.repos.listReleaseAssets({
+              owner: owner,
+              repo: repo,
+              release_id,
+              per_page: 50,
+            });
+            const asset = assets.data.find((e) => e.name === 'latest.json');
 
-            let list = []
+            if (!asset) throw new Error("latest.json was not found in release assets");
 
-            function listFile(dir) {
-              let arr = fs.readdirSync(dir);
-              arr.forEach(item => {
-                let fullpath = path.join(dir, item)
-                let stats = fs.statSync(fullpath)
-                if (stats.isDirectory()) {
-                  listFile(fullpath)
-                } else {
-                  list.push(fullpath)
-                }
-              })
-              return list
-            }
+            const data = await github.request(
+              "GET /repos/{owner}/{repo}/releases/assets/{asset_id}",
+              {
+                owner: owner,
+                repo: repo,
+                asset_id: asset.id,
+                headers: {
+                  accept: "application/octet-stream",
+                },
+              },
+            ).data;
 
-            const dir = process.cwd()
+            return Buffer.from(data).toString()
 
-            const allFiles = listFile(dir)
-            console.log(allFiles)
-
-            const script = require('./src-tauri/mirror-latest-json.js')
-            script({release_id: process.env.release_id, context})
+      - name: new mirror latest.json
+        env:
+          TEXT: ${{ steps.get-latest.outputs.result }}
+        run: |
+          cd src-tauri
+          node mirror-latest-json.js
