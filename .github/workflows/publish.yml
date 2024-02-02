@@ -146,7 +146,7 @@ jobs:
             const assets = await github.rest.repos.listReleaseAssets({
               owner: owner,
               repo: repo,
-              release_id,
+              release_id: process.env.release_id,
               per_page: 50,
             });
             const asset = assets.data.find((e) => e.name === 'latest.json');
