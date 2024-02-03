@@ -95,7 +95,7 @@ jobs:
           TAURI_KEY_PASSWORD: ${{ secrets.TAURI_KEY_PASSWORD }}
         with:
           releaseId: ${{ needs.create-release.outputs.release_id }}
-          args: "-t aarch64-apple-darwin"
+          args: "-t aarch64-apple-darwin --no-default-features"
 
       - uses: thep0y/tauri-action@v0.1.0
         env:
@@ -106,6 +106,7 @@ jobs:
         with:
           releaseId: ${{ needs.create-release.outputs.release_id }}
           rename: ${{ matrix.platform == 'windows-latest' && env.RENAME_RULE || '' }}
+          args: "--no-default-features"
 
   publish-release:
     permissions:
