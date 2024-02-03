@@ -7,7 +7,7 @@
     justify-content: right;
     align-items: center;
 
-    span {
+    &-text {
       font-size: 0.8rem;
       color: var(--color-weak);
       font-weight: bold;

@@ -52,22 +52,26 @@ const Header = () => {
   return (
     <LazyRow class={baseClassName}>
       <LazyCol span={5} class={`${baseClassName}-label`}>
-        <span>保存目录：</span>
+        <LazyDropdown
+          open={openDropDown()}
+          menu={dropdownItems}
+          top={40}
+          left={18}
+        >
+          <span class={`${baseClassName}-label-text`}>保存目录：</span>
+        </LazyDropdown>
       </LazyCol>
 
       <LazyCol span={14} class={`${baseClassName}-directory-entry`}>
-        <LazyDropdown open={openDropDown()} menu={dropdownItems}>
-          <LazyLink
-            onClick={async () => {
-              setOpenDropDown(false);
-              open(downloadDir()!);
-            }}
-            wrap
-          // style={{ "text-overflow": "ellipsis" }}
-          >
-            {downloadDir()!}
-          </LazyLink>
-        </LazyDropdown>
+        <LazyLink
+          onClick={async () => {
+            setOpenDropDown(false);
+            open(downloadDir()!);
+          }}
+          wrap
+        >
+          {downloadDir()!}
+        </LazyLink>
       </LazyCol>
     </LazyRow>
   );
