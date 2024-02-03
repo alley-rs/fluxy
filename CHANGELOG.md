@@ -28,4 +28,4 @@
 
 #### Common
 
-- deepin 上非整数倍缩放时窗口比例异常(https://github.com/alley-rs/alley-transfer/commit/ceaaa7bec019e50aad3486c9a4054ed6223df05a)
+- deepin 上非整数倍缩放时窗口比例异常 [3df05a](https://github.com/alley-rs/alley-transfer/commit/ceaaa7bec019e50aad3486c9a4054ed6223df05a)
