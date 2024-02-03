@@ -23,3 +23,9 @@
 - 桌面端接收时显示实时进度和速度
 - 桌面端可配置接收文件的保存目录
 - 因手机操作系统权限问题, 手机端通过浏览器下载到默认目录
+
+### fix
+
+#### Common
+
+- deepin 上非整数倍缩放时窗口比例异常(https://github.com/alley-rs/alley-transfer/commit/ceaaa7bec019e50aad3486c9a4054ed6223df05a)
