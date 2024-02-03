@@ -17,13 +17,12 @@ const run = async () => {
     mirror = mirror.slice(0, mirror.length -1);
   }
 
-  const json = JSON.parse(mirror);
 
   const dir = process.cwd();
 
   const filepath = path.join(dir, "latest.json");
 
-  fs.writeFileSync(filepath, JSON.stringify(json));
+  fs.writeFileSync(filepath, mirror);
 };
 
 run();
