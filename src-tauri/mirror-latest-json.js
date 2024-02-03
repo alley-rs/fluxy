@@ -17,6 +17,8 @@ const run = async () => {
     mirror = mirror.slice(0, mirror.length -1);
   }
 
+  // 删除换行符, 多个空格合并为一个空格
+  mirror = mirror.replaceAll("\n", '').replaceAll(/\s+/g, ' ');;
 
   const dir = process.cwd();
 
