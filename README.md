@@ -16,12 +16,12 @@
 
 - 体积小
 
-  | 平台及格式                              | 体积（v0.1.0-beta） |
-  | --------------------------------------- | ------------------- |
-  | macOS aarch64 - dmg                     | 5.03 MB             |
-  | Linux(Debian/Ubuntu/Deepin) amd64 - deb | 7.23 MB             |
-  | Windows amd64 - msi                     | 4.72 MB             |
-  | Windows amd64 - exe                     | 3.85 MB             |
+  | 平台及格式                              | 体积（v0.1.0-beta.2） |
+  | --------------------------------------- | --------------------- |
+  | macOS aarch64 - dmg                     | 4.99 MB               |
+  | Linux(Debian/Ubuntu/Deepin) amd64 - deb | 7.15 MB               |
+  | Windows amd64 - msi                     | 4.71 MB               |
+  | Windows amd64 - exe                     | 3.87 MB               |
 
 ## 使用
 
@@ -39,9 +39,9 @@
 
 > 点击图片可查看大图。
 
-|      | PC 端扫描前                                        | 手机端                                                       | PC 端扫描后                                                  | 手机上传                                                     | PC端接收                                                     |
-| ---- | -------------------------------------------------- | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
-| 亮色 | ![output](./docs/images/light/receive-qrcode.png)  | ![output](./docs/images/light/mobile-send-index.png)         | ![output](./docs/images/light/pc-receive-empty.png)          | ![output](./docs/images/light/5-mobile-uploading.avif)       | ![output](./docs/images/light/6-pc-receiving.avif)           |
+|      | PC 端扫描前                                        | 手机端                                                             | PC 端扫描后                                                      | 手机上传                                                         | PC端接收                                                         |
+| ---- | -------------------------------------------------- | ------------------------------------------------------------------ | ---------------------------------------------------------------- | ---------------------------------------------------------------- | ---------------------------------------------------------------- |
+| 亮色 | ![output](./docs/images/light/receive-qrcode.png)  | ![output](./docs/images/light/mobile-send-index.png)               | ![output](./docs/images/light/pc-receive-empty.png)              | ![output](./docs/images/light/5-mobile-uploading.avif)           | ![output](./docs/images/light/6-pc-receiving.avif)               |
 | 暗色 | ![output](./docs/images/dark/2-receive-qrcode.png) | ![3-mobile-send-index](./docs/images/dark/3-mobile-send-index.png) | ![4-pc-receive-empty](./docs/images/dark/4-pc-receive-empty.png) | ![5-mobile-uploading](./docs/images/dark/5-mobile-uploading.png) | ![6-pc-receiving.png](./docs/images/dark/6-pc-receiving.png.png) |
 
 所有平台的 PC 端接收到的文件默认保存路径均为`~/Downloads/alley`，你可以自行修改保存目录。
