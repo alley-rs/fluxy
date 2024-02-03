@@ -27,8 +27,6 @@ jobs:
       - name: create release
         id: create-release
         uses: actions/github-script@v6
-        env:
-          PACKAGE_VERSION: ${{ env.PACKAGE_VERSION }}
         with:
           script: |
             const { data } = await github.rest.repos.createRelease({
@@ -129,6 +127,9 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               release_id: process.env.release_id,
+              tag_name: `v${process.env.PACKAGE_VERSION}`,
+              name: `v${process.env.PACKAGE_VERSION}`,
+              body: 'Take a look at the assets to download and install this app.',
               draft: true,
               prerelease: process.env.PACKAGE_VERSION.indexOf('alpha') >= 0,
             })
