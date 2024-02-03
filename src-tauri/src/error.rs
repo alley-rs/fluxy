@@ -16,6 +16,9 @@ pub(crate) enum AlleyError {
     QRCode(#[from] QRCodeError),
     #[error(transparent)]
     Io(#[from] std::io::Error),
+    #[cfg(target_os = "linux")]
+    #[error(transparent)]
+    EnvVar(#[from] std::env::VarError),
 }
 
 impl Serialize for AlleyError {
