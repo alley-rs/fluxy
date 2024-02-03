@@ -27,6 +27,8 @@ jobs:
       - name: create release
         id: create-release
         uses: actions/github-script@v6
+        env:
+          PACKAGE_VERSION: ${{ env.PACKAGE_VERSION }}
         with:
           script: |
             const { data } = await github.rest.repos.createRelease({
