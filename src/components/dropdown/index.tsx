@@ -7,12 +7,20 @@ interface DropdownProps {
   open?: boolean;
   children: JSXElement;
   menu: MenuItemProps[];
+  top?: number;
+  left?: number;
 }
 
 const baseClassName = "dropdown";
 
 const Dropdown = (props: DropdownProps) => {
   const [isOpen, setOpen] = createSignal(props.open);
+
+  const style = () => ({
+    top: `${props.top ?? 30}px`,
+    left: `${props.left ?? 280}px`,
+    display: isOpen() ? "block" : "none",
+  });
 
   createEffect(() => {
     if (props.open !== undefined) setOpen(props.open);
@@ -31,10 +39,7 @@ const Dropdown = (props: DropdownProps) => {
   return (
     <>
       <div onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
-        <div
-          class={className()}
-          style={{ display: isOpen() ? "block" : "none" }}
-        >
+        <div class={className()} style={style()}>
           <div class={`${baseClassName}-menu`}>
             {isOpen() && (
               <For each={props.menu}>

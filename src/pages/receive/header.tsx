@@ -1,7 +1,7 @@
 import { open as pick } from "@tauri-apps/api/dialog";
 import { open } from "@tauri-apps/api/shell";
-import { createEffect, createSignal } from "solid-js";
-import { changeDownloadsDir, getDownloadsDir } from "~/api";
+import { createEffect, createSignal, onMount } from "solid-js";
+import { changeDownloadsDir, getDownloadsDir, isLinux } from "~/api";
 import type { MenuItemProps } from "~/components/dropdown";
 import Loading from "~/components/loading";
 import { LazyCol, LazyDropdown, LazyLink, LazyRow } from "~/lazy";
@@ -13,6 +13,12 @@ const Header = () => {
     undefined,
   );
   const [openDropDown, setOpenDropDown] = createSignal(false);
+
+  const [dropdownTop, setDownloadTop] = createSignal(40);
+
+  onMount(() => {
+    isLinux().then((f) => f && setDownloadTop(30));
+  });
 
   createEffect(() => {
     const dir = downloadDir();
@@ -52,22 +58,26 @@ const Header = () => {
   return (
     <LazyRow class={baseClassName}>
       <LazyCol span={5} class={`${baseClassName}-label`}>
-        <span>保存目录：</span>
+        <LazyDropdown
+          open={openDropDown()}
+          menu={dropdownItems}
+          top={dropdownTop()}
+          left={18}
+        >
+          <span class={`${baseClassName}-label-text`}>保存目录：</span>
+        </LazyDropdown>
       </LazyCol>
 
       <LazyCol span={14} class={`${baseClassName}-directory-entry`}>
-        <LazyDropdown open={openDropDown()} menu={dropdownItems}>
-          <LazyLink
-            onClick={async () => {
-              setOpenDropDown(false);
-              open(downloadDir()!);
-            }}
-            wrap
-          // style={{ "text-overflow": "ellipsis" }}
-          >
-            {downloadDir()!}
-          </LazyLink>
-        </LazyDropdown>
+        <LazyLink
+          onClick={async () => {
+            setOpenDropDown(false);
+            open(downloadDir()!);
+          }}
+          wrap
+        >
+          {downloadDir()!}
+        </LazyLink>
       </LazyCol>
     </LazyRow>
   );

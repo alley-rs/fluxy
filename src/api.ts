@@ -22,3 +22,5 @@ export const getFilesMetadata = async (paths: string[]) =>
 
 export const getSendFilesUrlQrCode = async (files: SendFile[]) =>
   await invoke<QrCode>("get_send_files_url_qr_code", { files });
+
+export const isLinux = async () => await invoke<boolean>("is_linux");

@@ -76,6 +76,8 @@
 
   --padding-xxs: 4px;
 
+  transition: all var(--motion-duration-mid);
+
   color-scheme: light dark;
   color: var(--color-text);
   background-color: var(--color-background);

@@ -3,6 +3,8 @@
 
 mod error;
 mod lazy;
+#[cfg(target_os = "linux")]
+mod linux;
 mod logger;
 mod server;
 mod stream;
@@ -171,6 +173,11 @@ async fn get_files_metadata(paths: Vec<PathBuf>) -> AlleyResult<Vec<SendFile>> {
     Ok(files)
 }
 
+#[tauri::command]
+fn is_linux() -> bool {
+    cfg!(target_os = "linux")
+}
+
 #[tokio::main]
 async fn main() -> AlleyResult<()> {
     #[cfg(debug_assertions)]
@@ -186,6 +193,17 @@ async fn main() -> AlleyResult<()> {
         logger_config(true),
         fs::File::create(APP_CONFIG_DIR.join("alley.log"))?,
     )?;
+
+    #[cfg(target_os = "linux")]
+    {
+        let scale_factor = crate::linux::get_scale_factor()?;
+        if scale_factor.fract() != 0.0 {
+            info!("当前显示器非整数倍缩放：{}", scale_factor);
+            std::env::set_var("GDK_SCALE", "2");
+            std::env::set_var("GDK_DPI_SCALE", "0.5");
+            info!("已为当前程序设置 GDK 缩放比例");
+        }
+    }
 
     tokio::spawn(server::serve());
     info!("已创建 serve 线程");
@@ -204,6 +222,7 @@ async fn main() -> AlleyResult<()> {
             change_downloads_dir,
             get_files_metadata,
             get_send_files_url_qr_code,
+            is_linux,
         ])
         .build(tauri::generate_context!())?;
 

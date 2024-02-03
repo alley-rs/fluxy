@@ -121,6 +121,7 @@ jobs:
         env:
           release_id: ${{ needs.create-release.outputs.release_id }}
           PACKAGE_VERSION: ${{ needs.create-release.outputs.package_version }}
+        # TODO: latest.json 中添加 release note(当前为空)
         with:
           script: |
             github.rest.repos.updateRelease({
@@ -134,6 +135,7 @@ jobs:
               prerelease: process.env.PACKAGE_VERSION.indexOf('alpha') >= 0,
             })
 
+  # TODO: publish 后执行
   upload_mirror_json:
     permissions:
       contents: write
