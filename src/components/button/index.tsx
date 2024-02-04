@@ -28,8 +28,6 @@ const baseClassName = "alley-button";
 const Button = (props: ButtonProps) => {
   const merged = mergeProps({ filter: { scale: 1.1 } }, props);
 
-  console.log(merged);
-
   const className = () =>
     addClassNames(
       baseClassName,
