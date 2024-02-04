@@ -4,11 +4,12 @@ use log::{Level, LevelFilter};
 use simplelog::{Color, Config, ConfigBuilder};
 use time::macros::{format_description, offset};
 
-pub(super) fn logger_config(is_term: bool) -> Config {
+pub(super) fn logger_config() -> Config {
     let mut config = &mut ConfigBuilder::new();
 
-    if is_term {
-        config = config
+    config = {
+        #[cfg(debug_assertions)]
+        let c = config
             .set_level_color(Level::Error, Some(Color::Rgb(191, 0, 0)))
             .set_level_color(Level::Warn, Some(Color::Rgb(255, 127, 0)))
             .set_level_color(Level::Info, Some(Color::Rgb(19, 161, 14)))
@@ -17,11 +18,14 @@ pub(super) fn logger_config(is_term: bool) -> Config {
             .set_time_format_custom(format_description!(
                 "[hour]:[minute]:[second].[subsecond digits:3]"
             ));
-    } else {
-        config = config.set_time_format_custom(format_description!(
+
+        #[cfg(not(debug_assertions))]
+        let c = config.set_time_format_custom(format_description!(
             "[year]-[month]-[day] [hour]:[minute]:[second].[subsecond digits:3]"
         ));
-    }
+
+        c
+    };
 
     config.set_time_offset(offset!(+8));
 
@@ -36,7 +40,7 @@ pub(super) fn logger_config(is_term: bool) -> Config {
         .build()
 }
 
-pub(super) fn log_level() -> LevelFilter {
+pub(super) fn logger_level() -> LevelFilter {
     let level_strings: HashMap<&str, LevelFilter> = HashMap::from([
         ("off", LevelFilter::Off),
         ("error", LevelFilter::Error),

@@ -139,7 +139,12 @@ const Send = (props: SendProps) => {
             )}
           </LazyFlex>
 
-          <LazyButton onClick={newSendFilesQrCode} block disabled={isEmpty()}>
+          <LazyButton
+            filter
+            onClick={newSendFilesQrCode}
+            block
+            disabled={isEmpty()}
+          >
             确认
           </LazyButton>
         </LazyFlex>
@@ -147,30 +152,30 @@ const Send = (props: SendProps) => {
 
       {isEmpty() || qrcode()
         ? suspense(
-          <LazyFloatButton
-            icon={<AiOutlineHome />}
-            onClick={props.toHome}
-            tooltip="回到主页"
-            bottom={qrcode() ? 20 : 60}
-          />,
-        )
+            <LazyFloatButton
+              icon={<AiOutlineHome />}
+              onClick={props.toHome}
+              tooltip="回到主页"
+              bottom={qrcode() ? 20 : 60}
+            />,
+          )
         : suspense(
-          <LazyFloatButtonGroup
-            bottom={60}
-            options={[
-              {
-                icon: <AiOutlineClear />,
-                onClick: () => setFiles([]),
-                tooltip: "清空文件",
-              },
-              {
-                icon: <AiOutlineHome />,
-                onClick: props.toHome,
-                tooltip: "回到主页",
-              },
-            ]}
-          />,
-        )}
+            <LazyFloatButtonGroup
+              bottom={60}
+              options={[
+                {
+                  icon: <AiOutlineClear />,
+                  onClick: () => setFiles([]),
+                  tooltip: "清空文件",
+                },
+                {
+                  icon: <AiOutlineHome />,
+                  onClick: props.toHome,
+                  tooltip: "回到主页",
+                },
+              ]}
+            />,
+          )}
     </>
   );
 };

@@ -23,13 +23,8 @@ use std::{
     time::{Duration, SystemTime, UNIX_EPOCH},
 };
 
-use error::AlleyResult;
-use lazy::LOCAL_IP;
-use log::info;
-use logger::logger_config;
 use qrcode_generator::QrCodeEcc;
 use serde::Serialize;
-use server::{SendFile, DOWNLOADS_DIR, MAIN_WINDOW, QR_CODE_MAP};
 #[cfg(debug_assertions)]
 use simplelog::{ColorChoice, TermLogger, TerminalMode};
 use tauri::{Manager, UpdaterEvent};
@@ -37,7 +32,10 @@ use tokio::fs::File;
 #[cfg(not(debug_assertions))]
 use {lazy::APP_CONFIG_DIR, simplelog::WriteLogger, std::fs};
 
-use crate::{logger::log_level, server::SEND_FILES};
+use crate::error::AlleyResult;
+use crate::lazy::LOCAL_IP;
+use crate::logger::{logger_config, logger_level};
+use crate::server::{SendFile, DOWNLOADS_DIR, MAIN_WINDOW, QR_CODE_MAP, SEND_FILES};
 
 fn now() -> AlleyResult<Duration> {
     SystemTime::now().duration_since(UNIX_EPOCH).map_err(|e| {
@@ -182,15 +180,15 @@ fn is_linux() -> bool {
 async fn main() -> AlleyResult<()> {
     #[cfg(debug_assertions)]
     TermLogger::init(
-        log_level(),
-        logger_config(true),
+        logger_level(),
+        logger_config(),
         TerminalMode::Mixed,
         ColorChoice::Auto,
     )?;
     #[cfg(not(debug_assertions))]
     WriteLogger::init(
-        log_level(),
-        logger_config(true),
+        logger_level(),
+        logger_config(),
         fs::File::create(APP_CONFIG_DIR.join("alley.log"))?,
     )?;
 

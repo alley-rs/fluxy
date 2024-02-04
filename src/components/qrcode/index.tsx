@@ -24,6 +24,7 @@ const QRCode = ({ qrcode }: QRCodeProps) => {
       <LazyLink
         class={`${baseClassName}-link`}
         onClick={async () => await open(qrcode.url)}
+        filter={false}
       >
         {qrcode.url}
       </LazyLink>
