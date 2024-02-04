@@ -37,7 +37,7 @@ use tokio::fs::File;
 #[cfg(not(debug_assertions))]
 use {lazy::APP_CONFIG_DIR, simplelog::WriteLogger, std::fs};
 
-use crate::{logger::log_level, server::SEND_FILES};
+use crate::{logger::logger_level, server::SEND_FILES};
 
 fn now() -> AlleyResult<Duration> {
     SystemTime::now().duration_since(UNIX_EPOCH).map_err(|e| {
@@ -182,15 +182,15 @@ fn is_linux() -> bool {
 async fn main() -> AlleyResult<()> {
     #[cfg(debug_assertions)]
     TermLogger::init(
-        log_level(),
-        logger_config(true),
+        logger_level(),
+        logger_config(),
         TerminalMode::Mixed,
         ColorChoice::Auto,
     )?;
     #[cfg(not(debug_assertions))]
     WriteLogger::init(
-        log_level(),
-        logger_config(true),
+        logger_level(),
+        logger_config(),
         fs::File::create(APP_CONFIG_DIR.join("alley.log"))?,
     )?;
 
