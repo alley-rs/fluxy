@@ -2,14 +2,14 @@ import { mergeProps, type JSXElement } from "solid-js";
 import { addClassNames } from "~/components/utils/class";
 import "./index.scss";
 
-type ButtonType = "default" | "danger";
+type ButtonType = "default" | "plain";
 type ButtonShape = "square" | "circle";
 
 interface Filter {
   scale: number;
 }
 
-interface ButtonProps {
+export interface ButtonProps {
   class?: string;
   children?: string;
   icon?: JSXElement;
@@ -20,14 +20,13 @@ interface ButtonProps {
   onClick?: (event: MouseEvent) => void;
   style?: CSSProperties;
   filter?: boolean | Filter;
+  danger?: boolean;
 }
 
 const baseClassName = "alley-button";
 
 const Button = (props: ButtonProps) => {
   const merged = mergeProps({ filter: { scale: 1.1 } }, props);
-
-  console.log(merged);
 
   const className = () =>
     addClassNames(
@@ -37,6 +36,7 @@ const Button = (props: ButtonProps) => {
       merged.shape || "",
       merged.type || "",
       merged.filter && `${baseClassName}-filter`,
+      merged.danger && `${baseClassName}-danger`,
       merged.class || "",
     );
 

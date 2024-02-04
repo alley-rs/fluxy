@@ -24,15 +24,8 @@
     }
 
     .delete-file {
-      font-size: 24px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
+      font-size: 20px;
       margin-right: 5px;
-
-      &:hover {
-        color: var(--color-danger);
-      }
     }
   }
 }
