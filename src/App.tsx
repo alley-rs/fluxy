@@ -65,8 +65,6 @@ const App = () => {
             {suspense(
               <LazyButton
                 class="fill"
-                filter={false} // FIX: 不知道什么原因主页图标的 filter 会有残留, 暂时关闭
-                block
                 icon={<TbArrowsTransferDown />}
                 onClick={() => setMode(Mode.Receive)}
               >
@@ -77,8 +75,6 @@ const App = () => {
             {suspense(
               <LazyButton
                 class="fill"
-                filter={false} // FIX: 不知道什么原因主页图标的 filter 会有残留, 暂时关闭
-                block
                 icon={<TbArrowsTransferUp />}
                 onClick={() => setMode(Mode.Send)}
               >

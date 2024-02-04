@@ -11,11 +11,13 @@ $class-name: "alley-button";
   font-family: inherit;
   background-color: var(--color-button-backgroud);
   cursor: pointer;
-  transition: border-color 0.25s;
+  transition: all 0.2s ease-in-out;
   color: var(--color-button-text);
   display: flex;
   justify-content: center;
   align-items: center;
+  // 强制浏览器提前渲染 filter 属性, 防止 transition 中 filter 与 transform 一起使用时不生效
+  will-change: filter;
 
   &:not(.disabled):hover {
     border-color: var(--color-button-hover);
