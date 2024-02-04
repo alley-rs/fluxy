@@ -1,9 +1,6 @@
-import type { JSXElement } from "solid-js";
+import type { ButtonProps } from "../button";
 
-export interface FloatButtonProps {
-  class?: string;
-  onClick: () => void;
-  icon?: JSXElement;
+export interface FloatButtonProps extends ButtonProps {
   tooltip?: string;
   right?: number;
   bottom?: number;

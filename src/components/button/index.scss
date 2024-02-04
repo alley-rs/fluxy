@@ -49,8 +49,39 @@ $class-name: "alley-button";
     padding: 0.6rem;
   }
 
-  &.danger:not(.disabled):hover {
+  &-danger:not(.disabled) {
     color: var(--color-danger);
+
+    &:not(.plain) {
+      color: #fff;
+      background-color: var(--color-danger);
+    }
+
+    &.#{$class-name}-filter:not(.disabled):hover {
+      border-color: var(--color-hover-danger-hover);
+      background-color: var(--color-hover-danger-hover);
+      filter: drop-shadow(0 0 8px var(--color-hover-danger-filter));
+      transform: scale(var(--filter-scale));
+    }
+
+    &.plain.#{$class-name}-filter:not(.disabled):hover {
+      filter: drop-shadow(0 0 10px var(--color-danger));
+      transform: scale(var(--filter-scale));
+      color: var(--color-text-reverse);
+      background-color: var(--color-danger);
+    }
+  }
+
+  &-danger:not(.disabled):hover {
     border-color: var(--color-danger);
+    color: #fff;
+  }
+
+  &.plain {
+    border: none;
+    height: 100%;
+    width: 100%;
+    padding: 0;
+    margin: 0;
   }
 }

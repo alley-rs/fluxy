@@ -124,12 +124,15 @@ const Send = (props: SendProps) => {
                       </>
                     }
                     extra={[
-                      <LazyLink
+                      <LazyButton
                         class="delete-file"
+                        shape="circle"
+                        type="plain"
+                        danger
                         onClick={() => removeFile(file.path)}
                       >
                         <AiOutlineCloseCircle />
-                      </LazyLink>,
+                      </LazyButton>,
                     ]}
                   />
                 )}
@@ -166,6 +169,7 @@ const Send = (props: SendProps) => {
                 {
                   icon: <AiOutlineClear />,
                   onClick: () => setFiles([]),
+                  danger: true,
                   tooltip: "清空文件",
                 },
                 {
