@@ -1,4 +1,4 @@
-import type { JSXElement } from "solid-js";
+import { mergeProps, type JSXElement } from "solid-js";
 import "./index.scss";
 import { addClassNames } from "../utils";
 
@@ -16,6 +16,7 @@ interface BaseLinkProps {
   class?: string;
   children: JSXElement;
   wrap?: boolean;
+  filter?: boolean;
 }
 
 type LinkProps =
@@ -23,20 +24,23 @@ type LinkProps =
   | (BaseLinkProps & ButtonLinkProps);
 
 const Link = (props: LinkProps) => {
+  const merged = mergeProps({ filter: true }, props);
+
   const classNames = () =>
     addClassNames(
       baseClassName,
-      props.wrap && `${baseClassName}-wrap`,
-      props.class,
+      merged.wrap && `${baseClassName}-wrap`,
+      merged.filter && `${baseClassName}-filter`,
+      merged.class,
     );
 
   return (
     <a
       class={classNames()}
-      href={"href" in props ? props.href : undefined}
-      onClick={"onClick" in props ? props.onClick : undefined}
+      href={"href" in merged ? merged.href : undefined}
+      onClick={"onClick" in merged ? merged.onClick : undefined}
     >
-      {props.children}
+      {merged.children}
     </a>
   );
 };

@@ -1,6 +1,8 @@
 $class-name: "alley-button";
 
 .#{$class-name} {
+  --filter-scale: 1;
+
   border-radius: 8px;
   border: 1px solid transparent;
   padding: 0.6em 1.2em;
@@ -18,6 +20,11 @@ $class-name: "alley-button";
   &:not(.disabled):hover {
     border-color: var(--color-button-hover);
     color: var(--color-hover);
+  }
+
+  &-filter:not(.disabled):hover {
+    filter: drop-shadow(0 0 1em var(--color-hover-filter));
+    transform: scale(var(--filter-scale));
   }
 
   &:focus,

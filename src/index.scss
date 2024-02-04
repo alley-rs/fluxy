@@ -24,6 +24,8 @@
   --color-hover: var(--color-primary);
   --color-hover-text: var(--color-hover);
 
+  --color-hover-filter: #646cffaa;
+
   --color-button-backgroud: #f9f9f9;
   --color-button-text: #213547;
   --color-button-hover: var(--hover-text-color);
@@ -129,8 +131,4 @@
 
   --control-item-bg-hover: rgba(255, 255, 255, 0.08);
   --control-item-text-hover: var(--color-hover-text);
-
-  a:hover {
-    color: #747bff;
-  }
 }
