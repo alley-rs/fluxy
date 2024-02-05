@@ -16,20 +16,20 @@
 
 - 体积小
 
-  | 平台及格式                              | 体积（v0.1.0-beta.2） |
+  | 平台及格式                              | 体积（v0.1.0-beta.4） |
   | --------------------------------------- | --------------------- |
-  | macOS aarch64 - dmg                     | 4.99 MB               |
-  | Linux(Debian/Ubuntu/Deepin) amd64 - deb | 7.15 MB               |
+  | macOS aarch64 - dmg                     | 4.98 MB               |
+  | Linux(Debian/Ubuntu/Deepin) amd64 - deb | 7.17 MB               |
   | Windows amd64 - msi                     | 4.71 MB               |
-  | Windows amd64 - exe                     | 3.87 MB               |
+  | Windows amd64 - exe                     | 3.88 MB               |
 
 ## 使用
 
 打开软件后需要选择传输模式：
 
-| 亮色                                          | 暗色                                           |
-| --------------------------------------------- | ---------------------------------------------- |
-| ![传输模式选择](./docs/images/light/home.png) | ![传输模式选择](./docs/images/dark/1-home.png) |
+| 亮色                                            | 暗色                                           |
+| ----------------------------------------------- | ---------------------------------------------- |
+| ![传输模式选择](./docs/images/light/1-home.png) | ![传输模式选择](./docs/images/dark/1-home.png) |
 
 ### 接收模式
 
@@ -39,10 +39,10 @@
 
 > 点击图片可查看大图。
 
-|      | PC 端扫描前                                        | 手机端                                                             | PC 端扫描后                                                      | 手机上传                                                         | PC端接收                                                         |
-| ---- | -------------------------------------------------- | ------------------------------------------------------------------ | ---------------------------------------------------------------- | ---------------------------------------------------------------- | ---------------------------------------------------------------- |
-| 亮色 | ![output](./docs/images/light/receive-qrcode.png)  | ![output](./docs/images/light/mobile-send-index.png)               | ![output](./docs/images/light/pc-receive-empty.png)              | ![output](./docs/images/light/5-mobile-uploading.avif)           | ![output](./docs/images/light/6-pc-receiving.avif)               |
-| 暗色 | ![output](./docs/images/dark/2-receive-qrcode.png) | ![3-mobile-send-index](./docs/images/dark/3-mobile-send-index.png) | ![4-pc-receive-empty](./docs/images/dark/4-pc-receive-empty.png) | ![5-mobile-uploading](./docs/images/dark/5-mobile-uploading.png) | ![6-pc-receiving.png](./docs/images/dark/6-pc-receiving.png.png) |
+|      | PC 端扫描前                                         | 手机端                                                       | PC 端扫描后                                                  | 手机上传                                                     | PC端接收                                                     |
+| ---- | --------------------------------------------------- | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
+| 亮色 | ![output](./docs/images/light/2-receive-qrcode.png) | ![output](./docs/images/light/mobile-send-index.png)         | ![output](./docs/images/light/4-pc-receive-empty.png)        | ![output](./docs/images/light/5-mobile-uploading.avif)       | ![output](./docs/images/light/6-pc-receiving.avif)           |
+| 暗色 | ![output](./docs/images/dark/2-receive-qrcode.png)  | ![3-mobile-send-index](./docs/images/dark/3-mobile-send-index.png) | ![4-pc-receive-empty](./docs/images/dark/4-pc-receive-empty.png) | ![5-mobile-uploading](./docs/images/dark/5-mobile-uploading.png) | ![6-pc-receiving.png](./docs/images/dark/6-pc-receiving.png.png) |
 
 所有平台的 PC 端接收到的文件默认保存路径均为`~/Downloads/alley`，你可以自行修改保存目录。
 
@@ -54,7 +54,7 @@ _受限于手机操作系统的限制，手机浏览器无法实现批量下载�
 
 > 点击图片可查看大图。
 
-|      | PC 端待选文件                                                | PC 端待发文件列表                                | PC 端发送二维码                                        | 手机端接收页                                                               |
-| ---- | ------------------------------------------------------------ | ------------------------------------------------ | ------------------------------------------------------ | -------------------------------------------------------------------------- |
-| 亮色 | ![output](./docs/images/light/wait-selecting.png)            | ![output](./docs/images/light/selected.png)      | ![output](./docs/images/light/send-qrcode.png)         | ![output](./docs/images/light/mobile-download-list.png)                    |
+|      | PC 端待选文件                                                | PC 端待发文件列表                                | PC 端发送二维码                                        | 手机端接收页                                                 |
+| ---- | ------------------------------------------------------------ | ------------------------------------------------ | ------------------------------------------------------ | ------------------------------------------------------------ |
+| 亮色 | ![output](./docs/images/light/7-wait-selecting.png)          | ![output](./docs/images/light/8-selected.png)    | ![output](./docs/images/light/9-send-qrcode.png)       | ![output](./docs/images/light/mobile-download-list.png)      |
 | 暗色 | ![7-wait-selecting](./docs/images/dark/7-wait-selecting.png) | ![8-selected](./docs/images/dark/8-selected.png) | ![9-send-qrcode](./docs/images/dark/9-send-qrcode.png) | ![10-mobile-download-list](./docs/images/dark/10-mobile-download-list.png) |
