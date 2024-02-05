@@ -1,4 +1,6 @@
-.dropdown {
+$base: "dropdown";
+
+.#{$base} {
   --arrow-x: 38.758331298828125px;
   --arrow-y: 115px;
   inset: auto auto -892.917px 744.25px;
@@ -12,6 +14,14 @@
   position: fixed;
   height: 62px;
   z-index: 99;
+  transition: all 0.2s ease-in;
+
+  &-hidden {
+    opacity: 0;
+    height: 0;
+    transition: all 0.2s ease-out;
+    z-index: -1;
+  }
 
   &-menu {
     padding: var(--padding-xxs);
@@ -50,7 +60,6 @@
     flex: auto;
     font-weight: normal;
     font-size: 14px;
-    // line-height: 1.5;
     cursor: pointer;
 
     >a {
