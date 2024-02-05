@@ -28,7 +28,7 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-            const data = await github.request(
+            const { data } = await github.request(
               'GET /repos/{owner}/{repo}/releases/latest', 
               {
                 owner: context.repo.owner,
@@ -38,8 +38,6 @@ jobs:
                 }
               }
             )
-
-            console.log(data)
 
             if (data.tag_name.slice(1) === process.env.PACKAGE_VERSION) throw new Error("当前要发布的版本号与 latest 版本号相同")
 
