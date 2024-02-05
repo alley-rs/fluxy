@@ -1,4 +1,5 @@
-import { mergeProps, type JSXElement } from "solid-js";
+import { mergeProps } from "solid-js";
+import type { JSXElement } from "solid-js";
 import { addClassNames } from "~/components/utils/class";
 import "./index.scss";
 
@@ -11,7 +12,7 @@ interface Filter {
 
 export interface ButtonProps {
   class?: string;
-  children?: string;
+  children?: JSXElement;
   icon?: JSXElement;
   block?: boolean;
   disabled?: boolean;
