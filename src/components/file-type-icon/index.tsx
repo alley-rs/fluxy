@@ -88,6 +88,7 @@ const FileTypeIcon = (ext: string) => {
     case "RAR":
     case "7Z":
     case "TAR":
+    case "GZ":
       return <BsFileZip />;
     case "DMG":
     case "IPA":
