@@ -14,19 +14,24 @@ interface DropdownProps {
 const baseClassName = "dropdown";
 
 const Dropdown = (props: DropdownProps) => {
-  const [isOpen, setOpen] = createSignal(props.open);
+  // const [isOpen, setOpen] = createSignal(props.open);
+  const [isOpen, setOpen] = createSignal(true);
 
   const style = () => ({
     top: `${props.top ?? 30}px`,
     left: `${props.left ?? 280}px`,
-    display: isOpen() ? "block" : "none",
   });
 
   createEffect(() => {
     if (props.open !== undefined) setOpen(props.open);
   });
 
-  const className = () => addClassNames(baseClassName, props.class || "");
+  const className = () =>
+    addClassNames(
+      baseClassName,
+      !isOpen() && `${baseClassName}-hidden`,
+      props.class || "",
+    );
 
   const handleMouseEnter = () => {
     setOpen(true);
@@ -41,19 +46,17 @@ const Dropdown = (props: DropdownProps) => {
       <div onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
         <div class={className()} style={style()}>
           <div class={`${baseClassName}-menu`}>
-            {isOpen() && (
-              <For each={props.menu}>
-                {(item) => (
-                  <MenuItem
-                    {...item}
-                    onClick={() => {
-                      item.onClick();
-                      setOpen(false);
-                    }}
-                  />
-                )}
-              </For>
-            )}
+            <For each={props.menu}>
+              {(item) => (
+                <MenuItem
+                  {...item}
+                  onClick={() => {
+                    item.onClick();
+                    setOpen(false);
+                  }}
+                />
+              )}
+            </For>
           </div>
         </div>
         {props.children}
