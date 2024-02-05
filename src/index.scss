@@ -25,7 +25,7 @@
   --color-hover: var(--color-primary);
   --color-hover-text: var(--color-hover);
 
-  --color-hover-danger-hover: #e86e6b;
+  --color-hover-danger-hover: var(--color-danger);
   --color-hover-filter: #646cffaa;
   --color-hover-danger-filter: rgba(255, 48, 64, 0.76);
 
@@ -118,15 +118,20 @@
 .dark {
   --color-text: var(--color-light);
   --color-text-reverse: #1a1a1a;
-  --color-background: #242424;
   --color-text-disabled: #6a6a6a;
+
+  --color-background: #242424;
   --color-shadow: #000;
 
   --color-button-backgroud: #1a1a1a;
   --color-button-text: var(--color-text);
+
+  --color-hover-danger-hover: #e86e6b;
+
   --color-bg-elevated: #2f2f2f;
 
   --color-progress-text: var(--color-light);
+
   --color-avatar-backgroud: #6a6a6a;
   --color-avatar: var(--color-light);
 
