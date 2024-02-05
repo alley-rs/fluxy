@@ -1,8 +1,10 @@
 use std::{collections::HashMap, env};
 
-use log::{Level, LevelFilter};
-use simplelog::{Color, Config, ConfigBuilder};
+use log::LevelFilter;
+use simplelog::{Config, ConfigBuilder};
 use time::macros::{format_description, offset};
+#[cfg(debug_assertions)]
+use {log::Level, simplelog::Color};
 
 pub(super) fn logger_config() -> Config {
     let mut config = &mut ConfigBuilder::new();
