@@ -131,7 +131,7 @@ jobs:
               tag_name: `v${process.env.PACKAGE_VERSION}`,
               name: `v${process.env.PACKAGE_VERSION}`,
               body: 'Take a look at the assets to download and install this app.',
-              draft: true,
+              draft: false,
               prerelease: process.env.PACKAGE_VERSION.indexOf('alpha') >= 0,
             })
 
