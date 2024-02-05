@@ -24,9 +24,23 @@ jobs:
       - name: get version
         run: echo "PACKAGE_VERSION=$(node -p "require('./package.json').version")" >> $GITHUB_ENV
 
+      - name: check latest version
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { tag_name } = await github.request('GET /repos/{owner}/{repo}/releases/latest', {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              headers: {
+                'X-GitHub-Api-Version': '2022-11-28'
+              }
+            })
+
+            if (tag_name.slice(1) === process.env.PACKAGE_VERSION) throw new Error("当前要发布的版本号与 latest 版本号相同")
+
       - name: create release
         id: create-release
-        uses: actions/github-script@v6
+        uses: actions/github-script@v7
         with:
           script: |
             const { data } = await github.rest.repos.createRelease({
@@ -117,7 +131,7 @@ jobs:
     steps:
       - name: publish release
         id: publish-release
-        uses: actions/github-script@v6
+        uses: actions/github-script@v7
         env:
           release_id: ${{ needs.create-release.outputs.release_id }}
           PACKAGE_VERSION: ${{ needs.create-release.outputs.package_version }}
@@ -149,7 +163,7 @@ jobs:
 
       - name: get latest.json
         id: get-latest
-        uses: actions/github-script@v6
+        uses: actions/github-script@v7
         with:
           script: |
             const { owner, repo } = context.repo;
