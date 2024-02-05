@@ -80,7 +80,7 @@ jobs:
       - name: get version with alpha or beta deleted on Windows
         if: matrix.platform == 'windows-latest'
         run: |
-          cd src-tauri
+          cd .scripts
           $version = node before-build.js
           echo "BUILD_VERSION=$version" >> $Env:GITHUB_ENV
 
@@ -181,7 +181,7 @@ jobs:
         env:
           TEXT: ${{ steps.get-latest.outputs.result }}
         run: |
-          cd src-tauri
+          cd .scripts
           node mirror-latest-json.js
 
       - uses: wlixcc/SFTP-Deploy-Action@v1.2.4
@@ -189,6 +189,6 @@ jobs:
           username: thepoy
           server: thepoy.cc
           password: ${{ secrets.TAURI_KEY_PASSWORD }}
-          local_path: ./src-tauri/latest.json
+          local_path: ./.scripts/mirrors/*
           remote_path: /home/thepoy/app/alley-transfer
           sftpArgs: "-o ConnectTimeout=5"

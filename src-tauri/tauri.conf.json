@@ -45,7 +45,10 @@
     "updater": {
       "active": true,
       "endpoints": [
-        "https://app.thepoy.cc/alley-transfer/latest.json",
+        "https://app.thepoy.cc/alley-transfer/latest-mirror-1.json",
+        "https://app.thepoy.cc/alley-transfer/latest-mirror-2.json",
+        "https://app.thepoy.cc/alley-transfer/latest-mirror-3.json",
+        "https://app.thepoy.cc/alley-transfer/latest-mirror-4.json",
         "https://github.com/thep0y/alley/releases/latest/download/latest.json"
       ],
       "dialog": true,
