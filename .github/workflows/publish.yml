@@ -28,15 +28,20 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-            const { tag_name } = await github.request('GET /repos/{owner}/{repo}/releases/latest', {
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              headers: {
-                'X-GitHub-Api-Version': '2022-11-28'
+            const data = await github.request(
+              'GET /repos/{owner}/{repo}/releases/latest', 
+              {
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                headers: {
+                  'X-GitHub-Api-Version': '2022-11-28'
+                }
               }
-            })
+            )
 
-            if (tag_name.slice(1) === process.env.PACKAGE_VERSION) throw new Error("当前要发布的版本号与 latest 版本号相同")
+            console.log(data)
+
+            if (data.tag_name.slice(1) === process.env.PACKAGE_VERSION) throw new Error("当前要发布的版本号与 latest 版本号相同")
 
       - name: create release
         id: create-release
