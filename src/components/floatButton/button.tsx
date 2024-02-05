@@ -10,6 +10,7 @@ const FloatButton = (props: FloatButtonProps) => {
 
   const button = (
     <Button
+      {...props}
       icon={props.icon ?? <TbHome />}
       onClick={props.onClick}
       shape="circle"

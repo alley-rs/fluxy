@@ -1,13 +1,18 @@
-import { type JSXElement } from "solid-js";
+import { mergeProps } from "solid-js";
+import type { JSXElement } from "solid-js";
 import { addClassNames } from "~/components/utils/class";
 import "./index.scss";
 
-type ButtonType = "default" | "danger";
+type ButtonType = "default" | "plain";
 type ButtonShape = "square" | "circle";
 
-interface ButtonProps {
+interface Filter {
+  scale: number;
+}
+
+export interface ButtonProps {
   class?: string;
-  children?: string;
+  children?: JSXElement;
   icon?: JSXElement;
   block?: boolean;
   disabled?: boolean;
@@ -15,36 +20,51 @@ interface ButtonProps {
   type?: ButtonType;
   onClick?: (event: MouseEvent) => void;
   style?: CSSProperties;
+  filter?: boolean | Filter;
+  danger?: boolean;
 }
 
 const baseClassName = "alley-button";
 
 const Button = (props: ButtonProps) => {
+  const merged = mergeProps({ filter: { scale: 1.1 } }, props);
+
   const className = () =>
     addClassNames(
       baseClassName,
-      props.class || "",
-      props.block ? "block" : "",
-      props.disabled ? "disabled" : "",
-      props.shape || "",
-      props.type || "",
+      merged.block ? "block" : "",
+      merged.disabled ? "disabled" : "",
+      merged.shape || "",
+      merged.type || "",
+      merged.filter && `${baseClassName}-filter`,
+      merged.danger && `${baseClassName}-danger`,
+      merged.class || "",
     );
 
+  const style = () => {
+    if (!merged.filter || merged.filter === true) return merged.style;
+
+    return {
+      "--filter-scale": merged.filter.scale,
+      ...merged.style,
+    };
+  };
+
   const children =
-    props.icon && props.children ? (
+    merged.icon && merged.children ? (
       <>
-        {props.icon}&nbsp;{props.children}
+        {merged.icon}&nbsp;{merged.children}
       </>
     ) : (
-      props.icon || props.children
+      merged.icon || merged.children
     );
 
   return (
     <button
       class={className()}
-      onClick={props.onClick}
-      disabled={props.disabled}
-      style={props.style}
+      onClick={merged.onClick}
+      disabled={merged.disabled}
+      style={style()}
     >
       {children}
     </button>

@@ -9,6 +9,11 @@
     text-decoration: none;
   }
 
+  &-filter:hover {
+    text-shadow: 1px 0 5px var(--color-hover-filter);
+    word-break: break-all;
+  }
+
   &-wrap {
     word-break: break-all;
   }
