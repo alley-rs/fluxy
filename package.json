@@ -1,7 +1,7 @@
 {
   "name": "alley",
   "private": true,
-  "version": "0.1.0-beta.4",
+  "version": "0.1.0",
   "type": "module",
   "scripts": {
     "install:all": "pnpm i && cd static && pnpm i",
@@ -12,19 +12,20 @@
     "tauri": "tauri",
     "start:dev": "cross-env RUST_BACKTRACE=1 LOG_LEVEL=4 tauri dev",
     "trace": "cross-env RUST_BACKTRACE=1 LOG_LEVEL=5 tauri dev",
-    "dev": "pnpm start:dev"
+    "dev": "pnpm start:dev",
+    "update:all": "pnpm up --latest && cd static && pnpm up --latest && cd ../src-tauri && cargo update"
   },
   "dependencies": {
     "@tauri-apps/api": "^1.5.3",
     "solid-icons": "^1.1.0",
-    "solid-js": "^1.8.12"
+    "solid-js": "^1.8.14"
   },
   "devDependencies": {
     "@tauri-apps/cli": "^1.5.9",
     "cross-env": "^7.0.3",
     "sass": "^1.70.0",
     "typescript": "^5.3.3",
-    "vite": "^5.0.12",
+    "vite": "^5.1.1",
     "vite-plugin-solid": "^2.9.1"
   }
 }
