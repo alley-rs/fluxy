@@ -12,6 +12,8 @@ jobs:
     outputs:
       release_id: ${{ steps.create-release.outputs.result }}
       package_version: ${{ env.PACKAGE_VERSION }}
+      latest_version: ${{ steps.latest-version.outputs.result }}
+      changelog: ${{ steps.github_release_changelog.outputs.changelog }}
 
     steps:
       - uses: actions/checkout@v4
@@ -26,6 +28,7 @@ jobs:
 
       - name: check latest version
         uses: actions/github-script@v7
+        id: latest-version
         with:
           script: |
             const { data } = await github.request(
@@ -39,11 +42,23 @@ jobs:
               }
             )
 
-            if (data.tag_name.slice(1) === process.env.PACKAGE_VERSION) throw new Error("当前要发布的版本号与 latest 版本号相同")
+            const latesVersion = data.tag_name.slice(1)
+
+            if (latesVersion === process.env.PACKAGE_VERSION) throw new Error("当前要发布的版本号与 latest 版本号相同")
+
+            return latesVersion
+
+      - name: build changelog
+        id: github_release_changelog
+        uses: mikepenz/release-changelog-builder-action@v3
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: create release
         id: create-release
         uses: actions/github-script@v7
+        env:
+          changelog: ${{ steps.github_release_changelog.outputs.changelog }}
         with:
           script: |
             const { data } = await github.rest.repos.createRelease({
@@ -51,7 +66,7 @@ jobs:
               repo: context.repo.repo,
               tag_name: `v${process.env.PACKAGE_VERSION}`,
               name: `v${process.env.PACKAGE_VERSION}`,
-              body: 'Take a look at the assets to download and install this app.',
+              body: process.env.changelog,
               draft: true,
               prerelease: process.env.PACKAGE_VERSION.indexOf('alpha') >= 0,
             })
@@ -122,6 +137,7 @@ jobs:
           RENAME_RULE: '{"searchValue": "${{ env.BUILD_VERSION }}", "replaceValue": "${{ needs.create-release.outputs.package_version }}"}'
         with:
           releaseId: ${{ needs.create-release.outputs.release_id }}
+          releaseBody: ${{ needs.create-release.outputs.changelog }}
           rename: ${{ matrix.platform == 'windows-latest' && env.RENAME_RULE || '' }}
           args: "-- --no-default-features"
 
@@ -138,21 +154,15 @@ jobs:
         env:
           release_id: ${{ needs.create-release.outputs.release_id }}
           PACKAGE_VERSION: ${{ needs.create-release.outputs.package_version }}
-        # TODO: latest.json 中添加 release note(当前为空)
         with:
           script: |
             github.rest.repos.updateRelease({
               owner: context.repo.owner,
               repo: context.repo.repo,
               release_id: process.env.release_id,
-              tag_name: `v${process.env.PACKAGE_VERSION}`,
-              name: `v${process.env.PACKAGE_VERSION}`,
-              body: 'Take a look at the assets to download and install this app.',
               draft: false,
-              prerelease: process.env.PACKAGE_VERSION.indexOf('alpha') >= 0,
             })
 
-  # TODO: publish 后执行
   upload_mirror_json:
     permissions:
       contents: write
