@@ -41,6 +41,7 @@ import {
   BsFiletypeTtf,
   BsFiletypeOtf,
   BsFiletypeWoff,
+  BsFiletypeCsv,
 } from "solid-icons/bs";
 import { FaBrandsAppStore, FaBrandsLinux } from "solid-icons/fa";
 import { ImFileVideo } from "solid-icons/im";
@@ -113,6 +114,8 @@ const FileTypeIcon = (ext: string) => {
       return <BsFiletypeDoc />;
     case "DOCX":
       return <BsFiletypeDocx />;
+    case "CSV":
+      return <BsFiletypeCsv />;
 
     /* 压缩文件 */
     case "ZIP":
