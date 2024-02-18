@@ -51,6 +51,7 @@ import {
   SiRust,
   SiToml,
   SiAdobephotoshop,
+  SiYaml,
 } from "solid-icons/si";
 import { TbBrandCSharp } from "solid-icons/tb";
 import {
@@ -175,16 +176,17 @@ const FileTypeIcon = (ext: string) => {
       return <BsFileCode />;
     case "JSON":
       return <BsFiletypeJson />;
-    case "TXT":
-    case "YML":
-    case "YAML":
-      return <BsFiletypeTxt />;
     case "TOML":
       return <SiToml />;
     case "HTML":
       return <BsFiletypeHtml />;
     case "XML":
       return <BsFiletypeXml />;
+    case "YML":
+    case "YAML":
+      return <SiYaml />;
+    case "TXT":
+      return <BsFiletypeTxt />;
 
     /* 字体文件 */
     case "TTF":
