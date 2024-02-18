@@ -53,6 +53,7 @@ import {
   SiToml,
   SiAdobephotoshop,
   SiYaml,
+  SiSqlite,
 } from "solid-icons/si";
 import { TbBrandCSharp } from "solid-icons/tb";
 import {
@@ -198,6 +199,11 @@ const FileTypeIcon = (ext: string) => {
       return <BsFiletypeOtf />;
     case "WOFF":
       return <BsFiletypeWoff />;
+
+    /* 数据库 */
+    case "SQLITE":
+    case "DB":
+      return <SiSqlite />;
 
     default:
       return <AiOutlineFileUnknown />;
