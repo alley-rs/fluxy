@@ -43,6 +43,7 @@ import {
   BsFiletypeWoff,
   BsFiletypeCsv,
   BsFileMusicFill,
+  BsBookFill,
 } from "solid-icons/bs";
 import { FaBrandsAppStore, FaBrandsLinux } from "solid-icons/fa";
 import { ImFileVideo } from "solid-icons/im";
@@ -122,6 +123,11 @@ const FileTypeIcon = (ext: string) => {
       return <BsFiletypeDocx />;
     case "CSV":
       return <BsFiletypeCsv />;
+
+    /* 电子书 */
+    case "EPUB":
+    case "MOBI":
+      return <BsBookFill />;
 
     /* 压缩文件 */
     case "ZIP":
