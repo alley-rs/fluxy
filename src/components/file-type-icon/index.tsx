@@ -38,6 +38,9 @@ import {
   BsFiletypeXml,
   BsMarkdown,
   BsWindows,
+  BsFiletypeTtf,
+  BsFiletypeOtf,
+  BsFiletypeWoff,
 } from "solid-icons/bs";
 import { FaBrandsAppStore, FaBrandsLinux } from "solid-icons/fa";
 import { ImFileVideo } from "solid-icons/im";
@@ -158,6 +161,12 @@ const FileTypeIcon = (ext: string) => {
       return <BsFiletypeHtml />;
     case "XML":
       return <BsFiletypeXml />;
+    case "TTF":
+      return <BsFiletypeTtf />;
+    case "OTF":
+      return <BsFiletypeOtf />;
+    case "WOFF":
+      return <BsFiletypeWoff />;
     default:
       return <AiOutlineFileUnknown />;
   }
