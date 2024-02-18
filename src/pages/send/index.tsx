@@ -27,6 +27,7 @@ import {
   LazyList,
   LazyListItem,
   LazyQrcode,
+  LazyTooltip,
 } from "~/lazy";
 import { addClassNames } from "~/components/utils";
 import { open } from "@tauri-apps/api/shell";
@@ -112,9 +113,11 @@ const Send = (props: SendProps) => {
                   <LazyListItem
                     avatar={LazyFileTypeIcon(file.extension)}
                     title={
-                      <LazyLink onClick={() => open(file.path)}>
-                        {file.name}
-                      </LazyLink>
+                      <LazyTooltip text="单击预览文件" placement="top">
+                        <LazyLink onClick={() => open(file.path)}>
+                          {file.name}
+                        </LazyLink>
+                      </LazyTooltip>
                     }
                     description={
                       <>
@@ -155,31 +158,31 @@ const Send = (props: SendProps) => {
 
       {isEmpty() || qrcode()
         ? suspense(
-            <LazyFloatButton
-              icon={<AiOutlineHome />}
-              onClick={props.toHome}
-              tooltip="回到主页"
-              bottom={qrcode() ? 20 : 60}
-            />,
-          )
+          <LazyFloatButton
+            icon={<AiOutlineHome />}
+            onClick={props.toHome}
+            tooltip="回到主页"
+            bottom={qrcode() ? 20 : 60}
+          />,
+        )
         : suspense(
-            <LazyFloatButtonGroup
-              bottom={60}
-              options={[
-                {
-                  icon: <AiOutlineClear />,
-                  onClick: () => setFiles([]),
-                  danger: true,
-                  tooltip: "清空文件",
-                },
-                {
-                  icon: <AiOutlineHome />,
-                  onClick: props.toHome,
-                  tooltip: "回到主页",
-                },
-              ]}
-            />,
-          )}
+          <LazyFloatButtonGroup
+            bottom={60}
+            options={[
+              {
+                icon: <AiOutlineClear />,
+                onClick: () => setFiles([]),
+                danger: true,
+                tooltip: "清空文件列表",
+              },
+              {
+                icon: <AiOutlineHome />,
+                onClick: props.toHome,
+                tooltip: "回到主页",
+              },
+            ]}
+          />,
+        )}
     </>
   );
 };

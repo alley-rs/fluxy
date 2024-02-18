@@ -5,6 +5,7 @@ export const LazyRow = lazy(() => import("~/components/row"));
 export const LazyCol = lazy(() => import("~/components/col"));
 export const LazyProgress = lazy(() => import("~/components/progress"));
 export const LazyDropdown = lazy(() => import("~/components/dropdown"));
+export const LazyTooltip = lazy(() => import("~/components/tooltip"));
 export const LazyLink = lazy(() => import("~/components/link"));
 export const LazyFlex = lazy(() => import("~/components/flex"));
 export const LazyEmpty = lazy(() => import("~/components/empty"));
