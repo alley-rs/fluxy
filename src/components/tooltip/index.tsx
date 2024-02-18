@@ -111,13 +111,15 @@ const Tooltip = (props: TooltipProps) => {
   });
 
   return (
-    <div
-      class={className()}
-      onMouseEnter={showTooltip}
-      onMouseLeave={hideTooltip}
-      style={visibleStyle()}
-    >
-      <div ref={childRef}>{resolved()}</div>
+    <div class={className()} style={visibleStyle()}>
+      <div
+        style={{ display: "inline" }}
+        ref={childRef}
+        onMouseEnter={showTooltip}
+        onMouseLeave={hideTooltip}
+      >
+        {resolved()}
+      </div>
       <div ref={tooltipRef} class={popoverClassName()} style={positionStyles()}>
         <div class={arrowClassName()} />
         <div class={`${classPrefix}-text`}>{props.text}</div>
