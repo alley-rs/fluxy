@@ -42,6 +42,7 @@ import {
   BsFiletypeOtf,
   BsFiletypeWoff,
   BsFiletypeCsv,
+  BsFileMusicFill,
 } from "solid-icons/bs";
 import { FaBrandsAppStore, FaBrandsLinux } from "solid-icons/fa";
 import { ImFileVideo } from "solid-icons/im";
@@ -64,15 +65,19 @@ import {
 
 const FileTypeIcon = (ext: string) => {
   switch (ext) {
-    /* 音视频 */
+    /* 视频 */
     case "MP4":
       return <BsFiletypeMp4 />;
     case "MOV":
       return <BsFiletypeMov />;
     case "WEBM":
       return <ImFileVideo />;
+
+    /* 音频 */
     case "MP3":
       return <BsFiletypeMp3 />;
+    case "FLAC":
+      return <BsFileMusicFill />;
 
     /* 图片 */
     case "JPG":
