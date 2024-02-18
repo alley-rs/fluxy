@@ -51,8 +51,6 @@ const Tooltip = (props: TooltipProps) => {
 
     if (!childRect || !tooltipRect) return;
 
-    console.log(childRect, tooltipRect);
-
     const positionStyle = setPostion(
       props.placement ?? "left",
       childRect,
