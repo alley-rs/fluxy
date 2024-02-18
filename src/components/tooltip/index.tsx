@@ -57,12 +57,7 @@ const Tooltip = (props: TooltipProps) => {
       tooltipRect,
     );
 
-    console.log(childRect);
-
-    setPositionStyles({
-      ...positionStyle,
-      // "--visibility": isVisible() ? "visible" : "hidden",
-    });
+    setPositionStyles(positionStyle);
   });
 
   const setPostion = (
