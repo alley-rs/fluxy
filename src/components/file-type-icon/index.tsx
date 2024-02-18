@@ -44,6 +44,7 @@ import {
   BsFiletypeCsv,
   BsFileMusicFill,
   BsBookFill,
+  BsFiletypeWav,
 } from "solid-icons/bs";
 import { FaBrandsAppStore, FaBrandsLinux } from "solid-icons/fa";
 import { ImFileVideo } from "solid-icons/im";
@@ -77,7 +78,10 @@ const FileTypeIcon = (ext: string) => {
     /* 音频 */
     case "MP3":
       return <BsFiletypeMp3 />;
+    case "WAV":
+      return <BsFiletypeWav />;
     case "FLAC":
+    case "APE":
       return <BsFileMusicFill />;
 
     /* 图片 */
