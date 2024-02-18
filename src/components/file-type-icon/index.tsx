@@ -53,6 +53,11 @@ import {
   SiAdobephotoshop,
 } from "solid-icons/si";
 import { TbBrandCSharp } from "solid-icons/tb";
+import {
+  RiDocumentNumbersFill,
+  RiDocumentPagesFill,
+  RiDocumentKeynoteFill,
+} from "solid-icons/ri";
 
 const FileTypeIcon = (ext: string) => {
   switch (ext) {
@@ -167,6 +172,12 @@ const FileTypeIcon = (ext: string) => {
       return <BsFiletypeOtf />;
     case "WOFF":
       return <BsFiletypeWoff />;
+    case "NUMBERS":
+      return <RiDocumentNumbersFill />;
+    case "PAGES":
+      return <RiDocumentPagesFill />;
+    case "KEYNOTE":
+      return <RiDocumentKeynoteFill />;
     default:
       return <AiOutlineFileUnknown />;
   }
