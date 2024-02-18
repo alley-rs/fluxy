@@ -46,8 +46,11 @@ import {
   BsBookFill,
   BsFiletypeWav,
 } from "solid-icons/bs";
-import { FaBrandsAppStore, FaBrandsLinux } from "solid-icons/fa";
-import { ImFileVideo } from "solid-icons/im";
+import {
+  FaBrandsAppStore,
+  FaBrandsLinux,
+  FaSolidFileVideo,
+} from "solid-icons/fa";
 import {
   SiDebian,
   SiLua,
@@ -57,8 +60,8 @@ import {
   SiAdobephotoshop,
   SiYaml,
   SiSqlite,
+  SiCsharp,
 } from "solid-icons/si";
-import { TbBrandCSharp } from "solid-icons/tb";
 import {
   RiDocumentNumbersFill,
   RiDocumentPagesFill,
@@ -73,7 +76,9 @@ const FileTypeIcon = (ext: string) => {
     case "MOV":
       return <BsFiletypeMov />;
     case "WEBM":
-      return <ImFileVideo />;
+    case "FLV":
+    case "MKV":
+      return <FaSolidFileVideo />;
 
     /* 音频 */
     case "MP3":
@@ -190,7 +195,7 @@ const FileTypeIcon = (ext: string) => {
     case "SQL":
       return <BsFiletypeSql />;
     case "CS":
-      return <TbBrandCSharp />;
+      return <SiCsharp />;
     case "C":
       return <BsFileCode />;
     case "JSON":
