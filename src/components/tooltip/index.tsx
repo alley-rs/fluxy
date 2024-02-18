@@ -31,8 +31,7 @@ const classPrefix = "tooltip";
 const gap = 4;
 
 const Tooltip = (props: TooltipProps) => {
-  let childRef: HTMLDivElement | undefined,
-    tooltipRef: HTMLDivElement | undefined;
+  let tooltipRef: HTMLDivElement | undefined;
   const [isVisible, setIsVisible] = createSignal(false);
 
   const [positionStyles, setPositionStyles] = createSignal<JSX.CSSProperties>();
@@ -46,8 +45,9 @@ const Tooltip = (props: TooltipProps) => {
 
     if (!child) return;
 
+    const childRect = child.getBoundingClientRect();
+
     const tooltipRect = tooltipRef?.getBoundingClientRect();
-    const childRect = childRef?.getBoundingClientRect();
 
     if (!childRect || !tooltipRect) return;
 
@@ -74,7 +74,7 @@ const Tooltip = (props: TooltipProps) => {
       case "left":
         return {
           "--left": `${childRect.left - tooltipRect.width - 5 - gap}px`,
-          "--top": `${childRect.top + childRect.width / 2}px`,
+          "--top": `${childRect.top + childRect.height / 2}px`,
         };
     }
   };
@@ -109,7 +109,6 @@ const Tooltip = (props: TooltipProps) => {
     <div class={className()} style={visibleStyle()}>
       <div
         style={{ display: "inline" }}
-        ref={childRef}
         onMouseEnter={showTooltip}
         onMouseLeave={hideTooltip}
       >
