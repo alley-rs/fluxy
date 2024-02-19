@@ -48,6 +48,7 @@ const Tooltip = (props: TooltipProps) => {
           "--top": `${childRect.top - gap}px`,
           "--left": `${left < halfWidth ? halfWidth : left}px`,
         };
+
       case "left":
         return {
           "--left": `${childRect.left - tooltipRect.width - 5 - gap}px`,

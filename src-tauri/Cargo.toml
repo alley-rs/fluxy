@@ -13,12 +13,12 @@ edition = "2021"
 tauri-build = { version = "1.5", features = [] }
 
 [dependencies]
-tauri = { version = "1", features = [ "updater", "dialog-open", "shell-open"] }
+tauri = { version = "1", features = ["updater", "dialog-open", "shell-open"] }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 dirs = "5"
 lazy_static = "1"
-salvo = { version = "0.65", features = ["serve-static"] }
+salvo = { version = "0.66", features = ["serve-static"] }
 tokio = { version = "1", features = ["macros"] }
 tokio-util = "0.7"
 local-ip-address = "0.5"
@@ -37,3 +37,10 @@ thiserror = "1"
 custom-protocol = ["tauri/custom-protocol"]
 default = ["log-paris"]
 log-paris = ["simplelog/paris"]
+
+[profile.release]
+panic = "abort"   # Strip expensive panic clean-up logic
+codegen-units = 1 # Compile crates one after another so the compiler can optimize better
+lto = true        # Enables link to optimizations
+opt-level = "s"   # Optimize for binary size
+strip = true      # Remove debug symbols
