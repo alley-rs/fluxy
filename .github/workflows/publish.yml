@@ -164,62 +164,62 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               release_id: process.env.release_id,
-              draft: true,
+              draft: false,
             })
 
-  # upload_mirror_json:
-  #   permissions:
-  #     contents: write
-  #   runs-on: ubuntu-22.04
-  #   needs: [create-release, publish-release]
-  #   env:
-  #     release_id: ${{ needs.create-release.outputs.release_id }}
-  #
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #
-  #     - name: get latest.json
-  #       id: get-latest
-  #       uses: actions/github-script@v7
-  #       with:
-  #         script: |
-  #           const { owner, repo } = context.repo;
-  #           const assets = await github.rest.repos.listReleaseAssets({
-  #             owner: owner,
-  #             repo: repo,
-  #             release_id: process.env.release_id,
-  #             per_page: 50,
-  #           });
-  #           const asset = assets.data.find((e) => e.name === 'latest.json');
-  #
-  #           if (!asset) throw new Error("latest.json was not found in release assets");
-  #
-  #           const data = await github.request(
-  #             "GET /repos/{owner}/{repo}/releases/assets/{asset_id}",
-  #             {
-  #               owner: owner,
-  #               repo: repo,
-  #               asset_id: asset.id,
-  #               headers: {
-  #                 accept: "application/octet-stream",
-  #               },
-  #             },
-  #           );
-  #
-  #           return Buffer.from(data.data).toString()
-  #
-  #     - name: new mirror latest.json
-  #       env:
-  #         TEXT: ${{ steps.get-latest.outputs.result }}
-  #       run: |
-  #         cd .scripts
-  #         node mirror-latest-json.js
-  #
-  #     - uses: wlixcc/SFTP-Deploy-Action@v1.2.4
-  #       with:
-  #         username: thepoy
-  #         server: thepoy.cc
-  #         password: ${{ secrets.TAURI_KEY_PASSWORD }}
-  #         local_path: ./.scripts/mirrors/*
-  #         remote_path: /home/thepoy/app/alley-transfer
-  #         sftpArgs: "-o ConnectTimeout=5"
+  upload_mirror_json:
+    permissions:
+      contents: write
+    runs-on: ubuntu-22.04
+    needs: [create-release, publish-release]
+    env:
+      release_id: ${{ needs.create-release.outputs.release_id }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: get latest.json
+        id: get-latest
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+            const assets = await github.rest.repos.listReleaseAssets({
+              owner: owner,
+              repo: repo,
+              release_id: process.env.release_id,
+              per_page: 50,
+            });
+            const asset = assets.data.find((e) => e.name === 'latest.json');
+
+            if (!asset) throw new Error("latest.json was not found in release assets");
+
+            const data = await github.request(
+              "GET /repos/{owner}/{repo}/releases/assets/{asset_id}",
+              {
+                owner: owner,
+                repo: repo,
+                asset_id: asset.id,
+                headers: {
+                  accept: "application/octet-stream",
+                },
+              },
+            );
+
+            return Buffer.from(data.data).toString()
+
+      - name: new mirror latest.json
+        env:
+          TEXT: ${{ steps.get-latest.outputs.result }}
+        run: |
+          cd .scripts
+          node mirror-latest-json.js
+
+      - uses: wlixcc/SFTP-Deploy-Action@v1.2.4
+        with:
+          username: thepoy
+          server: thepoy.cc
+          password: ${{ secrets.TAURI_KEY_PASSWORD }}
+          local_path: ./.scripts/mirrors/*
+          remote_path: /home/thepoy/app/alley-transfer
+          sftpArgs: "-o ConnectTimeout=5"
