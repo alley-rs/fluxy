@@ -105,6 +105,6 @@
     }
   },
   "base_branches": [
-    "dev"
+    "main"
   ]
 }
