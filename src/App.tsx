@@ -1,7 +1,13 @@
 import { Match, Switch, createSignal, onMount, createEffect } from "solid-js";
 import { TbArrowsTransferUp, TbArrowsTransferDown } from "solid-icons/tb";
 import { BiRegularSun, BiSolidMoon } from "solid-icons/bi";
-import { LazyButton, LazyReceive, LazySend, LazySwitch } from "./lazy";
+import {
+  LazyButton,
+  LazyReceive,
+  LazySend,
+  LazySwitch,
+  LazyTooltip,
+} from "./lazy";
 import { suspense } from "./advance";
 import "~/App.scss";
 
@@ -45,17 +51,19 @@ const App = () => {
 
   return (
     <>
-      <LazySwitch
-        class="dark-switch"
-        checked={isDark()}
-        setChecked={() => {
-          setIsDark((pre) => {
-            return !pre;
-          });
-        }}
-        uncheckedChild={<BiRegularSun />}
-        checkedChild={<BiSolidMoon />}
-      />
+      <LazyTooltip text={`切换为${isDark() ? "亮" : "暗"}色`} placement="left">
+        <LazySwitch
+          class="dark-switch"
+          checked={isDark()}
+          setChecked={() => {
+            setIsDark((pre) => {
+              return !pre;
+            });
+          }}
+          uncheckedChild={<BiRegularSun />}
+          checkedChild={<BiSolidMoon />}
+        />
+      </LazyTooltip>
 
       <Switch
         fallback={

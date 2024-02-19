@@ -5,7 +5,10 @@
   &-header {
     height: 31px;
     line-height: 31px;
+    padding-bottom: 5px;
     margin-bottom: 5px;
+    width: 100%;
+    box-shadow: 3px 16px 2px -15px rgba(0, 0, 0, 0.22);
   }
 
   .file-list {
