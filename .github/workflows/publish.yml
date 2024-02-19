@@ -58,13 +58,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: check changelog
-        env:
-          changelog: ${{ steps.github_release_changelog.outputs.changelog }}
-        run: |
-          echo $changelog
-          exit 1
-
       - name: create release
         id: create-release
         uses: actions/github-script@v7
