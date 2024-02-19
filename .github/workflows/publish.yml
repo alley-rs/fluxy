@@ -53,7 +53,7 @@ jobs:
         uses: mikepenz/release-changelog-builder-action@v3
         with:
           configuration: ".github/changelog-configuration.json"
-          fromTag: ${{ format("v{0}", ${{ env.PACKAGE_VERSION }}) }}
+          fromTag: ${{ format('v{0}', env.PACKAGE_VERSION) }}
           failOnError: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
