@@ -1,7 +1,13 @@
 import { open } from "@tauri-apps/api/shell";
 import { AiFillCheckCircle } from "solid-icons/ai";
 import fileType from "./fileType";
-import { LazyLink, LazyListItem, LazyProgress, LazySpace } from "~/lazy";
+import {
+  LazyLink,
+  LazyListItem,
+  LazyProgress,
+  LazySpace,
+  LazyTooltip,
+} from "~/lazy";
 
 interface FileListItemProps {
   index?: number;
@@ -23,7 +29,9 @@ const FileListItem = (props: FileListItemProps) => {
           {props.index !== undefined ? (
             <span class="label">{props.index + 1}.</span>
           ) : null}
-          <LazyLink onClick={() => open(props.path)}>{props.name}</LazyLink>
+          <LazyTooltip text="单击使用默认程序打开此文件" placement="top">
+            <LazyLink onClick={() => open(props.path)}>{props.name}</LazyLink>
+          </LazyTooltip>
         </span>
       }
       description={
