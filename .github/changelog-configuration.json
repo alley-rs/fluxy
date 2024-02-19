@@ -94,16 +94,6 @@
   "max_tags_to_fetch": 200,
   "max_pull_requests": 200,
   "max_back_track_time_days": 365,
-  "exclude_merge_branches": [
-    "Owner/qa"
-  ],
-  "tag_resolver": {
-    "method": "semver",
-    "filter": {
-      "pattern": "api-(.+)",
-      "flags": "gu"
-    }
-  },
   "base_branches": [
     "main"
   ]

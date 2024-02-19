@@ -53,7 +53,8 @@ jobs:
         uses: mikepenz/release-changelog-builder-action@v3
         with:
           configuration: ".github/changelog-configuration.json"
-          toTag: ${{ steps.latest-version.outputs.result }}
+          fromTag: ${{ steps.latest-version.outputs.result }}
+          failOnError: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
