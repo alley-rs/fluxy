@@ -16,12 +16,12 @@
 
 - 体积小
 
-  | 平台及格式                              | 体积（v0.1.0-beta.4） |
-  | --------------------------------------- | --------------------- |
-  | macOS aarch64 - dmg                     | 4.98 MB               |
-  | Linux(Debian/Ubuntu/Deepin) amd64 - deb | 7.17 MB               |
-  | Windows amd64 - msi                     | 4.71 MB               |
-  | Windows amd64 - exe                     | 3.88 MB               |
+  | 平台及格式                              | 体积（v0.1.1） |
+  | --------------------------------------- | -------------- |
+  | macOS aarch64 - dmg                     | 2.64 MB        |
+  | Linux(Debian/Ubuntu/Deepin) amd64 - deb | 2.86 MB        |
+  | Windows amd64 - msi                     | 2.79 MB        |
+  | Windows amd64 - exe                     | 2.68 MB        |
 
 ## 使用
 
