@@ -38,9 +38,9 @@ const run = async () => {
     text = text.slice(0, text.length - 1);
   }
 
-  // 删除换行符, 多个空格合并为一个空格
+  // 替换错误的换行符, 多个空格合并为一个空格
   text = text
-    .replaceAll("\\n", "")
+    .replaceAll("\\n", "\n")
     .replaceAll('\\"', '"')
     .replaceAll(/\s+/g, " ");
 
