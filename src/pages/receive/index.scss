@@ -1,6 +1,8 @@
 .receive-header {
   margin-top: 10px;
   width: 100vw;
+  padding-bottom: 5px;
+  box-shadow: 3px 16px 2px -15px rgba(0, 0, 0, 0.22);
 
   &-label {
     display: flex !important;
