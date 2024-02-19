@@ -70,3 +70,9 @@ sudo xattr -r -d com.apple.quarantine /Applications/Alley.app
 ```
 
 关闭终端后就可以正常打开程序了。
+
+### 缓存清理
+
+前端页面使用系统 WebView 渲染，缓存文件同样也由系统 WebView 创建。
+
+当缓存占据磁盘空间较大时，可以通过一些垃圾清理工具删除或手动删除缓存目录，不会影响程序的运行。
