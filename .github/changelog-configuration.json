@@ -27,6 +27,7 @@
       ]
     }
   ],
+  "pr_template": "- #{{TITLE}}(##{{NUMBER}})",
   "base_branches": [
     "main"
   ]
