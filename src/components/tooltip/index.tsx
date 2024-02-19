@@ -1,9 +1,4 @@
-import {
-  children,
-  createSignal,
-  type JSXElement,
-  createEffect,
-} from "solid-js";
+import { children, createSignal, type JSXElement } from "solid-js";
 import { addClassNames } from "../utils/class";
 import "./index.scss";
 import { JSX } from "solid-js/h/jsx-runtime";
@@ -32,33 +27,12 @@ const gap = 4;
 
 const Tooltip = (props: TooltipProps) => {
   let tooltipRef: HTMLDivElement | undefined;
+
   const [isVisible, setIsVisible] = createSignal(false);
 
   const [positionStyles, setPositionStyles] = createSignal<JSX.CSSProperties>();
 
   const resolved = children(() => props.children);
-
-  // TODO: 下面的状态处理不是最佳方式，有待改进
-  createEffect(() => {
-    // children 懒加载无法使用 onMount 监听，需要直接判断 props.children 的变化
-    const child = resolved() as HTMLElement;
-
-    if (!child) return;
-
-    const childRect = child.getBoundingClientRect();
-
-    const tooltipRect = tooltipRef?.getBoundingClientRect();
-
-    if (!childRect || !tooltipRect) return;
-
-    const positionStyle = setPostion(
-      props.placement ?? "left",
-      childRect,
-      tooltipRect,
-    );
-
-    setPositionStyles(positionStyle);
-  });
 
   const setPostion = (
     placement: TooltipPlacement,
@@ -67,9 +41,12 @@ const Tooltip = (props: TooltipProps) => {
   ): JSX.CSSProperties => {
     switch (placement) {
       case "top":
+        const left = childRect.width / 2 + childRect.left;
+        const halfWidth = tooltipRect.width / 2;
+
         return {
           "--top": `${childRect.top - gap}px`,
-          "--left": `${childRect.width / 2 + childRect.left}px`,
+          "--left": `${left < halfWidth ? halfWidth : left}px`,
         };
       case "left":
         return {
@@ -93,7 +70,30 @@ const Tooltip = (props: TooltipProps) => {
       `${classPrefix}-popover-arrow-${props.placement ?? "left"}`,
     );
 
+  const updatePostion = () => {
+    // TODO: 下面的状态处理不是最佳方式，有待改进
+    const child = resolved() as HTMLElement;
+
+    if (!child) return;
+
+    const childRect = child.getBoundingClientRect();
+
+    const tooltipRect = tooltipRef?.getBoundingClientRect();
+
+    if (!childRect || !tooltipRect) return;
+
+    const positionStyle = setPostion(
+      props.placement ?? "left",
+      childRect,
+      tooltipRect,
+    );
+
+    setPositionStyles(positionStyle);
+  };
+
   const showTooltip = () => {
+    updatePostion();
+
     setIsVisible(true);
   };
 
