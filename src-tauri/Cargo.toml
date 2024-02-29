@@ -1,10 +1,10 @@
 [package]
 name = "alley"
 version = "0.0.0"
-description = "A Tauri App"
-authors = ["you"]
-license = ""
-repository = ""
+description = "局域网文件传输工具"
+authors = ["thep0y"]
+license = "AGPL-3.0"
+repository = "https://github.com/alley-rs/alley-transfer"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
@@ -21,22 +21,25 @@ lazy_static = "1"
 salvo = { version = "0.66", features = ["serve-static"] }
 tokio = { version = "1", features = ["macros"] }
 tokio-util = "0.7"
-local-ip-address = "0.5"
+local-ip-address = "0.6"
 qrcode-generator = "4"
 bytes = '1'
 futures = "0.3"
-log = "0.4"
-simplelog = { version = "0.12" }
-time = { version = "0.3", features = ['formatting'] }
+time = { version = "0.3", features = ['macros'] }
 thiserror = "1"
+tracing-subscriber = { version = "0.3", features = [
+  'time',
+  'env-filter',
+  'json',
+] }
+tracing = { version = "0.1", features = ["log", "release_max_level_info"] }
+tracing-appender = '0.2'
 
 
 [features]
 # this feature is used for production builds or when `devPath` points to the filesystem
 # DO NOT REMOVE!!
 custom-protocol = ["tauri/custom-protocol"]
-default = ["log-paris"]
-log-paris = ["simplelog/paris"]
 
 [profile.release]
 panic = "abort"   # Strip expensive panic clean-up logic

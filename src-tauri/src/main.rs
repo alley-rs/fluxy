@@ -5,18 +5,11 @@ mod error;
 mod lazy;
 #[cfg(target_os = "linux")]
 mod linux;
-mod logger;
 mod server;
 mod stream;
 
 #[macro_use]
 extern crate lazy_static;
-#[cfg(debug_assertions)]
-#[macro_use]
-extern crate simplelog;
-#[cfg(not(debug_assertions))]
-#[macro_use]
-extern crate log;
 
 use std::{
     path::PathBuf,
@@ -25,17 +18,15 @@ use std::{
 
 use qrcode_generator::QrCodeEcc;
 use serde::Serialize;
-#[cfg(debug_assertions)]
-use simplelog::{ColorChoice, TermLogger, TerminalMode};
 use tauri::{Manager, UpdaterEvent};
+use time::macros::{format_description, offset};
 use tokio::fs::File;
-#[cfg(not(debug_assertions))]
-use {lazy::APP_CONFIG_DIR, simplelog::WriteLogger, std::fs};
+use tracing::{debug, error, info, trace, Level};
+use tracing_subscriber::fmt::time::OffsetTime;
 
-use crate::error::AlleyResult;
 use crate::lazy::LOCAL_IP;
-use crate::logger::{logger_config, logger_level};
 use crate::server::{SendFile, DOWNLOADS_DIR, MAIN_WINDOW, QR_CODE_MAP, SEND_FILES};
+use crate::{error::AlleyResult, lazy::APP_CONFIG_DIR};
 
 fn now() -> AlleyResult<Duration> {
     SystemTime::now().duration_since(UNIX_EPOCH).map_err(|e| {
@@ -179,18 +170,42 @@ fn is_linux() -> bool {
 #[tokio::main]
 async fn main() -> AlleyResult<()> {
     #[cfg(debug_assertions)]
-    TermLogger::init(
-        logger_level(),
-        logger_config(),
-        TerminalMode::Mixed,
-        ColorChoice::Auto,
-    )?;
+    let timer = OffsetTime::new(
+        offset!(+8),
+        format_description!("[hour]:[minute]:[second].[subsecond digits:3]"),
+    );
     #[cfg(not(debug_assertions))]
-    WriteLogger::init(
-        logger_level(),
-        logger_config(),
-        fs::File::create(APP_CONFIG_DIR.join("alley.log"))?,
-    )?;
+    let timer = OffsetTime::new(
+        offset!(+8),
+        format_description!("[year]-[month]-[day] [hour]:[minute]:[second].[subsecond digits:3]"),
+    );
+
+    // NOTE: _guard must be a top-level variable
+    let (writer, _guard) = {
+        let file_appender = tracing_appender::rolling::never(&*APP_CONFIG_DIR, "alley.log");
+        tracing_appender::non_blocking(file_appender)
+    };
+
+    #[cfg(debug_assertions)]
+    let writer = {
+        use tracing_subscriber::fmt::writer::MakeWriterExt;
+        std::io::stderr.and(writer)
+    };
+
+    let builder = tracing_subscriber::fmt()
+        .with_max_level(Level::WARN)
+        .with_file(true)
+        .with_line_number(true)
+        .with_target(false)
+        .with_env_filter("hunter")
+        .with_timer(timer)
+        .with_writer(writer);
+
+    #[cfg(debug_assertions)]
+    builder.init();
+
+    #[cfg(not(debug_assertions))]
+    builder.json().init();
 
     #[cfg(target_os = "linux")]
     {

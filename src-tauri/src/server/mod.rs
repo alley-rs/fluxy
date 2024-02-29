@@ -8,7 +8,6 @@ use std::process;
 use std::sync::OnceLock;
 use std::time::Instant;
 
-use log::info;
 use salvo::fs::NamedFile;
 use salvo::prelude::*;
 #[cfg(not(debug_assertions))]
@@ -19,6 +18,7 @@ use tokio::fs;
 use tokio::fs::File;
 use tokio::sync::RwLock;
 use tokio_util::io::StreamReader;
+use tracing::{debug, error, info};
 
 #[cfg(debug_assertions)]
 use crate::lazy::LOCAL_IP;
