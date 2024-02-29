@@ -415,21 +415,11 @@ pub(super) async fn serve() -> AlleyResult<()> {
 
             info!(message = "已获取到可执行文件路径", path = ?current_exe);
 
-            let current_dir = current_exe
-                .parent()
-                .map_err(|e| {
-                    error!(message = "获取可执行文件的父目录失败", error = ?e);
-                    e
-                })?
-                .parent()
-                .map_err(|e| {
-                    error!(message = "获取可执行文件的父目录的父目录失败", error = ?e);
-                    e
-                })?;
+            let current_dir = current_exe.parent().unwrap().parent().unwrap();
 
             debug!(
                 message = "当前工作目录",
-                dir = current_dir,
+                dir = ?current_dir,
                 is_absolute = current_dir.is_absolute(),
             );
 
