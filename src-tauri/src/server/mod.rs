@@ -8,7 +8,6 @@ use std::process;
 use std::sync::OnceLock;
 use std::time::Instant;
 
-use log::info;
 use salvo::fs::NamedFile;
 use salvo::prelude::*;
 #[cfg(not(debug_assertions))]
@@ -19,7 +18,9 @@ use tokio::fs;
 use tokio::fs::File;
 use tokio::sync::RwLock;
 use tokio_util::io::StreamReader;
+use tracing::{debug, error, info};
 
+use crate::error::AlleyResult;
 #[cfg(debug_assertions)]
 use crate::lazy::LOCAL_IP;
 use crate::server::logger::Logger;
@@ -158,7 +159,7 @@ async fn connect(req: &Request, res: &mut Response) -> Result<()> {
 
     let mut qr_code_map = QR_CODE_MAP.write().await;
     if qr_code_map.contains_key(&id) {
-        error!("此二维码已被使用: {}", id);
+        error!(message = "此二维码已被使用", id = id);
         return Err(ServerError::new(
             "此二维码已被使用",
             "请刷新小路互传页面生成新的二维码",
@@ -167,7 +168,7 @@ async fn connect(req: &Request, res: &mut Response) -> Result<()> {
 
     qr_code_map.insert(id, true);
 
-    info!("客户端连接成功: addr={}", req.remote_addr());
+    info!(message = "客户端连接成功", ip = ?req.remote_addr());
 
     // 客户端重定向到首页
     res.render(Redirect::found("/?mode=".to_owned() + &mode));
@@ -181,13 +182,13 @@ fn format_file_size(size: u64) -> String {
     const GB: u64 = MB * 1024;
 
     if size < KB {
-        return format!("{} B", size);
+        format!("{} B", size)
     } else if size < MB {
-        return format!("{:.2} KB", size as f64 / KB as f64);
+        format!("{:.2} KB", size as f64 / KB as f64)
     } else if size < GB {
-        return format!("{:.2} MB", size as f64 / MB as f64);
+        format!("{:.2} MB", size as f64 / MB as f64)
     } else {
-        return format!("{:.2} GB", size as f64 / GB as f64);
+        format!("{:.2} GB", size as f64 / GB as f64)
     }
 }
 
@@ -225,10 +226,10 @@ async fn download_file(req: &Request, res: &mut Response) -> Result<()> {
         Some(p) => p,
     };
 
-    debug!("下载文件: {:?}", path);
+    debug!(message = "下载文件", path = ?path);
 
     if !path.exists() {
-        error!("path 不存在: {:?}", path);
+        error!(message = "path 不存在", path = ?path);
         return Err(ServerError::new("文件不存在", "路径错误或该文件已被删除"));
     }
 
@@ -259,7 +260,7 @@ async fn files(res: &mut Response) -> Result<()> {
         Some(arr) => arr,
     };
 
-    debug!("发送的文件列表: {:?}", send_files);
+    debug!(message = "发送的文件列表", files = ?send_files);
 
     res.render(Json(send_files));
 
@@ -274,7 +275,7 @@ async fn files(res: &mut Response) -> Result<()> {
 
 #[handler]
 async fn upload(req: &mut Request) -> Result<()> {
-    debug!("收到上传任务: addr={}", req.remote_addr());
+    debug!(message = "收到上传任务", ip = ?req.remote_addr());
 
     let name = match req.query::<String>("name") {
         Some(s) => s,
@@ -283,7 +284,7 @@ async fn upload(req: &mut Request) -> Result<()> {
             return Err(ServerError::new("文件名为空", "请通过小路互传扫码访问"));
         }
     };
-    debug!("文件名: {:?}", name);
+    debug!(message = "接收的文件名", name = name);
 
     let size: u64 = match req.header("content-length") {
         Some(n) => n,
@@ -295,10 +296,10 @@ async fn upload(req: &mut Request) -> Result<()> {
     };
 
     info!(
-        "收到有效的上传任务: name={} size={} addr={}",
-        name,
-        size,
-        req.remote_addr()
+        message= "收到有效的上传任务",
+        name = name,
+        size = size,
+        ip = ?req.remote_addr()
     );
 
     let start = Instant::now();
@@ -336,15 +337,15 @@ async fn upload(req: &mut Request) -> Result<()> {
 
     let file_path = DOWNLOADS_DIR.read().await.join(&name);
 
-    debug!("保存的文件路径: {:?}", file_path);
+    debug!(message = "保存的文件路径", path = ?file_path);
 
     let mut stream_reader = StreamReader::new(stream);
     let mut file = File::create(&file_path).await.map_err(|e| {
-        error!("新建文件时出错: path={:?} error={}", file_path, e);
+        error!(message = "新建文件时出错", path = ?file_path, error = ?e);
         ServerError::Internal
     })?;
     if let Err(e) = tokio::io::copy(&mut stream_reader, &mut file).await {
-        error!("复制文件流时出错: path={:?} error={}", file_path, e);
+        error!(message = "复制文件流时出错", path = ?file_path, error = ?e);
 
         if let Some(w) = MAIN_WINDOW.get() {
             let _ = w.emit(
@@ -355,11 +356,11 @@ async fn upload(req: &mut Request) -> Result<()> {
 
         // 上传未完成时删除本地未完成的文件
         fs::remove_file(&file_path).await.map_err(|e| {
-            error!("删除未完成文件时出错: path={:?} error={}", file_path, e);
+            error!(message = "删除未完成文件时出错", path = ?file_path, error = ?e);
             ServerError::Internal
         })?;
 
-        info!("已删除未完成文件: {:?}", file_path);
+        info!(message = "已删除未完成文件", path = ?file_path);
 
         return Err(ServerError::new("请求中断", None));
     }
@@ -367,21 +368,27 @@ async fn upload(req: &mut Request) -> Result<()> {
     let end = Instant::now();
 
     info!(
-        "已保存文件: path={:?} size={} addr={} cost={:?}",
-        file_path,
-        size,
-        req.remote_addr(),
-        end.duration_since(start)
+        message = "已保存文件",
+        path = ?file_path,
+        size = size,
+        ip = ?req.remote_addr(),
+        cost = ?end.duration_since(start),
     );
 
     Ok(())
 }
 
-pub(super) async fn serve() {
+pub(super) async fn serve() -> AlleyResult<()> {
     // 程序启动时的默认下载目录
     let default_downloads_dir = DOWNLOADS_DIR.read().await;
     if !default_downloads_dir.exists() {
-        fs::create_dir(default_downloads_dir.clone()).await.unwrap();
+        debug!(message = "创建默认接收目录", dir = ?default_downloads_dir);
+        fs::create_dir(default_downloads_dir.clone())
+            .await
+            .map_err(|e| {
+                error!(message = "创建默认接收目录失败", error = ?e);
+                e
+            })?;
     }
     drop(default_downloads_dir);
 
@@ -401,13 +408,19 @@ pub(super) async fn serve() {
     {
         #[cfg(any(target_os = "windows", target_os = "macos"))]
         let static_dir = {
-            let current_exe = env::current_exe().unwrap();
+            let current_exe = env::current_exe().map_err(|e| {
+                error!(message = "获取可执行文件路径失败", error = ?e);
+                e
+            })?;
+
+            info!(message = "已获取到可执行文件路径", path = ?current_exe);
+
             let current_dir = current_exe.parent().unwrap().parent().unwrap();
 
             debug!(
-                "当前工作目录:{:?}({})",
-                current_dir,
-                current_dir.is_absolute()
+                message = "当前工作目录",
+                dir = ?current_dir,
+                is_absolute = current_dir.is_absolute(),
             );
 
             #[cfg(target_os = "windows")]
@@ -433,9 +446,11 @@ pub(super) async fn serve() {
     let acceptor = match TcpListener::new("0.0.0.0:5800").try_bind().await {
         Ok(a) => a,
         Err(e) => {
-            error!("创建 TcpListener 失败: {}", e);
+            error!(message = "创建 TcpListener 失败", error = ?e);
             process::exit(1);
         }
     };
     Server::new(acceptor).serve(router).await;
+
+    Ok(())
 }
