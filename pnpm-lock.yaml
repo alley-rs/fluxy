@@ -8,6 +8,9 @@ dependencies:
   '@tauri-apps/api':
     specifier: ^1.5.3
     version: 1.5.3
+  alley-components:
+    specifier: ^0.0.7
+    version: 0.0.7(solid-icons@1.1.0)(solid-js@1.8.15)
   solid-icons:
     specifier: ^1.1.0
     version: 1.1.0(solid-js@1.8.15)
@@ -752,6 +755,16 @@ packages:
   /@types/estree@1.0.5:
     resolution: {integrity: sha512-/kYRxGDLWzHOB7q+wtSUQlFrtcdUccpfy+X+9iMBpHK8QLLhx2wIPYuS5DYtR9Wa/YlZAbIovy7qVdB1Aq6Lyw==}
     dev: true
+
+  /alley-components@0.0.7(solid-icons@1.1.0)(solid-js@1.8.15):
+    resolution: {integrity: sha512-nGztBoAIt+Y75NgZjm2BMZo631hptc/OuWqNDfrTrnlh9LVN0k08U40aa4SpwF48XXSiLqrogsMF3uNbKgTasw==}
+    peerDependencies:
+      solid-icons: ^1.1.0
+      solid-js: ^1.8.15
+    dependencies:
+      solid-icons: 1.1.0(solid-js@1.8.15)
+      solid-js: 1.8.15
+    dev: false
 
   /ansi-styles@3.2.1:
     resolution: {integrity: sha512-VT0ZI6kZRdTh8YyJw3SMbYm/u+NqfsAxEpWO0Pf9sq8/e94WxxOpPKx9FR1FlyCtOVDNOQ+8ntlqFxiRc+r5qA==}

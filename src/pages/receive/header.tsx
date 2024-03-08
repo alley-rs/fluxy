@@ -2,8 +2,8 @@ import { open as pick } from "@tauri-apps/api/dialog";
 import { open } from "@tauri-apps/api/shell";
 import { createEffect, createSignal, onMount } from "solid-js";
 import { changeDownloadsDir, getDownloadsDir, isLinux } from "~/api";
-import type { MenuItemProps } from "~/components/dropdown";
-import Loading from "~/components/loading";
+import type { MenuItemProps } from "alley-components/lib/components/dropdown";
+import Loading from "alley-components/lib/components/spinner";
 import { LazyCol, LazyDropdown, LazyLink, LazyRow } from "~/lazy";
 
 const baseClassName = "receive-header";
