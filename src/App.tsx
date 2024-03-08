@@ -1,4 +1,4 @@
-import { Match, Switch, createSignal, onMount, createEffect } from "solid-js";
+import { Match, Switch, createSignal } from "solid-js";
 import { TbArrowsTransferUp, TbArrowsTransferDown } from "solid-icons/tb";
 import { BiRegularSun, BiSolidMoon } from "solid-icons/bi";
 import {
@@ -10,6 +10,7 @@ import {
 } from "./lazy";
 import { suspense } from "./advance";
 import "~/App.scss";
+import useDark from "alley-components/lib/hooks/useDark";
 
 enum Mode {
   Send,
@@ -17,37 +18,11 @@ enum Mode {
 }
 
 const App = () => {
-  const [isDark, setIsDark] = createSignal(false);
+  const [isDark, setIsDark] = useDark();
 
   const [mode, setMode] = createSignal<Mode | null>(null);
 
   const toHome = () => setMode(null);
-
-  onMount(() => {
-    // 设置默认主题色
-    if (matchMedia("(prefers-color-scheme: dark)").matches) {
-      setIsDark(true);
-    } else {
-      setIsDark(false);
-    }
-
-    // 监听系统颜色切换
-    window
-      .matchMedia("(prefers-color-scheme: dark)")
-      .addEventListener("change", (event) => {
-        if (event.matches) {
-          setIsDark(true);
-        } else {
-          setIsDark(false);
-        }
-      });
-  });
-
-  // 手动切换主题色
-  createEffect(() => {
-    if (isDark()) window.document.documentElement.setAttribute("class", "dark");
-    else window.document.documentElement.removeAttribute("class");
-  });
 
   return (
     <>
