@@ -29,7 +29,7 @@ import {
   LazyQrcode,
   LazyTooltip,
 } from "~/lazy";
-import { addClassNames } from "~/components/utils";
+import { addClassNames } from "alley-components/lib/utils/class";
 import { open } from "@tauri-apps/api/shell";
 
 interface SendProps {
@@ -158,31 +158,31 @@ const Send = (props: SendProps) => {
 
       {isEmpty() || qrcode()
         ? suspense(
-          <LazyFloatButton
-            icon={<AiOutlineHome />}
-            onClick={props.toHome}
-            tooltip="回到主页"
-            bottom={qrcode() ? 20 : 60}
-          />,
-        )
+            <LazyFloatButton
+              icon={<AiOutlineHome />}
+              onClick={props.toHome}
+              tooltip="回到主页"
+              bottom={qrcode() ? 20 : 60}
+            />,
+          )
         : suspense(
-          <LazyFloatButtonGroup
-            bottom={60}
-            options={[
-              {
-                icon: <AiOutlineClear />,
-                onClick: () => setFiles([]),
-                danger: true,
-                tooltip: "清空文件列表",
-              },
-              {
-                icon: <AiOutlineHome />,
-                onClick: props.toHome,
-                tooltip: "回到主页",
-              },
-            ]}
-          />,
-        )}
+            <LazyFloatButtonGroup
+              bottom={60}
+              options={[
+                {
+                  icon: <AiOutlineClear />,
+                  onClick: () => setFiles([]),
+                  danger: true,
+                  tooltip: "清空文件列表",
+                },
+                {
+                  icon: <AiOutlineHome />,
+                  onClick: props.toHome,
+                  tooltip: "回到主页",
+                },
+              ]}
+            />,
+          )}
     </>
   );
 };
