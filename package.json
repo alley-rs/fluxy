@@ -17,16 +17,16 @@
   },
   "dependencies": {
     "@tauri-apps/api": "^1.5.3",
-    "alley-components": "^0.0.7",
+    "alley-components": "^0.0.9",
     "solid-icons": "^1.1.0",
     "solid-js": "^1.8.15"
   },
   "devDependencies": {
-    "@tauri-apps/cli": "^1.5.10",
+    "@tauri-apps/cli": "^1.5.11",
     "cross-env": "^7.0.3",
     "sass": "^1.71.1",
-    "typescript": "^5.3.3",
-    "vite": "^5.1.4",
+    "typescript": "^5.4.2",
+    "vite": "^5.1.5",
     "vite-plugin-solid": "^2.10.1"
   }
 }
