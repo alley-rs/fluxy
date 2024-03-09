@@ -1,6 +1,6 @@
 .send {
   padding: 10px;
-  flex: 1;
+  width: 100%;
 
   &-header {
     height: 31px;
@@ -16,6 +16,10 @@
     flex-grow: 14;
     margin-bottom: 10px;
     overflow-y: auto;
+
+    .tooltip {
+      max-width: 250px;
+    }
 
     &-empty {
       border: 1px #999 dashed;
