@@ -10,6 +10,8 @@ mod stream;
 
 #[macro_use]
 extern crate lazy_static;
+#[macro_use]
+extern crate tracing;
 
 use std::{
     path::PathBuf,
@@ -21,7 +23,7 @@ use serde::Serialize;
 use tauri::{Manager, UpdaterEvent};
 use time::macros::{format_description, offset};
 use tokio::fs::File;
-use tracing::{debug, error, info, trace, Level};
+use tracing::Level;
 use tracing_subscriber::fmt::time::OffsetTime;
 
 use crate::lazy::LOCAL_IP;
