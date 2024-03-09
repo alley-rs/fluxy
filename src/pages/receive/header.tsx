@@ -57,7 +57,7 @@ const Header = () => {
 
   return (
     <LazyRow class={baseClassName}>
-      <LazyCol span={5} class={`${baseClassName}-label`}>
+      <LazyCol span={5} class={`${baseClassName}-label`} align="center">
         <LazyDropdown
           open={openDropDown()}
           menu={dropdownItems}
