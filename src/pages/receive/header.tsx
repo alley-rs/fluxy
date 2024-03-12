@@ -4,7 +4,7 @@ import { createEffect, createSignal, onMount } from "solid-js";
 import { changeDownloadsDir, getDownloadsDir, isLinux } from "~/api";
 import type { MenuItemProps } from "alley-components/lib/components/dropdown";
 import Loading from "alley-components/lib/components/spinner";
-import { LazyCol, LazyDropdown, LazyLink, LazyRow } from "~/lazy";
+import { LazyCol, LazyDropdown, LazyLink, LazyRow, LazyTooltip } from "~/lazy";
 
 const baseClassName = "receive-header";
 
@@ -57,27 +57,39 @@ const Header = () => {
 
   return (
     <LazyRow class={baseClassName}>
-      <LazyCol span={5} class={`${baseClassName}-label`} align="center">
+      <LazyCol
+        span={4}
+        class={`${baseClassName}-label`}
+        align="center"
+        justify="center"
+      >
         <LazyDropdown
           open={openDropDown()}
           menu={dropdownItems}
           top={dropdownTop()}
           left={18}
         >
-          <span class={`${baseClassName}-label-text`}>保存目录：</span>
+          <span class={`${baseClassName}-label-text`}>保存目录</span>
         </LazyDropdown>
       </LazyCol>
 
-      <LazyCol span={14} class={`${baseClassName}-directory-entry`}>
-        <LazyLink
-          onClick={async () => {
-            setOpenDropDown(false);
-            open(downloadDir()!);
-          }}
-          wrap
-        >
-          {downloadDir()!}
-        </LazyLink>
+      <LazyCol
+        span={15}
+        class={`${baseClassName}-directory-entry`}
+        align="center"
+        justify="center"
+      >
+        <LazyTooltip text="单击在文件管理器中打开" placement="bottom">
+          <LazyLink
+            onClick={async () => {
+              setOpenDropDown(false);
+              open(downloadDir()!);
+            }}
+            wrap
+          >
+            {downloadDir()!}
+          </LazyLink>
+        </LazyTooltip>
       </LazyCol>
     </LazyRow>
   );

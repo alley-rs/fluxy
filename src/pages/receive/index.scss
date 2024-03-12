@@ -2,36 +2,13 @@
   margin-top: 10px;
   width: 100vw;
   padding-bottom: 5px;
+  padding-left: 8px;
   box-shadow: 3px 16px 2px -15px rgba(0, 0, 0, 0.22);
 
   &-label {
-    display: flex !important;
-    justify-content: right;
-    align-items: center;
-
     &-text {
       font-size: 0.8rem;
       color: var(--alley-color-weak);
-      font-weight: bold;
-    }
-  }
-
-  &-directory-entry {
-    max-width: 100%;
-    padding-left: 0;
-    display: flex !important;
-    justify-content: start;
-    align-items: center;
-    cursor: pointer;
-
-    >div {
-      display: flex;
-    }
-
-    span {
-      max-width: 100%;
-      overflow-wrap: break-word;
-      white-space: normal;
     }
   }
 }
