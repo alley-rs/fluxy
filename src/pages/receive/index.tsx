@@ -20,6 +20,7 @@ import {
   LazyQrcode,
   LazyList,
   LazyFloatButtonGroup,
+  LazyToast,
 } from "~/lazy";
 import { TbHome } from "solid-icons/tb";
 import { createStore } from "solid-js/store";
@@ -121,6 +122,13 @@ const Receive = ({ toHome }: ReceiveProps) => {
     <Switch>
       <Match when={qrcode() !== null}>
         <LazyQrcode qrcode={qrcode()!} />
+
+        <LazyToast
+          placement="top"
+          open={true}
+          message="请使用手机扫描此二维码"
+          onClose={() => {}}
+        />
 
         {floatButtons()}
       </Match>
