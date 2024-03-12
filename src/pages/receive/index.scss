@@ -11,7 +11,7 @@
 
     &-text {
       font-size: 0.8rem;
-      color: var(--color-weak);
+      color: var(--alley-color-weak);
       font-weight: bold;
     }
   }
@@ -73,12 +73,12 @@
 
       .label {
         font-weight: normal;
-        font-size: var(--font-size-4);
+        font-size: var(--alley-font-size-sm);
         margin-right: 4px;
         color: var(--color-weak);
         text-shadow:
-          0.1px 0.1px 0.1px var(--color-weak),
-          -0.1px -0.1px 0.1px var(--color-light);
+          0.1px 0.1px 0.1px var(--alley-color-weak),
+          -0.1px -0.1px 0.1px var(--alley-color-light);
       }
     }
 
@@ -89,9 +89,9 @@
     }
 
     .done {
-      color: var(--color-success);
+      color: var(--alley-color-success);
       margin-right: 10px;
-      font-size: var(--font-size-8);
+      font-size: var(--alley-font-size-8);
     }
   }
 }
