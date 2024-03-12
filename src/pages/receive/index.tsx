@@ -5,9 +5,9 @@ import {
   createSignal,
   onCleanup,
   onMount,
+  Show,
 } from "solid-js";
 import { appWindow } from "@tauri-apps/api/window";
-import { OrderedSet } from "~/utils";
 import { getUploadQrCode, getQrCodeState } from "~/api";
 import FileListItem from "./fileListItem";
 import "./index.scss";
@@ -18,8 +18,12 @@ import {
   LazyFlex,
   LazyEmpty,
   LazyQrcode,
+  LazyList,
+  LazyFloatButtonGroup,
 } from "~/lazy";
 import { TbHome } from "solid-icons/tb";
+import { createStore } from "solid-js/store";
+import { AiFillDelete } from "solid-icons/ai";
 
 interface ReceiveProps {
   toHome: () => void;
@@ -28,15 +32,11 @@ interface ReceiveProps {
 const Receive = ({ toHome }: ReceiveProps) => {
   const [qrcode, setQrcode] = createSignal<QrCode | null>(null);
 
-  const [taskList, setTaskList] = createSignal<OrderedSet<TaskMessage>>(
-    new OrderedSet("name"),
-  );
-  const [fileList, setFileList] = createSignal<Omit<TaskMessage, "speed">[]>(
-    [],
-  );
+  const [taskList, setTaskList] = createStore<TaskMessage[]>([]);
+  const [fileList, setFileList] = createStore<Omit<TaskMessage, "speed">[]>([]);
 
   onMount(() => {
-    if (qrcode() || !taskList().empty() || fileList().length) return;
+    if (qrcode() || taskList.length || fileList.length) return;
 
     getUploadQrCode().then((c) => setQrcode(c));
   });
@@ -45,24 +45,30 @@ const Receive = ({ toHome }: ReceiveProps) => {
     const unlisten = appWindow.listen<TaskMessage>("upload://progress", (e) => {
       if (qrcode()) setQrcode(null);
 
-      setTaskList((pre) => pre.push(e.payload));
+      const { path, percent, aborted } = e.payload;
 
-      const { path, name, percent, aborted } = e.payload;
+      const taskIndex = taskList.findIndex((prev) => prev.path === path);
+      if (taskIndex === -1) {
+        setTaskList(taskList.length, e.payload);
+      } else {
+        setTaskList(taskIndex, (item) => ({
+          ...item,
+          percent: e.payload.percent,
+          speed: e.payload.speed,
+        }));
+      }
 
       if (aborted) {
-        setFileList((pre) => pre.filter((i) => i.path !== path));
-        setTaskList((pre) => pre.remove(e.payload));
+        setFileList((prev) => prev.filter((i) => i.path !== path));
+        setTaskList((prev) => prev.filter((i) => i.path !== path));
         return;
       }
 
       if (percent === 100) {
-        setTaskList((pre) => pre.remove(e.payload));
+        setTaskList((prev) => prev.filter((i) => i.path !== path));
 
-        setFileList((pre) => {
-          const t = pre.find((v) => v.name === name);
-
-          return t ? pre : [...pre, e.payload];
-        });
+        const doneIndex = fileList.findIndex((prev) => prev.path === path);
+        if (doneIndex === -1) setFileList(fileList.length, e.payload);
       }
     });
 
@@ -87,17 +93,28 @@ const Receive = ({ toHome }: ReceiveProps) => {
     onCleanup(() => clearTimeout(timer));
   });
 
-  const homeButton = () =>
+  const floatButtons = () =>
     suspense(
-      <LazyFloatButton
-        tooltip="回到主页"
-        icon={<TbHome />}
-        onClick={() => {
-          setTaskList(new OrderedSet<TaskMessage>("name"));
-          setFileList([]);
-          toHome();
-        }}
-      />,
+      <LazyFloatButtonGroup>
+        <Show when={fileList.length}>
+          <LazyFloatButton
+            tooltip="清空已完成列表"
+            icon={<AiFillDelete />}
+            onClick={() => setFileList([])}
+            danger
+          />
+        </Show>
+
+        <LazyFloatButton
+          tooltip="回到主页"
+          icon={<TbHome />}
+          onClick={() => {
+            setTaskList([]);
+            setFileList([]);
+            toHome();
+          }}
+        />
+      </LazyFloatButtonGroup>,
     );
 
   return (
@@ -105,9 +122,9 @@ const Receive = ({ toHome }: ReceiveProps) => {
       <Match when={qrcode() !== null}>
         <LazyQrcode qrcode={qrcode()!} />
 
-        {homeButton()}
+        {floatButtons()}
       </Match>
-      <Match when={taskList().empty() && !fileList().length}>
+      <Match when={!taskList.length && !fileList.length}>
         <LazyFlex
           direction="vertical"
           align="center"
@@ -124,38 +141,42 @@ const Receive = ({ toHome }: ReceiveProps) => {
           </LazyFlex>
         </LazyFlex>
 
-        {homeButton()}
+        {floatButtons()}
       </Match>
-      <Match
-        when={qrcode() === null && (!taskList().empty() || fileList().length)}
-      >
+      <Match when={qrcode() === null && (taskList.length || fileList.length)}>
         <LazyFlex direction="vertical" style={{ height: "100vh" }}>
           {suspense(<LazyReceiveHeader />)}
 
           <ul class="receive-file-list">
-            {fileList().map((t, i) => (
-              <FileListItem
-                index={i}
-                name={t.name}
-                percent={100}
-                size={t.size}
-                path={t.path}
-              />
-            ))}
+            <LazyList
+              dataSource={fileList}
+              renderItem={(item, index) => (
+                <FileListItem
+                  index={index}
+                  name={item.name}
+                  percent={100}
+                  size={item.size}
+                  path={item.path}
+                />
+              )}
+            />
 
-            {taskList().map((task) => (
-              <FileListItem
-                path={task.path}
-                name={task.name}
-                percent={Math.round(task.percent)}
-                speed={task.speed}
-                size={task.size}
-              />
-            ))}
+            <LazyList
+              dataSource={taskList}
+              renderItem={(item) => (
+                <FileListItem
+                  path={item.path}
+                  name={item.name}
+                  percent={Math.round(item.percent)}
+                  speed={item.speed}
+                  size={item.size}
+                />
+              )}
+            />
           </ul>
         </LazyFlex>
 
-        {homeButton()}
+        {floatButtons()}
       </Match>
     </Switch>
   );

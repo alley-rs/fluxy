@@ -48,6 +48,9 @@ export const LazySwitch = lazy(
 export const LazySpace = lazy(
   () => import("alley-components/lib/components/space"),
 );
+export const LazyTypographyText = lazy(
+  () => import("alley-components/lib/components/typography/text"),
+);
 export const LazyQrcode = lazy(() => import("~/components/qrcode"));
 
 export const LazySend = lazy(() => import("~/pages/send"));

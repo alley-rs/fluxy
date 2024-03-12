@@ -1,3 +1,4 @@
+import { Show } from "solid-js";
 import { open } from "@tauri-apps/api/shell";
 import { AiFillCheckCircle } from "solid-icons/ai";
 import fileType from "./fileType";
@@ -7,6 +8,7 @@ import {
   LazyProgress,
   LazySpace,
   LazyTooltip,
+  LazyTypographyText,
 } from "~/lazy";
 
 interface FileListItemProps {
@@ -29,9 +31,17 @@ const FileListItem = (props: FileListItemProps) => {
           {props.index !== undefined ? (
             <span class="label">{props.index + 1}.</span>
           ) : null}
-          <LazyTooltip text="单击使用默认程序打开此文件" placement="top">
-            <LazyLink onClick={() => open(props.path)}>{props.name}</LazyLink>
-          </LazyTooltip>
+
+          <Show
+            when={props.percent === 100}
+            fallback={
+              <LazyTypographyText disabled>{props.name}</LazyTypographyText>
+            }
+          >
+            <LazyTooltip text="单击使用默认程序打开此文件" placement="top">
+              <LazyLink onClick={() => open(props.path)}>{props.name}</LazyLink>
+            </LazyTooltip>
+          </Show>
         </span>
       }
       description={
