@@ -166,22 +166,20 @@ const Send = (props: SendProps) => {
             />,
           )
         : suspense(
-            <LazyFloatButtonGroup
-              bottom={60}
-              options={[
-                {
-                  icon: <AiOutlineClear />,
-                  onClick: () => setFiles([]),
-                  danger: true,
-                  tooltip: "清空文件列表",
-                },
-                {
-                  icon: <AiOutlineHome />,
-                  onClick: props.toHome,
-                  tooltip: "回到主页",
-                },
-              ]}
-            />,
+            <LazyFloatButtonGroup bottom={60}>
+              <LazyFloatButton
+                icon={<AiOutlineClear />}
+                onClick={() => setFiles([])}
+                danger
+                tooltip={"清空文件列表"}
+              />
+
+              <LazyFloatButton
+                icon={<AiOutlineHome />}
+                onClick={props.toHome}
+                tooltip={"回到主页"}
+              />
+            </LazyFloatButtonGroup>,
           )}
     </>
   );

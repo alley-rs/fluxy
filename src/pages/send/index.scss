@@ -17,6 +17,10 @@
     margin-bottom: 10px;
     overflow-y: auto;
 
+    .alley-list {
+      flex: 1;
+    }
+
     .tooltip {
       max-width: 250px;
     }
