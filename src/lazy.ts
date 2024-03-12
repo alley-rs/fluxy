@@ -37,10 +37,10 @@ export const LazyFileTypeIcon = lazy(
   () => import("~/components/file-type-icon"),
 );
 export const LazyFloatButton = lazy(
-  () => import("alley-components/lib/components/floatButton/button"),
+  () => import("alley-components/lib/components/float-button/button"),
 );
 export const LazyFloatButtonGroup = lazy(
-  () => import("alley-components/lib/components/floatButton/group"),
+  () => import("alley-components/lib/components/float-button/group"),
 );
 export const LazySwitch = lazy(
   () => import("alley-components/lib/components/switch"),
