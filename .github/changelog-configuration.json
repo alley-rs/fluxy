@@ -20,6 +20,12 @@
       ]
     },
     {
+      "title": "## 📦 Dependencies",
+      "labels": [
+        "dependencies"
+      ]
+    },
+    {
       "title": "## 🛠 Breaking Changes",
       "labels": [
         "semver-major",
