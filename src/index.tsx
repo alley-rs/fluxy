@@ -6,4 +6,8 @@ import App from "./App";
 
 const root = document.getElementById("root");
 
+if (import.meta.env.MODE === "production") {
+  document.addEventListener("contextmenu", (event) => event.preventDefault());
+}
+
 render(() => <App />, root!);
