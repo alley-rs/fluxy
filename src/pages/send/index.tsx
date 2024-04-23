@@ -44,12 +44,15 @@ const Send = (props: SendProps) => {
   const [qrcode, setQrcode] = createSignal<QrCode | null>(null);
 
   createEffect(() => {
-    const unlisten = appWindow.listen<string[]>(TauriEvent.DROP, async (e) => {
-      const paths = deleteRepetition(e.payload, files());
-      const sendFiles = await getFilesMetadata(paths);
+    const unlisten = appWindow.listen<{ paths: string[] }>(
+      TauriEvent.DROP,
+      async (e) => {
+        const paths = deleteRepetition(e.payload.paths, files());
+        const sendFiles = await getFilesMetadata(paths);
 
-      setFiles((pre) => [...pre, ...sendFiles]);
-    });
+        setFiles((pre) => [...pre, ...sendFiles]);
+      },
+    );
 
     onCleanup(() => {
       unlisten.then((f) => f());
@@ -157,29 +160,29 @@ const Send = (props: SendProps) => {
 
       {isEmpty() || qrcode()
         ? suspense(
-          <LazyFloatButton
-            icon={<AiOutlineHome />}
-            onClick={props.toHome}
-            tooltip="回到主页"
-            bottom={qrcode() ? 20 : 60}
-          />,
-        )
-        : suspense(
-          <LazyFloatButtonGroup bottom={60}>
-            <LazyFloatButton
-              icon={<AiOutlineClear />}
-              onClick={() => setFiles([])}
-              danger
-              tooltip={"清空文件列表"}
-            />
-
             <LazyFloatButton
               icon={<AiOutlineHome />}
               onClick={props.toHome}
-              tooltip={"回到主页"}
-            />
-          </LazyFloatButtonGroup>,
-        )}
+              tooltip="回到主页"
+              bottom={qrcode() ? 20 : 60}
+            />,
+          )
+        : suspense(
+            <LazyFloatButtonGroup bottom={60}>
+              <LazyFloatButton
+                icon={<AiOutlineClear />}
+                onClick={() => setFiles([])}
+                danger
+                tooltip={"清空文件列表"}
+              />
+
+              <LazyFloatButton
+                icon={<AiOutlineHome />}
+                onClick={props.toHome}
+                tooltip={"回到主页"}
+              />
+            </LazyFloatButtonGroup>,
+          )}
     </>
   );
 };
