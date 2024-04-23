@@ -1,5 +1,5 @@
 import { Show } from "solid-js";
-import { open } from "@tauri-apps/api/shell";
+import { open } from "@tauri-apps/plugin-shell";
 import { AiFillCheckCircle } from "solid-icons/ai";
 import fileType from "./fileType";
 import {

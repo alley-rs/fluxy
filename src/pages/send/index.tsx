@@ -10,7 +10,7 @@ import {
   AiOutlineCloseCircle,
   AiOutlineHome,
 } from "solid-icons/ai";
-import { appWindow } from "@tauri-apps/api/window";
+import { getCurrent } from "@tauri-apps/api/webviewWindow";
 import { TauriEvent } from "@tauri-apps/api/event";
 import "./index.scss";
 import { getFilesMetadata, getSendFilesUrlQrCode, getQrCodeState } from "~/api";
@@ -30,11 +30,13 @@ import {
   LazyTooltip,
 } from "~/lazy";
 import { addClassNames } from "alley-components/lib/utils/class";
-import { open } from "@tauri-apps/api/shell";
+import { open } from "@tauri-apps/plugin-shell";
 
 interface SendProps {
   toHome: () => void;
 }
+
+const appWindow = getCurrent();
 
 const Send = (props: SendProps) => {
   const [files, setFiles] = createSignal<SendFile[]>([]);
@@ -42,15 +44,12 @@ const Send = (props: SendProps) => {
   const [qrcode, setQrcode] = createSignal<QrCode | null>(null);
 
   createEffect(() => {
-    const unlisten = appWindow.listen<string[]>(
-      TauriEvent.WINDOW_FILE_DROP,
-      async (e) => {
-        const paths = deleteRepetition(e.payload, files());
-        const sendFiles = await getFilesMetadata(paths);
+    const unlisten = appWindow.listen<string[]>(TauriEvent.DROP, async (e) => {
+      const paths = deleteRepetition(e.payload, files());
+      const sendFiles = await getFilesMetadata(paths);
 
-        setFiles((pre) => [...pre, ...sendFiles]);
-      },
-    );
+      setFiles((pre) => [...pre, ...sendFiles]);
+    });
 
     onCleanup(() => {
       unlisten.then((f) => f());
@@ -158,29 +157,29 @@ const Send = (props: SendProps) => {
 
       {isEmpty() || qrcode()
         ? suspense(
+          <LazyFloatButton
+            icon={<AiOutlineHome />}
+            onClick={props.toHome}
+            tooltip="回到主页"
+            bottom={qrcode() ? 20 : 60}
+          />,
+        )
+        : suspense(
+          <LazyFloatButtonGroup bottom={60}>
+            <LazyFloatButton
+              icon={<AiOutlineClear />}
+              onClick={() => setFiles([])}
+              danger
+              tooltip={"清空文件列表"}
+            />
+
             <LazyFloatButton
               icon={<AiOutlineHome />}
               onClick={props.toHome}
-              tooltip="回到主页"
-              bottom={qrcode() ? 20 : 60}
-            />,
-          )
-        : suspense(
-            <LazyFloatButtonGroup bottom={60}>
-              <LazyFloatButton
-                icon={<AiOutlineClear />}
-                onClick={() => setFiles([])}
-                danger
-                tooltip={"清空文件列表"}
-              />
-
-              <LazyFloatButton
-                icon={<AiOutlineHome />}
-                onClick={props.toHome}
-                tooltip={"回到主页"}
-              />
-            </LazyFloatButtonGroup>,
-          )}
+              tooltip={"回到主页"}
+            />
+          </LazyFloatButtonGroup>,
+        )}
     </>
   );
 };

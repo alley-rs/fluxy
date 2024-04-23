@@ -4,7 +4,7 @@ use qrcode_generator::QRCodeError;
 use serde::{Serialize, Serializer};
 
 #[derive(Debug, thiserror::Error)]
-pub(crate) enum AlleyError {
+pub enum AlleyError {
     // #[error(transparent)]
     // SetLogger(#[from] SetLoggerError),
     #[error(transparent)]

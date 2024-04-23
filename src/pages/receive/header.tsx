@@ -1,5 +1,5 @@
-import { open as pick } from "@tauri-apps/api/dialog";
-import { open } from "@tauri-apps/api/shell";
+import { open as pick } from "@tauri-apps/plugin-dialog";
+import { open } from "@tauri-apps/plugin-shell";
 import { createEffect, createSignal, onMount } from "solid-js";
 import { changeDownloadsDir, getDownloadsDir, isLinux } from "~/api";
 import type { MenuItemProps } from "alley-components/lib/components/dropdown";

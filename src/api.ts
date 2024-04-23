@@ -1,4 +1,4 @@
-import { invoke } from "@tauri-apps/api";
+import { invoke } from "@tauri-apps/api/core";
 
 export const getDownloadsDir = async () =>
   await invoke<string>("downloads_dir");

@@ -16,17 +16,23 @@
     "update:all": "pnpm up --latest && cd static && pnpm up --latest && cd ../src-tauri && cargo update"
   },
   "dependencies": {
-    "@tauri-apps/api": "^1.5.3",
+    "@tauri-apps/api": "^2.0.0-beta.7",
+    "@tauri-apps/plugin-clipboard-manager": "2.1.0-beta.0",
+    "@tauri-apps/plugin-dialog": "2.0.0-beta.2",
+    "@tauri-apps/plugin-shell": "2.0.0-beta.2",
+    "@tauri-apps/plugin-updater": "2.0.0-beta.2",
     "alley-components": "^0.1.4",
     "solid-icons": "^1.1.0",
     "solid-js": "^1.8.16"
   },
   "devDependencies": {
-    "@tauri-apps/cli": "^1.5.11",
+    "@types/node": "*",
+    "@tauri-apps/cli": "2.0.0-beta.12",
     "cross-env": "^7.0.3",
     "sass": "^1.75.0",
     "typescript": "^5.4.5",
     "vite": "^5.2.8",
-    "vite-plugin-solid": "^2.10.2"
+    "vite-plugin-solid": "^2.10.2",
+    "internal-ip": "^7.0.0"
   }
 }

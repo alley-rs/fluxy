@@ -13,7 +13,7 @@ use salvo::prelude::*;
 #[cfg(not(debug_assertions))]
 use salvo::serve_static::StaticDir;
 use serde::{Deserialize, Serialize};
-use tauri::Window;
+use tauri::{Manager, WebviewWindow};
 use tokio::fs;
 use tokio::fs::File;
 use tokio::sync::RwLock;
@@ -26,7 +26,7 @@ use crate::server::logger::Logger;
 use crate::stream::ReadProgressStream;
 
 const UPLOAD_EVENT: &str = "upload://progress";
-pub static MAIN_WINDOW: OnceLock<Window> = OnceLock::new();
+pub static MAIN_WINDOW: OnceLock<WebviewWindow> = OnceLock::new();
 
 lazy_static! {
     pub(super) static ref DOWNLOADS_DIR: RwLock<PathBuf> =
@@ -377,7 +377,7 @@ async fn upload(req: &mut Request) -> Result<()> {
     Ok(())
 }
 
-pub(super) async fn serve() -> AlleyResult<()> {
+pub async fn serve() -> AlleyResult<()> {
     // 程序启动时的默认下载目录
     let default_downloads_dir = DOWNLOADS_DIR.read().await;
     if !default_downloads_dir.exists() {
