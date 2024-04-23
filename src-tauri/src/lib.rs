@@ -21,8 +21,11 @@ use std::{
 use qrcode_generator::QrCodeEcc;
 use serde::Serialize;
 use tauri::Manager;
+use time::macros::{format_description, offset};
 // use time::macros::{format_description, offset};
 use tokio::fs::File;
+use tracing::Level;
+use tracing_subscriber::fmt::time::OffsetTime;
 // use tracing::Level;
 // use tracing_subscriber::fmt::time::OffsetTime;
 
@@ -91,6 +94,7 @@ impl QrCode {
     }
 }
 
+#[instrument]
 #[tauri::command]
 async fn get_qr_code_state(id: u64) -> bool {
     trace!("获取 server 地址二维码状态");
@@ -118,6 +122,7 @@ async fn upload_qr_code() -> AlleyResult<QrCode> {
     Ok(code)
 }
 
+#[instrument]
 #[tauri::command]
 async fn get_send_files_url_qr_code(files: Vec<SendFile>) -> AlleyResult<QrCode> {
     trace!("获取发送址二维码");
@@ -195,50 +200,49 @@ fn is_linux() -> bool {
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
-pub fn run() -> AlleyResult<()> {
-    // #[cfg(debug_assertions)]
-    // let timer = OffsetTime::new(
-    //     offset!(+8),
-    //     format_description!("[hour]:[minute]:[second].[subsecond digits:3]"),
-    // );
-    // #[cfg(not(debug_assertions))]
-    // let timer = OffsetTime::new(
-    //     offset!(+8),
-    //     format_description!("[year]-[month]-[day] [hour]:[minute]:[second].[subsecond digits:3]"),
-    // );
-    //
-    // #[cfg(not(any(target_os = "android", target_os = "ios")))]
-    // // NOTE: _guard must be a top-level variable
-    // // let (writer, _guard) = {
-    // //     let file_appender = tracing_appender::rolling::never(&*APP_CONFIG_DIR, "alley.log");
-    // //     tracing_appender::non_blocking(file_appender)
-    // // };
-    // let writer = tracing_appender::rolling::never(&*APP_CONFIG_DIR, "alley.log");
-    //
-    // #[cfg(debug_assertions)]
-    // let writer = {
-    //     #[cfg(not(any(target_os = "android", target_os = "ios")))]
-    //     {
-    //         use tracing_subscriber::fmt::writer::MakeWriterExt;
-    //         std::io::stderr.and(writer)
-    //     }
-    //     #[cfg(any(target_os = "android", target_os = "ios"))]
-    //     std::io::stderr
-    // };
-    //
-    // let builder = tracing_subscriber::fmt()
-    //     .with_max_level(Level::TRACE)
-    //     .with_file(true)
-    //     .with_line_number(true)
-    //     .with_env_filter("alley")
-    //     .with_timer(timer)
-    //     .with_writer(writer);
-    //
-    // #[cfg(debug_assertions)]
-    // builder.init();
-    //
-    // #[cfg(not(debug_assertions))]
-    // builder.json().init();
+pub fn run() {
+    #[cfg(debug_assertions)]
+    let timer = OffsetTime::new(
+        offset!(+8),
+        format_description!("[hour]:[minute]:[second].[subsecond digits:3]"),
+    );
+    #[cfg(not(debug_assertions))]
+    let timer = OffsetTime::new(
+        offset!(+8),
+        format_description!("[year]-[month]-[day] [hour]:[minute]:[second].[subsecond digits:3]"),
+    );
+
+    #[cfg(not(any(target_os = "android", target_os = "ios")))]
+    // NOTE: _guard must be a top-level variable
+    let (writer, _guard) = {
+        let file_appender = tracing_appender::rolling::never(&*APP_CONFIG_DIR, "alley.log");
+        tracing_appender::non_blocking(file_appender)
+    };
+
+    #[cfg(debug_assertions)]
+    let writer = {
+        #[cfg(not(any(target_os = "android", target_os = "ios")))]
+        {
+            use tracing_subscriber::fmt::writer::MakeWriterExt;
+            std::io::stderr.and(writer)
+        }
+        #[cfg(any(target_os = "android", target_os = "ios"))]
+        std::io::stderr
+    };
+
+    let builder = tracing_subscriber::fmt()
+        .with_max_level(Level::TRACE)
+        .with_file(true)
+        .with_line_number(true)
+        .with_env_filter("app_lib,salvo_core::server")
+        .with_timer(timer)
+        .with_writer(writer);
+
+    #[cfg(debug_assertions)]
+    builder.init();
+
+    #[cfg(not(debug_assertions))]
+    builder.json().init();
 
     #[cfg(target_os = "linux")]
     {
@@ -251,11 +255,9 @@ pub fn run() -> AlleyResult<()> {
         }
     }
 
-    // tokio::spawn(server::serve());
     tauri::async_runtime::spawn(server::serve());
 
     info!("已创建 serve 线程");
-    error!("测试错误日志");
 
     tauri::Builder::default()
         .plugin(tauri_plugin_dialog::init())
@@ -288,7 +290,6 @@ pub fn run() -> AlleyResult<()> {
         .map_err(|e| {
             error!(message = "创建 app 失败", error = ?e);
             e
-        })?;
-
-    Ok(())
+        })
+        .unwrap();
 }
