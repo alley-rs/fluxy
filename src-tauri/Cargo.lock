@@ -71,6 +71,7 @@ dependencies = [
  "lazy_static",
  "local-ip-address",
  "qrcode-generator",
+ "rust-embed",
  "salvo",
  "serde",
  "serde_json",

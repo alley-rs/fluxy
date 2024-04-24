@@ -2,14 +2,12 @@
   "build": {
     "beforeDevCommand": "pnpm dev:vite",
     "beforeBuildCommand": "pnpm build:vite",
-    "devUrl": "http://localhost:1420/"
+    "devUrl": "http://localhost:1420/",
+    "frontendDist": "../dist"
   },
   "bundle": {
     "active": true,
     "targets": "all",
-    "resources": [
-      "static"
-    ],
     "icon": [
       "icons/32x32.png",
       "icons/128x128.png",
@@ -19,10 +17,7 @@
     ],
     "linux": {
       "deb": {
-        "desktopTemplate": "./linux/alley.desktop",
-        "files": {
-          "usr/share/alley/static": "./static"
-        }
+        "desktopTemplate": "./linux/alley.desktop"
       }
     }
   },

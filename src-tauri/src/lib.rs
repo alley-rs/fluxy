@@ -94,7 +94,6 @@ impl QrCode {
     }
 }
 
-#[instrument]
 #[tauri::command]
 async fn get_qr_code_state(id: u64) -> bool {
     trace!("获取 server 地址二维码状态");
@@ -122,7 +121,6 @@ async fn upload_qr_code() -> AlleyResult<QrCode> {
     Ok(code)
 }
 
-#[instrument]
 #[tauri::command]
 async fn get_send_files_url_qr_code(files: Vec<SendFile>) -> AlleyResult<QrCode> {
     trace!("获取发送址二维码");
@@ -230,6 +228,7 @@ pub fn run() {
         std::io::stderr
     };
 
+    #[cfg(not(any(target_os = "android", target_os = "ios")))]
     let builder = tracing_subscriber::fmt()
         .with_max_level(Level::TRACE)
         .with_file(true)
@@ -237,6 +236,13 @@ pub fn run() {
         .with_env_filter("app_lib,salvo_core::server")
         .with_timer(timer)
         .with_writer(writer);
+    #[cfg(any(target_os = "android", target_os = "ios"))]
+    let builder = tracing_subscriber::fmt()
+        .with_max_level(Level::TRACE)
+        .with_file(true)
+        .with_line_number(true)
+        .with_env_filter("app_lib,salvo_core::server")
+        .with_timer(timer);
 
     #[cfg(debug_assertions)]
     builder.init();
@@ -275,6 +281,16 @@ pub fn run() {
                     app.handle().exit(1);
                 }
             }
+
+            let paths = std::fs::read_dir(app.path().resource_dir().unwrap()).unwrap();
+            for path in paths {
+                trace!("Name: {}", path.unwrap().path().display())
+            }
+
+            let static_dir = app.path().resource_dir().unwrap().join("static");
+
+            info!("static: {:?}", static_dir.exists());
+
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![
