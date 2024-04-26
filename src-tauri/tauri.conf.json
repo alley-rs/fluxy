@@ -2,62 +2,42 @@
   "build": {
     "beforeDevCommand": "pnpm dev:vite",
     "beforeBuildCommand": "pnpm build:vite",
-    "devPath": "http://localhost:1420/",
-    "withGlobalTauri": false
+    "devUrl": "http://localhost:1420/",
+    "frontendDist": "../dist"
   },
-  "package": {
-    "productName": "Alley",
-    "version": "../package.json"
-  },
-  "tauri": {
-    "allowlist": {
-      "all": false,
-      "shell": {
-        "all": false,
-        "open": "^((/Users/.+)|(C:\\\\Users\\\\.+)|(/home/.+)|(http(s)?://.+)).+"
-      },
-      "dialog": {
-        "all": false,
-        "open": true
-      },
-      "clipboard": {
-        "all": false,
-        "writeText": true
-      }
-    },
-    "bundle": {
-      "active": true,
-      "targets": "all",
+  "bundle": {
+    "active": true,
+    "targets": "all",
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ],
+    "linux": {
       "deb": {
-        "desktopTemplate": "./linux/alley.desktop",
-        "files": {
-          "usr/share/alley/static": "./static"
-        }
-      },
-      "identifier": "com.thepoy.alley",
-      "resources": [
-        "static"
-      ],
-      "icon": [
-        "icons/32x32.png",
-        "icons/128x128.png",
-        "icons/128x128@2x.png",
-        "icons/icon.icns",
-        "icons/icon.ico"
-      ]
-    },
+        "desktopTemplate": "./linux/alley.desktop"
+      }
+    }
+  },
+  "productName": "Alley",
+  "version": "../package.json",
+  "identifier": "com.thepoy.alley",
+  "plugins": {
     "updater": {
-      "active": true,
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDcxQTQ5NDZBNUIyMEVDRTUKUldUbDdDQmJhcFNrY2RYSkpGNUt0U3cvdEozMXJoN2pXeEFBcUQ4YmZMTi9MS2E2YjNQT1pSbTgK",
       "endpoints": [
         "https://app.thepoy.cc/alley-transfer/latest-mirror-1.json",
         "https://app.thepoy.cc/alley-transfer/latest-mirror-2.json",
         "https://app.thepoy.cc/alley-transfer/latest-mirror-3.json",
         "https://app.thepoy.cc/alley-transfer/latest-mirror-4.json",
         "https://github.com/thep0y/alley/releases/latest/download/latest.json"
-      ],
-      "dialog": true,
-      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDcxQTQ5NDZBNUIyMEVDRTUKUldUbDdDQmJhcFNrY2RYSkpGNUt0U3cvdEozMXJoN2pXeEFBcUQ4YmZMTi9MS2E2YjNQT1pSbTgK"
-    },
+      ]
+    }
+  },
+  "app": {
+    "withGlobalTauri": false,
     "security": {
       "csp": null
     },

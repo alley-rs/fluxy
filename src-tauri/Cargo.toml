@@ -7,18 +7,26 @@ license = "AGPL-3.0"
 repository = "https://github.com/alley-rs/alley-transfer"
 edition = "2021"
 
+[lib]
+name = "app_lib"
+# crate-type = ["staticlib", "cdylib", "rlib", "lib"]
+crate-type = ["lib", "cdylib", "staticlib"]
+
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [build-dependencies]
-tauri-build = { version = "1.5", features = [] }
+tauri-build = { version = "2.0.0-beta", features = [] }
 
 [dependencies]
-tauri = { version = "1", features = [ "clipboard-write-text", "updater", "dialog-open", "shell-open"] }
+tauri = { version = "2.0.0-beta", features = [] }
+tauri-plugin-clipboard-manager = "2.1.0-beta.0"
+tauri-plugin-shell = "2.0.0-beta.3"
+tauri-plugin-dialog = "2.0.0-beta.4"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 dirs = "5"
 lazy_static = "1"
-salvo = { version = "0.66", features = ["serve-static"] }
+salvo = { version = "0.67", features = ["serve-static"] }
 tokio = { version = "1", features = ["macros"] }
 tokio-util = "0.7"
 local-ip-address = "0.6"
@@ -34,6 +42,10 @@ tracing-subscriber = { version = "0.3", features = [
 ] }
 tracing = { version = "0.1", features = ["log", "release_max_level_info"] }
 tracing-appender = '0.2'
+rust-embed = "8"
+
+[target."cfg(not(any(target_os = \"android\", target_os = \"ios\")))".dependencies]
+tauri-plugin-updater = "2.0.0-beta"
 
 
 [features]

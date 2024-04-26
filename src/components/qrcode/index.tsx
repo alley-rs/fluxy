@@ -1,5 +1,5 @@
-import { open } from "@tauri-apps/api/shell";
-import { writeText } from "@tauri-apps/api/clipboard";
+import { open } from "@tauri-apps/plugin-shell";
+import { writeText } from "@tauri-apps/plugin-clipboard-manager";
 import {
   LazyButton,
   LazyFlex,
@@ -19,7 +19,7 @@ interface QRCodeProps {
 const baseClassName = "qr-code";
 
 const QRCode = ({ qrcode }: QRCodeProps) => {
-  const [showToast, setShowToast] = createSignal(false);
+  const [copyError, setCopyError] = createSignal<string | boolean>(false);
 
   return (
     <LazyFlex
@@ -46,9 +46,15 @@ const QRCode = ({ qrcode }: QRCodeProps) => {
           <LazyButton
             icon={<AiFillCopy />}
             shape="circle"
-            onClick={() => {
-              writeText(qrcode.url);
-              setShowToast(true);
+            onClick={async () => {
+              console.log(qrcode.url);
+              try {
+                await writeText(qrcode.url);
+                setCopyError(true);
+              } catch (e) {
+                setCopyError(String(e));
+                console.error(e);
+              }
             }}
           />
         </LazyTooltip>
@@ -56,13 +62,17 @@ const QRCode = ({ qrcode }: QRCodeProps) => {
 
       <LazyToast
         placement="bottom"
-        open={showToast()}
-        onClose={() => setShowToast(false)}
+        open={!!copyError()}
+        onClose={() => setCopyError(false)}
         autoHideDuration={1000}
-        alert={{
-          type: "success",
-          message: "已复制链接",
-        }}
+        alert={
+          copyError() === true
+            ? {
+                type: "success",
+                message: "已复制链接",
+              }
+            : { type: "error", message: copyError() }
+        }
       />
     </LazyFlex>
   );

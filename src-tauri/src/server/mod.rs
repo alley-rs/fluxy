@@ -1,19 +1,16 @@
 mod logger;
 
 use std::collections::HashMap;
-#[cfg(all(not(debug_assertions), any(target_os = "windows", target_os = "macos")))]
-use std::env;
 use std::path::{Path, PathBuf};
 use std::process;
+use std::str::FromStr;
 use std::sync::OnceLock;
 use std::time::Instant;
 
 use salvo::fs::NamedFile;
 use salvo::prelude::*;
-#[cfg(not(debug_assertions))]
-use salvo::serve_static::StaticDir;
 use serde::{Deserialize, Serialize};
-use tauri::Window;
+use tauri::{Manager, WebviewWindow};
 use tokio::fs;
 use tokio::fs::File;
 use tokio::sync::RwLock;
@@ -26,11 +23,17 @@ use crate::server::logger::Logger;
 use crate::stream::ReadProgressStream;
 
 const UPLOAD_EVENT: &str = "upload://progress";
-pub static MAIN_WINDOW: OnceLock<Window> = OnceLock::new();
+pub static MAIN_WINDOW: OnceLock<WebviewWindow> = OnceLock::new();
 
 lazy_static! {
     pub(super) static ref DOWNLOADS_DIR: RwLock<PathBuf> =
-        RwLock::new(dirs::download_dir().unwrap().join("alley"));
+        if cfg!(not(any(target_os = "android", target_os = "ios"))) {
+            RwLock::new(dirs::download_dir().unwrap().join("alley"))
+        } else if cfg!(target_os = "android") {
+            RwLock::new(PathBuf::from_str("/storage/emulated/0/Download/alley").unwrap())
+        } else {
+            unreachable!()
+        };
     pub(super) static ref QR_CODE_MAP: RwLock<HashMap<u64, bool>> = RwLock::new(HashMap::new());
     pub(super) static ref SEND_FILES: RwLock<Option<Vec<SendFile>>> = RwLock::new(None);
 }
@@ -377,7 +380,7 @@ async fn upload(req: &mut Request) -> Result<()> {
     Ok(())
 }
 
-pub(super) async fn serve() -> AlleyResult<()> {
+pub async fn serve() -> AlleyResult<()> {
     // 程序启动时的默认下载目录
     let default_downloads_dir = DOWNLOADS_DIR.read().await;
     if !default_downloads_dir.exists() {
@@ -405,40 +408,15 @@ pub(super) async fn serve() -> AlleyResult<()> {
 
     #[cfg(not(debug_assertions))]
     {
-        #[cfg(any(target_os = "windows", target_os = "macos"))]
-        let static_dir = {
-            let current_exe = env::current_exe().map_err(|e| {
-                error!(message = "获取可执行文件路径失败", error = ?e);
-                e
-            })?;
+        use rust_embed::RustEmbed;
+        use salvo::serve_static::static_embed;
 
-            info!(message = "已获取到可执行文件路径", path = ?current_exe);
-
-            let current_dir = current_exe.parent().unwrap().parent().unwrap();
-
-            debug!(
-                message = "当前工作目录",
-                dir = ?current_dir,
-                is_absolute = current_dir.is_absolute(),
-            );
-
-            #[cfg(target_os = "windows")]
-            let static_dir = current_dir.join("alley/static");
-            #[cfg(target_os = "macos")]
-            let static_dir = current_dir.join("Resources/static");
-
-            static_dir
-        };
-
-        #[cfg(target_os = "linux")]
-        let static_dir = "/usr/share/alley/static";
+        #[derive(RustEmbed)]
+        #[folder = "static"]
+        struct Assets;
 
         router = router.push(
-            Router::with_path("<**path>").get(
-                StaticDir::new([static_dir])
-                    .defaults("index.html")
-                    .auto_list(true),
-            ),
+            Router::with_path("<**path>").get(static_embed::<Assets>().fallback("index.html")),
         );
     }
 

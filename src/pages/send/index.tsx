@@ -10,7 +10,7 @@ import {
   AiOutlineCloseCircle,
   AiOutlineHome,
 } from "solid-icons/ai";
-import { appWindow } from "@tauri-apps/api/window";
+import { getCurrent } from "@tauri-apps/api/webviewWindow";
 import { TauriEvent } from "@tauri-apps/api/event";
 import "./index.scss";
 import { getFilesMetadata, getSendFilesUrlQrCode, getQrCodeState } from "~/api";
@@ -30,11 +30,13 @@ import {
   LazyTooltip,
 } from "~/lazy";
 import { addClassNames } from "alley-components/lib/utils/class";
-import { open } from "@tauri-apps/api/shell";
+import { open } from "@tauri-apps/plugin-shell";
 
 interface SendProps {
   toHome: () => void;
 }
+
+const appWindow = getCurrent();
 
 const Send = (props: SendProps) => {
   const [files, setFiles] = createSignal<SendFile[]>([]);
@@ -42,10 +44,10 @@ const Send = (props: SendProps) => {
   const [qrcode, setQrcode] = createSignal<QrCode | null>(null);
 
   createEffect(() => {
-    const unlisten = appWindow.listen<string[]>(
-      TauriEvent.WINDOW_FILE_DROP,
+    const unlisten = appWindow.listen<{ paths: string[] }>(
+      TauriEvent.DROP,
       async (e) => {
-        const paths = deleteRepetition(e.payload, files());
+        const paths = deleteRepetition(e.payload.paths, files());
         const sendFiles = await getFilesMetadata(paths);
 
         setFiles((pre) => [...pre, ...sendFiles]);

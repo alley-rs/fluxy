@@ -10,14 +10,14 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@tauri-apps/api": "^1.5.3",
+    "@tauri-apps/api": "^1.5.4",
     "solid-icons": "^1.1.0",
-    "solid-js": "^1.8.16"
+    "solid-js": "^1.8.17"
   },
   "devDependencies": {
     "sass": "^1.75.0",
     "typescript": "^5.4.5",
-    "vite": "^5.2.8",
+    "vite": "^5.2.10",
     "vite-plugin-solid": "^2.10.2"
   }
 }

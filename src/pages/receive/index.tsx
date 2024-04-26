@@ -7,7 +7,7 @@ import {
   onMount,
   Show,
 } from "solid-js";
-import { appWindow } from "@tauri-apps/api/window";
+import { getCurrent } from "@tauri-apps/api/webviewWindow";
 import { getUploadQrCode, getQrCodeState } from "~/api";
 import FileListItem from "./fileListItem";
 import "./index.scss";
@@ -29,6 +29,8 @@ import { AiFillDelete } from "solid-icons/ai";
 interface ReceiveProps {
   toHome: () => void;
 }
+
+const appWindow = getCurrent();
 
 const Receive = ({ toHome }: ReceiveProps) => {
   const [qrcode, setQrcode] = createSignal<QrCode | null>(null);
@@ -127,7 +129,7 @@ const Receive = ({ toHome }: ReceiveProps) => {
           placement="top"
           open={true}
           message="请使用手机扫描此二维码"
-          onClose={() => {}}
+          onClose={() => { }}
         />
 
         {floatButtons()}
