@@ -1,3 +1,4 @@
+#[cfg(desktop)]
 use std::{fs, path::PathBuf};
 
 use local_ip_address::local_ip;
@@ -6,7 +7,7 @@ lazy_static! {
     pub(super) static ref LOCAL_IP: String = local_ip().unwrap().to_string();
 }
 
-#[cfg(not(any(target_os = "android", target_os = "ios")))]
+#[cfg(desktop)]
 lazy_static! {
     pub static ref APP_CONFIG_DIR: PathBuf = {
         let config_dir = dirs::config_dir().unwrap();

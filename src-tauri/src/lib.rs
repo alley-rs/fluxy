@@ -22,12 +22,9 @@ use qrcode_generator::QrCodeEcc;
 use serde::Serialize;
 use tauri::Manager;
 use time::macros::{format_description, offset};
-// use time::macros::{format_description, offset};
 use tokio::fs::File;
 use tracing::Level;
 use tracing_subscriber::fmt::time::OffsetTime;
-// use tracing::Level;
-// use tracing_subscriber::fmt::time::OffsetTime;
 
 use crate::error::AlleyResult;
 use crate::lazy::LOCAL_IP;
@@ -200,35 +197,23 @@ fn is_linux() -> bool {
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     #[cfg(debug_assertions)]
-    let timer = OffsetTime::new(
-        offset!(+8),
-        format_description!("[hour]:[minute]:[second].[subsecond digits:3]"),
-    );
+    let fmt = format_description!("[hour]:[minute]:[second].[subsecond digits:3]");
     #[cfg(not(debug_assertions))]
-    let timer = OffsetTime::new(
-        offset!(+8),
-        format_description!("[year]-[month]-[day] [hour]:[minute]:[second].[subsecond digits:3]"),
-    );
+    let fmt =
+        format_description!("[year]-[month]-[day] [hour]:[minute]:[second].[subsecond digits:3]");
 
-    #[cfg(not(any(target_os = "android", target_os = "ios")))]
+    let timer = OffsetTime::new(offset!(+8), fmt);
+
+    #[cfg(all(desktop, not(debug_assertions)))]
     // NOTE: _guard must be a top-level variable
     let (writer, _guard) = {
         let file_appender = tracing_appender::rolling::never(&*APP_CONFIG_DIR, "alley.log");
         tracing_appender::non_blocking(file_appender)
     };
 
-    #[cfg(debug_assertions)]
-    let writer = {
-        #[cfg(not(any(target_os = "android", target_os = "ios")))]
-        {
-            use tracing_subscriber::fmt::writer::MakeWriterExt;
-            std::io::stderr.and(writer)
-        }
-        #[cfg(any(target_os = "android", target_os = "ios"))]
-        std::io::stderr
-    };
+    #[cfg(any(debug_assertions, mobile))]
+    let writer = std::io::stderr;
 
-    #[cfg(not(any(target_os = "android", target_os = "ios")))]
     let builder = tracing_subscriber::fmt()
         .with_max_level(Level::TRACE)
         .with_file(true)
@@ -236,18 +221,11 @@ pub fn run() {
         .with_env_filter("app_lib,salvo_core::server")
         .with_timer(timer)
         .with_writer(writer);
-    #[cfg(any(target_os = "android", target_os = "ios"))]
-    let builder = tracing_subscriber::fmt()
-        .with_max_level(Level::TRACE)
-        .with_file(true)
-        .with_line_number(true)
-        .with_env_filter("app_lib,salvo_core::server")
-        .with_timer(timer);
 
-    #[cfg(debug_assertions)]
+    #[cfg(any(debug_assertions, mobile))]
     builder.init();
 
-    #[cfg(not(debug_assertions))]
+    #[cfg(all(not(debug_assertions), desktop))]
     builder.json().init();
 
     #[cfg(target_os = "linux")]
@@ -281,15 +259,6 @@ pub fn run() {
                     app.handle().exit(1);
                 }
             }
-
-            let paths = std::fs::read_dir(app.path().resource_dir().unwrap()).unwrap();
-            for path in paths {
-                trace!("Name: {}", path.unwrap().path().display())
-            }
-
-            let static_dir = app.path().resource_dir().unwrap().join("static");
-
-            info!("static: {:?}", static_dir.exists());
 
             Ok(())
         })

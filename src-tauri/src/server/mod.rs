@@ -30,7 +30,7 @@ lazy_static! {
         if cfg!(not(any(target_os = "android", target_os = "ios"))) {
             RwLock::new(dirs::download_dir().unwrap().join("alley"))
         } else if cfg!(target_os = "android") {
-            RwLock::new(PathBuf::from_str("/data/user/0/com.thepoy.alley").unwrap())
+            RwLock::new(PathBuf::from_str("/storage/emulated/0/Download/alley").unwrap())
         } else {
             unreachable!()
         };
