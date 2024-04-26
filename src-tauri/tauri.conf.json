@@ -26,7 +26,7 @@
   "identifier": "com.thepoy.alley",
   "plugins": {
     "updater": {
-      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDcxQTQ5NDZBNUIyMEVDRTUKUldUbDdDQmJhcFNrY2RYSkpGNUt0U3cvdEozMXJoN2pXeEFBcUQ4YmZMTi9MS2E2YjNQT1pSbTgK",
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDcyNDgxNTAxQjYwQzUxNTEKUldSUlVReTJBUlZJY2o0YXI4QkNBbXplWEdabVQzWjlxd0l0ZTdhWDVaMU9waTRLa0ptT20zV1UK",
       "endpoints": [
         "https://app.thepoy.cc/alley-transfer/latest-mirror-1.json",
         "https://app.thepoy.cc/alley-transfer/latest-mirror-2.json",
