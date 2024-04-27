@@ -1,8 +1,7 @@
 {
-  "identifier": "migrated",
-  "description": "permissions that were migrated from v1",
-  "local": true,
+  "identifier": "mobile-capability",
   "windows": ["main"],
+  "platforms": ["iOS", "android"],
   "permissions": [
     "path:default",
     "event:default",
@@ -11,10 +10,6 @@
     "resources:default",
     "menu:default",
     "tray:default",
-    "shell:default",
-    "clipboard-manager:allow-write-text",
-    "shell:allow-open",
-    "dialog:allow-open",
     "file-picker-android:allow-pickFiles",
     "os:allow-platform"
   ]
