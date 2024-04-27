@@ -19,9 +19,6 @@ tauri-build = { version = "2.0.0-beta", features = [] }
 
 [dependencies]
 tauri = { version = "2.0.0-beta", features = [] }
-tauri-plugin-clipboard-manager = "2.1.0-beta.0"
-tauri-plugin-shell = "2.0.0-beta.3"
-tauri-plugin-dialog = "2.0.0-beta.4"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 dirs = "5"
@@ -41,12 +38,17 @@ tracing-subscriber = { version = "0.3", features = [
   'json',
 ] }
 tracing = { version = "0.1", features = ["log", "release_max_level_info"] }
-tracing-appender = '0.2'
 rust-embed = "8"
 tauri-plugin-os = "2.0.0-beta.3"
 
-[target."cfg(not(any(target_os = \"android\", target_os = \"ios\")))".dependencies]
-tauri-plugin-updater = "2.0.0-beta"
+[target."cfg(any(target_os = \"windows\", target_os = \"macos\", target_os = \"linux\"))".dependencies]
+tracing-appender = '0.2'
+tauri-plugin-updater = "2.0.0-beta" # 这个插件不支持手机
+
+# 下面三个插件未完成对手机的适配，暂时不编译到手机端
+tauri-plugin-clipboard-manager = "2.1.0-beta.0"
+tauri-plugin-shell = "2.0.0-beta.3"
+tauri-plugin-dialog = "2.0.0-beta.4"
 
 [target."cfg(target_os = \"android\")".dependencies]
 file-picker-android = { git = "https://github.com/Berrysoft/file-picker-android" }
