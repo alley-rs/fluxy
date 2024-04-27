@@ -1,0 +1,20 @@
+{
+  "identifier": "desktop-capability",
+  "platforms": ["linux", "macOS", "windows"],
+  "windows": ["main"],
+  "permissions": [
+    "path:default",
+    "event:default",
+    "window:default",
+    "app:default",
+    "resources:default",
+    "menu:default",
+    "tray:default",
+    "shell:default",
+    "clipboard-manager:allow-write-text",
+    "shell:allow-open",
+    "dialog:allow-open",
+    "file-picker-android:allow-pickFiles",
+    "os:allow-platform"
+  ]
+}
