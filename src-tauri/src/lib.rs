@@ -245,19 +245,23 @@ pub fn run() {
 
     tauri::Builder::default()
         .plugin(tauri_plugin_os::init())
-        .plugin(tauri_plugin_dialog::init())
-        .plugin(tauri_plugin_shell::init())
-        .plugin(tauri_plugin_clipboard_manager::init())
         .setup(|app| {
             #[cfg(desktop)]
-            app.handle()
-                .plugin(tauri_plugin_updater::Builder::new().build())?;
+            {
+                app.handle()
+                    .plugin(tauri_plugin_updater::Builder::new().build())?;
+
+                // 下面三个插件未兼容手机，在兼容前不编译到手机端
+                app.handle()
+                    .plugin(tauri_plugin_clipboard_manager::init())?;
+                app.handle().plugin(tauri_plugin_dialog::init())?;
+                app.handle().plugin(tauri_plugin_shell::init())?;
+            }
 
             #[cfg(target_os = "android")]
             {
                 app.handle().plugin(file_picker_android::init())?;
             }
-
             let main_window = app.handle().get_webview_window("main");
             if let Some(w) = main_window {
                 if let Err(_) = MAIN_WINDOW.set(w) {
