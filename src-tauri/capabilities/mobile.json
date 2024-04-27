@@ -11,6 +11,8 @@
     "menu:default",
     "tray:default",
     "file-picker-android:allow-pickFiles",
+    "barcode-scanner:allow-scan",
+    "barcode-scanner:allow-cancel",
     "os:allow-platform"
   ]
 }

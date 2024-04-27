@@ -261,6 +261,7 @@ pub fn run() {
             #[cfg(target_os = "android")]
             {
                 app.handle().plugin(file_picker_android::init())?;
+                app.handle().plugin(tauri_plugin_barcode_scanner::init())?;
             }
             let main_window = app.handle().get_webview_window("main");
             if let Some(w) = main_window {
