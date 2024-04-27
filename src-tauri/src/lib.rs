@@ -244,6 +244,7 @@ pub fn run() {
     info!("已创建 serve 线程");
 
     tauri::Builder::default()
+        .plugin(tauri_plugin_os::init())
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_shell::init())
         .plugin(tauri_plugin_clipboard_manager::init())
@@ -251,6 +252,11 @@ pub fn run() {
             #[cfg(desktop)]
             app.handle()
                 .plugin(tauri_plugin_updater::Builder::new().build())?;
+
+            #[cfg(target_os = "android")]
+            {
+                app.handle().plugin(file_picker_android::init())?;
+            }
 
             let main_window = app.handle().get_webview_window("main");
             if let Some(w) = main_window {

@@ -67,6 +67,7 @@ version = "0.0.0"
 dependencies = [
  "bytes",
  "dirs",
+ "file-picker-android",
  "futures",
  "lazy_static",
  "local-ip-address",
@@ -79,6 +80,7 @@ dependencies = [
  "tauri-build",
  "tauri-plugin-clipboard-manager",
  "tauri-plugin-dialog",
+ "tauri-plugin-os",
  "tauri-plugin-shell",
  "tauri-plugin-updater",
  "thiserror",
@@ -1227,6 +1229,16 @@ checksum = "38e2275cc4e4fc009b0669731a1e5ab7ebf11f469eaede2bab9309a5b4d6057f"
 dependencies = [
  "memoffset",
  "rustc_version",
+]
+
+[[package]]
+name = "file-picker-android"
+version = "0.1.2"
+source = "git+https://github.com/Berrysoft/file-picker-android#54db797c59c353115007af6674c62194df153d17"
+dependencies = [
+ "serde",
+ "tauri",
+ "tauri-plugin",
 ]
 
 [[package]]
@@ -2884,6 +2896,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "os_info"
+version = "3.8.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ae99c7fa6dd38c7cafe1ec085e804f8f555a2f8659b0dbe03f1f9963a9b51092"
+dependencies = [
+ "log",
+ "serde",
+ "windows-sys 0.52.0",
+]
+
+[[package]]
 name = "os_pipe"
 version = "1.1.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -4445,6 +4468,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a7065abeca94b6a8a577f9bd45aa0867a2238b74e8eb67cf10d492bc39351394"
 
 [[package]]
+name = "sys-locale"
+version = "0.3.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e801cf239ecd6ccd71f03d270d67dd53d13e90aab208bf4b8fe4ad957ea949b0"
+dependencies = [
+ "libc",
+]
+
+[[package]]
 name = "system-configuration"
 version = "0.5.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -4725,6 +4757,24 @@ dependencies = [
  "thiserror",
  "url",
  "uuid",
+]
+
+[[package]]
+name = "tauri-plugin-os"
+version = "2.0.0-beta.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c02dc0a2037ef113d9d9db85edceab6f95f83ae111e4d989d6bc1df79c8ab4cf"
+dependencies = [
+ "gethostname",
+ "log",
+ "os_info",
+ "serde",
+ "serde_json",
+ "serialize-to-javascript",
+ "sys-locale",
+ "tauri",
+ "tauri-plugin",
+ "thiserror",
 ]
 
 [[package]]
