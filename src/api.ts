@@ -24,3 +24,10 @@ export const getSendFilesUrlQrCode = async (files: SendFile[]) =>
   await invoke<QrCode>("get_send_files_url_qr_code", { files });
 
 export const isLinux = async () => await invoke<boolean>("is_linux");
+
+export const pickFiles = async () => {
+  const result = await invoke<{ paths: string[] }>(
+    "plugin:file-picker-android|pickFiles"
+  );
+  return result.paths;
+};

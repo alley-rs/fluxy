@@ -4,6 +4,7 @@ import {
   onCleanup,
   createMemo,
   Show,
+  onMount,
 } from "solid-js";
 import {
   AiOutlineClear,
@@ -12,8 +13,14 @@ import {
 } from "solid-icons/ai";
 import { getCurrent } from "@tauri-apps/api/webviewWindow";
 import { TauriEvent } from "@tauri-apps/api/event";
+import { platform } from "@tauri-apps/plugin-os";
 import "./index.scss";
-import { getFilesMetadata, getSendFilesUrlQrCode, getQrCodeState } from "~/api";
+import {
+  getFilesMetadata,
+  getSendFilesUrlQrCode,
+  getQrCodeState,
+  pickFiles,
+} from "~/api";
 import { deleteRepetition } from "./utils";
 import { suspense } from "~/advance";
 import {
@@ -43,20 +50,35 @@ const Send = (props: SendProps) => {
 
   const [qrcode, setQrcode] = createSignal<QrCode | null>(null);
 
+  const [isMobile, setIsMobile] = createSignal(false);
+
+  onMount(() => {
+    platform().then((p) => setIsMobile(p === "android" || p === "ios"));
+
+    // downloadDir().then((p) => console.log("下载目录", p));
+    // cacheDir().then((p) => console.log("缓存目录", p));
+  });
+
+  const filterFiles = async (selectedPaths: string[]) => {
+    const paths = deleteRepetition(selectedPaths, files());
+    const sendFiles = await getFilesMetadata(paths);
+
+    setFiles((pre) => [...pre, ...sendFiles]);
+  };
+
   createEffect(() => {
-    const unlisten = appWindow.listen<{ paths: string[] }>(
-      TauriEvent.DROP,
-      async (e) => {
-        const paths = deleteRepetition(e.payload.paths, files());
-        const sendFiles = await getFilesMetadata(paths);
+    if (!isMobile()) {
+      const unlisten = appWindow.listen<{ paths: string[] }>(
+        TauriEvent.DROP,
+        async (e) => {
+          await filterFiles(e.payload.paths);
+        }
+      );
 
-        setFiles((pre) => [...pre, ...sendFiles]);
-      },
-    );
-
-    onCleanup(() => {
-      unlisten.then((f) => f());
-    });
+      onCleanup(() => {
+        unlisten.then((f) => f());
+      });
+    }
   });
 
   createEffect(() => {
@@ -103,7 +125,7 @@ const Send = (props: SendProps) => {
           <LazyFlex
             class={addClassNames(
               "file-list",
-              !files().length ? "file-list-empty" : undefined,
+              !files().length ? "file-list-empty" : undefined
             )}
             align={filesPostion()}
             justify={filesPostion()}
@@ -142,6 +164,15 @@ const Send = (props: SendProps) => {
                   />
                 )}
               />
+            ) : isMobile() ? (
+              <LazyButton
+                onClick={async () => {
+                  const selectedFiles = await pickFiles();
+                  await filterFiles(selectedFiles);
+                }}
+              >
+                选择文件
+              </LazyButton>
             ) : (
               <LazyEmpty description="将文件拖到此处" />
             )}
@@ -165,7 +196,7 @@ const Send = (props: SendProps) => {
               onClick={props.toHome}
               tooltip="回到主页"
               bottom={qrcode() ? 20 : 60}
-            />,
+            />
           )
         : suspense(
             <LazyFloatButtonGroup bottom={60}>
@@ -181,7 +212,7 @@ const Send = (props: SendProps) => {
                 onClick={props.toHome}
                 tooltip={"回到主页"}
               />
-            </LazyFloatButtonGroup>,
+            </LazyFloatButtonGroup>
           )}
     </>
   );
