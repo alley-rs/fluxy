@@ -29,7 +29,10 @@ async fn should_stop_broadcasting() -> bool {
     *SHOULD_STOP_BROADCASTING.read().await
 }
 
-async fn stop_broadcasting() {
+/// 停止组播。
+///
+/// 接收消息超过最大次数或与其他客户端建立连接时手动调用。
+pub async fn stop_broadcasting() {
     let mut ok = SHOULD_STOP_BROADCASTING.write().await;
     *ok = false;
 }
