@@ -5,6 +5,7 @@ mod error;
 mod lazy;
 #[cfg(target_os = "linux")]
 mod linux;
+mod multicast;
 mod server;
 mod stream;
 
@@ -18,20 +19,37 @@ use std::{
     time::{Duration, SystemTime, UNIX_EPOCH},
 };
 
+use once_cell::sync::Lazy;
 use qrcode_generator::QrCodeEcc;
 use serde::Serialize;
 use tauri::Manager;
 use time::macros::{format_description, offset};
-use tokio::fs::File;
+use tokio::{fs::File, sync::OnceCell};
 use tracing::Level;
 use tracing_subscriber::fmt::time::OffsetTime;
 
-use crate::error::AlleyResult;
 use crate::lazy::LOCAL_IP;
 use crate::server::{SendFile, DOWNLOADS_DIR, MAIN_WINDOW, QR_CODE_MAP, SEND_FILES};
+use crate::{error::AlleyResult, multicast::Multicast};
 
 #[cfg(not(any(target_os = "android", target_os = "ios")))]
 pub use crate::lazy::APP_CONFIG_DIR;
+
+static MULTICAST: Lazy<OnceCell<Multicast>> = Lazy::new(|| OnceCell::new());
+
+async fn new_multicast() -> Multicast {
+    Multicast::new(|message| {
+        if let Some(w) = MAIN_WINDOW.get() {
+            w.emit("multicast", message).unwrap();
+        }
+    })
+    .await
+    .unwrap()
+}
+
+async fn get_or_init_multicast() -> &'static Multicast {
+    MULTICAST.get_or_init(new_multicast).await
+}
 
 fn now() -> AlleyResult<Duration> {
     SystemTime::now().duration_since(UNIX_EPOCH).map_err(|e| {
@@ -194,6 +212,13 @@ fn is_linux() -> bool {
     cfg!(target_os = "linux")
 }
 
+#[tauri::command]
+async fn init_multicast() {
+    let multicast = get_or_init_multicast().await;
+
+    multicast.listen();
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     #[cfg(debug_assertions)]
@@ -281,6 +306,7 @@ pub fn run() {
             get_files_metadata,
             get_send_files_url_qr_code,
             is_linux,
+            init_multicast,
         ])
         .run(tauri::generate_context!())
         .map_err(|e| {
