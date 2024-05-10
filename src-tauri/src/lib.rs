@@ -8,6 +8,7 @@ mod linux;
 mod multicast;
 mod server;
 mod stream;
+mod tcp_listener;
 
 #[macro_use]
 extern crate lazy_static;

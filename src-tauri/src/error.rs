@@ -15,6 +15,8 @@ pub enum AlleyError {
     QRCode(#[from] QRCodeError),
     #[error(transparent)]
     Io(#[from] std::io::Error),
+    #[error("{0}")]
+    NotMatch(String),
     #[cfg(target_os = "linux")]
     #[error(transparent)]
     EnvVar(#[from] std::env::VarError),
