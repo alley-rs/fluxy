@@ -21,3 +21,5 @@ interface SendFile {
 }
 
 type CSSProperties = JSX.CSSProperties;
+
+type OsType = "Android" | "Windows" | "Macos";

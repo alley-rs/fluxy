@@ -31,3 +31,5 @@ export const pickFiles = async () => {
   );
   return result.paths;
 };
+
+export const initMulticast = async () => await invoke<void>("init_multicast");

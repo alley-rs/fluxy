@@ -1,28 +1,31 @@
-import { Match, Switch, createSignal } from "solid-js";
-import { TbArrowsTransferUp, TbArrowsTransferDown } from "solid-icons/tb";
+import { For, Show, onCleanup, onMount } from "solid-js";
 import { BiRegularSun, BiSolidMoon } from "solid-icons/bi";
-import {
-  LazyButton,
-  LazyReceive,
-  LazySend,
-  LazySwitch,
-  LazyTooltip,
-} from "./lazy";
-import { suspense } from "./advance";
+import { LazyFlex, LazySwitch, LazyTooltip } from "./lazy";
 import "~/App.scss";
 import useDark from "alley-components/lib/hooks/useDark";
+import RippleEffect from "./components/ripple";
+import { initMulticast } from "./api";
+import { getCurrent } from "@tauri-apps/api/webviewWindow";
+import { createStore } from "solid-js/store";
+import { AiFillAndroid } from "solid-icons/ai";
 
-enum Mode {
-  Send,
-  Receive,
-}
+const appWindow = getCurrent();
 
 const App = () => {
   const [isDark, setIsDark] = useDark();
 
-  const [mode, setMode] = createSignal<Mode | null>(null);
+  const [remoteAccesses, setRemoteAccesses] = createStore<Remote[]>([]);
 
-  const toHome = () => setMode(null);
+  onMount(() => {
+    const unlisten = appWindow.listen<Remote>("multicast", (e) => {
+      setRemoteAccesses(remoteAccesses.length, e.payload);
+    });
+    initMulticast();
+
+    onCleanup(() => {
+      unlisten.then((f) => f());
+    });
+  });
 
   return (
     <>
@@ -40,40 +43,32 @@ const App = () => {
         />
       </LazyTooltip>
 
-      <Switch
-        fallback={
-          <div id="index">
-            <div>选择传输方式</div>
-
-            {suspense(
-              <LazyButton
-                class="fill"
-                icon={<TbArrowsTransferDown />}
-                onClick={() => setMode(Mode.Receive)}
-              >
-                接收
-              </LazyButton>,
-            )}
-
-            {suspense(
-              <LazyButton
-                class="fill"
-                icon={<TbArrowsTransferUp />}
-                onClick={() => setMode(Mode.Send)}
-              >
-                发送
-              </LazyButton>,
-            )}
-          </div>
-        }
+      <LazyFlex
+        direction="vertical"
+        align="center"
+        justify="center"
+        style={{ width: "100%" }}
+        gap={16}
       >
-        <Match when={mode() === Mode.Receive}>
-          {suspense(<LazyReceive toHome={toHome} />)}
-        </Match>
-        <Match when={mode() === Mode.Send}>
-          {suspense(<LazySend toHome={toHome} />)}
-        </Match>
-      </Switch>
+        <RippleEffect />
+
+        <Show
+          when={!remoteAccesses.length}
+          fallback={<div>已搜索到设备：</div>}
+        >
+          <div>正在搜索其他设备...</div>
+        </Show>
+
+        <For each={remoteAccesses}>
+          {(item) => {
+            return (
+              <div>
+                <AiFillAndroid /> {item.name}
+              </div>
+            );
+          }}
+        </For>
+      </LazyFlex>
     </>
   );
 };

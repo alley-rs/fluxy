@@ -248,6 +248,96 @@
           ]
         },
         {
+          "type": "string",
+          "enum": [
+            "barcode-scanner:default"
+          ]
+        },
+        {
+          "description": "barcode-scanner:allow-cancel -> Enables the cancel command without any pre-configured scope.",
+          "type": "string",
+          "enum": [
+            "barcode-scanner:allow-cancel"
+          ]
+        },
+        {
+          "description": "barcode-scanner:allow-check-permissions -> Enables the check_permissions command without any pre-configured scope.",
+          "type": "string",
+          "enum": [
+            "barcode-scanner:allow-check-permissions"
+          ]
+        },
+        {
+          "description": "barcode-scanner:allow-open-app-settings -> Enables the open_app_settings command without any pre-configured scope.",
+          "type": "string",
+          "enum": [
+            "barcode-scanner:allow-open-app-settings"
+          ]
+        },
+        {
+          "description": "barcode-scanner:allow-request-permissions -> Enables the request_permissions command without any pre-configured scope.",
+          "type": "string",
+          "enum": [
+            "barcode-scanner:allow-request-permissions"
+          ]
+        },
+        {
+          "description": "barcode-scanner:allow-scan -> Enables the scan command without any pre-configured scope.",
+          "type": "string",
+          "enum": [
+            "barcode-scanner:allow-scan"
+          ]
+        },
+        {
+          "description": "barcode-scanner:allow-vibrate -> Enables the vibrate command without any pre-configured scope.",
+          "type": "string",
+          "enum": [
+            "barcode-scanner:allow-vibrate"
+          ]
+        },
+        {
+          "description": "barcode-scanner:deny-cancel -> Denies the cancel command without any pre-configured scope.",
+          "type": "string",
+          "enum": [
+            "barcode-scanner:deny-cancel"
+          ]
+        },
+        {
+          "description": "barcode-scanner:deny-check-permissions -> Denies the check_permissions command without any pre-configured scope.",
+          "type": "string",
+          "enum": [
+            "barcode-scanner:deny-check-permissions"
+          ]
+        },
+        {
+          "description": "barcode-scanner:deny-open-app-settings -> Denies the open_app_settings command without any pre-configured scope.",
+          "type": "string",
+          "enum": [
+            "barcode-scanner:deny-open-app-settings"
+          ]
+        },
+        {
+          "description": "barcode-scanner:deny-request-permissions -> Denies the request_permissions command without any pre-configured scope.",
+          "type": "string",
+          "enum": [
+            "barcode-scanner:deny-request-permissions"
+          ]
+        },
+        {
+          "description": "barcode-scanner:deny-scan -> Denies the scan command without any pre-configured scope.",
+          "type": "string",
+          "enum": [
+            "barcode-scanner:deny-scan"
+          ]
+        },
+        {
+          "description": "barcode-scanner:deny-vibrate -> Denies the vibrate command without any pre-configured scope.",
+          "type": "string",
+          "enum": [
+            "barcode-scanner:deny-vibrate"
+          ]
+        },
+        {
           "description": "event:default -> Default permissions for the plugin.",
           "type": "string",
           "enum": [
@@ -1359,6 +1449,13 @@
           ]
         },
         {
+          "description": "window:allow-cursor-position -> Enables the cursor_position command without any pre-configured scope.",
+          "type": "string",
+          "enum": [
+            "window:allow-cursor-position"
+          ]
+        },
+        {
           "description": "window:allow-destroy -> Enables the destroy command without any pre-configured scope.",
           "type": "string",
           "enum": [
@@ -1783,6 +1880,13 @@
           "type": "string",
           "enum": [
             "window:deny-current-monitor"
+          ]
+        },
+        {
+          "description": "window:deny-cursor-position -> Denies the cursor_position command without any pre-configured scope.",
+          "type": "string",
+          "enum": [
+            "window:deny-cursor-position"
           ]
         },
         {

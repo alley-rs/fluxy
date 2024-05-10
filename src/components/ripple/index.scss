@@ -1,0 +1,36 @@
+.ripple-container {
+  position: relative;
+  width: 250px; /* 或者其他尺寸，确保能完全包含波纹 */
+  height: 250px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.ripple {
+  position: absolute;
+  border-radius: 50%;
+  opacity: 0.5;
+  animation-duration: 3s;
+  animation-timing-function: linear;
+  animation-fill-mode: forwards;
+  width: 250px;
+  height: 250px;
+  background-color: rgb(13, 159, 232);
+  transform: scale(0);
+}
+
+@keyframes ripple-animation {
+  from {
+    opacity: 0.5;
+    transform: scale(0);
+  }
+  to {
+    opacity: 0;
+    transform: scale(1);
+  }
+}
+
+.ripple.active {
+  animation: ripple-animation 1s cubic-bezier(0, 0.2, 0.8, 1) infinite;
+}

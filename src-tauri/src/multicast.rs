@@ -41,11 +41,12 @@ pub async fn stop_broadcasting() {
 pub struct MulticastMessage {
     name: String,
     addr: IpAddr,
+    os: String,
 }
 
 impl MulticastMessage {
-    fn new(name: String, addr: IpAddr) -> Self {
-        Self { name, addr }
+    fn new(name: String, addr: IpAddr, os: String) -> Self {
+        Self { name, addr, os }
     }
 }
 
@@ -140,9 +141,15 @@ impl Multicast {
         if let Ok(rti) = serde_json::from_slice::<RemoteTerminalInfo>(&buf[..amt]) {
             info!("接收到组播消息：{:?}，来源：{}", rti, src);
 
+            let os_type = rti.os_type.clone();
+
             let remote_string = rti.to_string();
             self.add_remote_terminal(remote_terminal_ip, rti).await;
-            (self.message_handler)(MulticastMessage::new(remote_string, remote_terminal_ip));
+            (self.message_handler)(MulticastMessage::new(
+                remote_string,
+                remote_terminal_ip,
+                os_type,
+            ));
         } else {
             error!("反序列化消息失败");
         }
