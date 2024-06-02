@@ -10,4 +10,5 @@ if (import.meta.env.MODE === "production") {
   document.addEventListener("contextmenu", (event) => event.preventDefault());
 }
 
+// biome-ignore lint/style/noNonNullAssertion: root can not be null
 render(() => <App />, root!);
