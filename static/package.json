@@ -14,9 +14,9 @@
     "solid-js": "^1.8.17"
   },
   "devDependencies": {
-    "sass": "^1.77.0",
+    "sass": "^1.77.4",
     "typescript": "^5.4.5",
-    "vite": "^5.2.11",
+    "vite": "^5.2.12",
     "vite-plugin-solid": "^2.10.2"
   }
 }
