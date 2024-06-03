@@ -229,6 +229,25 @@ impl File {
 
 async fn calculate_sha1() {}
 
+#[derive(PartialEq)]
+enum MessageHeader {
+    Connection,
+    Text,
+    File,
+}
+
+impl TryFrom<u8> for MessageHeader {
+    type Error = AlleyError;
+    fn try_from(value: u8) -> Result<Self, Self::Error> {
+        match value {
+            0 => Ok(MessageHeader::Connection),
+            1 => Ok(MessageHeader::Text),
+            2 => Ok(MessageHeader::File),
+            _ => Err(AlleyError::InvalidMessageType(value)),
+        }
+    }
+}
+
 pub enum Message {
     Text(String),
     Path(PathBuf),
@@ -265,19 +284,45 @@ impl Listener {
         Ok(state)
     }
 
-    pub async fn receive(&mut self, window: tauri::WebviewWindow) -> AlleyResult<MessageState> {
-        // TODO: 第一个字节是 0 还是 1，0 为文本，1 为文件。
-
+    async fn get_message_header(&mut self) -> io::Result<MessageHeader> {
         let n = self.0.read_u8().await?;
-        if n == 0 {
-            let mut buf = [0u8; CHUNK_SIZE]; // 文本上限与块大小保持一致，懒得改了，8KB字符够用了
-            let len = self.0.read(&mut buf).await?;
-            let msg = String::from_utf8_lossy(&buf[..len]);
-            Ok(MessageState::Text(msg.to_string()))
-        } else {
-            let file = File::receive(&mut self.0, window).await?;
 
-            Ok(MessageState::File(file))
+        match MessageHeader::try_from(n) {
+            Ok(header) => Ok(header),
+            Err(e) => Err(io::Error::new(io::ErrorKind::InvalidData, e)),
+        }
+    }
+
+    pub async fn handle_connection(&mut self) -> AlleyResult<()> {
+        loop {
+            let header = self.get_message_header().await?;
+
+            if header == MessageHeader::Connection {
+                println!("Connection established.");
+                break;
+            } else {
+                return Err(AlleyError::InvalidMessageType(header as u8));
+            }
+        }
+
+        Ok(())
+    }
+
+    pub async fn receive(&mut self, window: tauri::WebviewWindow) -> AlleyResult<MessageState> {
+        let header = self.get_message_header().await?;
+
+        match header {
+            MessageHeader::File => {
+                let file = File::receive(&mut self.0, window).await?;
+                Ok(MessageState::File(file))
+            }
+            MessageHeader::Text => {
+                let mut buf = [0u8; CHUNK_SIZE]; // 文本上限与块大小保持一致，懒得改了，8KB字符够用了
+                let len = self.0.read(&mut buf).await?;
+                let msg = String::from_utf8_lossy(&buf[..len]);
+                Ok(MessageState::Text(msg.to_string()))
+            }
+            _ => Err(AlleyError::InvalidMessageType(header as u8)),
         }
     }
 }
