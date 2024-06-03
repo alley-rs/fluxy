@@ -1,4 +1,4 @@
-import { For, Show, onCleanup, onMount } from "solid-js";
+import { For, Show, createSignal, onCleanup, onMount } from "solid-js";
 import { BiRegularSun, BiSolidMoon } from "solid-icons/bi";
 import { LazyFlex, LazySwitch, LazyTooltip } from "./lazy";
 import "~/App.scss";
@@ -15,9 +15,26 @@ const App = () => {
   const [isDark, setIsDark] = useDark();
 
   const [remoteAccesses, setRemoteAccesses] = createStore<Remote[]>([]);
+  const [receiveEvent, setReceiveEvent] = createSignal<ReceiveEvent | null>(
+    null
+  );
 
   onMount(() => {
-    const unlisten = appWindow.listen<Remote>("multicast", (e) => {
+    const unlisten = appWindow.listen<ReceiveEvent>(
+      "multicast:receive-event",
+      (e) => {
+        setReceiveEvent(e.payload);
+        console.log(e.payload);
+      }
+    );
+
+    onCleanup(() => {
+      unlisten.then((f) => f());
+    });
+  });
+
+  onMount(() => {
+    const unlisten = appWindow.listen<Remote>("multicast:message", (e) => {
       setRemoteAccesses(remoteAccesses.length, e.payload);
     });
     initMulticast();
@@ -50,13 +67,20 @@ const App = () => {
         style={{ width: "100%" }}
         gap={16}
       >
-        <RippleEffect />
+        <Show when={receiveEvent() !== "End"}>
+          <RippleEffect />
+        </Show>
 
         <Show
           when={!remoteAccesses.length}
           fallback={<div>已搜索到设备：</div>}
         >
-          <div>正在搜索其他设备...</div>
+          <Show
+            when={receiveEvent() === "End"}
+            fallback={<div>正在搜索其他设备...</div>}
+          >
+            <div>搜索结束</div>
+          </Show>
         </Show>
 
         <For each={remoteAccesses}>
