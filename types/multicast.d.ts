@@ -3,3 +3,5 @@ interface Remote {
   name: string;
   os: OsType;
 }
+
+type ReceiveEvent = "Start" | "Running" | "End";

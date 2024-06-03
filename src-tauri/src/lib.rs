@@ -39,11 +39,18 @@ pub use crate::lazy::APP_CONFIG_DIR;
 static MULTICAST: Lazy<OnceCell<Multicast>> = Lazy::new(|| OnceCell::new());
 
 async fn new_multicast() -> Multicast {
-    Multicast::new(|message| {
-        if let Some(w) = MAIN_WINDOW.get() {
-            w.emit("multicast", message).unwrap();
-        }
-    })
+    Multicast::new(
+        |message| {
+            if let Some(w) = MAIN_WINDOW.get() {
+                w.emit("multicast:message", message).unwrap();
+            }
+        },
+        |event| {
+            if let Some(w) = MAIN_WINDOW.get() {
+                w.emit("multicast:receive-event", event).unwrap();
+            }
+        },
+    )
     .await
     .unwrap()
 }
@@ -265,9 +272,8 @@ pub fn run() {
         }
     }
 
-    tauri::async_runtime::spawn(server::serve());
-
-    info!("已创建 serve 线程");
+    // tauri::async_runtime::spawn(server::serve());
+    // info!("已创建 serve 线程");
 
     tauri::Builder::default()
         .plugin(tauri_plugin_os::init())
