@@ -22,7 +22,7 @@ const MAX_RECEIVE_ATTEMPTS: usize = 15; // 接收时最大循环次数
 lazy_static! {
     static ref REMOTE_TERMINALS: RwLock<HashMap<IpAddr, RemoteTerminalInfo>> =
         RwLock::new(HashMap::new());
-    static ref SHOULD_STOP_BROADCASTING: RwLock<bool> = RwLock::new(false);
+    static ref SHOULD_STOP_BROADCASTING: Arc<RwLock<bool>> = Arc::new(RwLock::new(false));
 }
 
 async fn should_stop_broadcasting() -> bool {
@@ -50,16 +50,28 @@ impl MulticastMessage {
     }
 }
 
+#[derive(Serialize, Clone)]
+pub enum ReceiveEvent {
+    Start,
+    Running,
+    End,
+}
+
 type MessageHandler = fn(message: MulticastMessage);
+type ReceiveEventHandler = fn(event: ReceiveEvent);
 
 pub struct Multicast {
     sender: Arc<UdpSocket>,
     receiver: Arc<UdpSocket>,
     message_handler: MessageHandler,
+    receive_event_handler: ReceiveEventHandler,
 }
 
 impl Multicast {
-    pub async fn new(message_handler: MessageHandler) -> io::Result<Self> {
+    pub async fn new(
+        message_handler: MessageHandler,
+        receive_event_handler: ReceiveEventHandler,
+    ) -> io::Result<Self> {
         let socket = create_socket().await?;
 
         let r = Arc::new(socket);
@@ -69,31 +81,45 @@ impl Multicast {
             sender: s,
             receiver: r,
             message_handler,
+            receive_event_handler,
         })
     }
 
     fn start_receiving_loop(&'static self) {
+        trace!("开始接收组播消息");
+
         tokio::spawn(async move {
+            (self.receive_event_handler)(ReceiveEvent::Start);
+
             let mut buf = [0; 512]; // 最多只接收 512 个字节
 
             for _ in 0..MAX_RECEIVE_ATTEMPTS {
                 if should_stop_broadcasting().await {
-                    info!("停止接收组播消息");
+                    info!("收到停止组播信号");
                     break;
                 } else if self.remote_terminals_count_reached().await {
-                    info!("停止接收组播消息");
+                    info!("达到最大远端数量");
                     stop_broadcasting().await; // 同时停止发送消息
                     break;
                 }
+
+                (self.receive_event_handler)(ReceiveEvent::Running);
 
                 if let Ok((amt, src)) = self.receiver.recv_from(&mut buf).await {
                     self.handle_received_message(amt, src, &buf).await;
                 }
             }
+
+            // 达到最大次数后不修改 SHOULD_STOP_BROADCASTING 便于重新搜索
+
+            (self.receive_event_handler)(ReceiveEvent::End);
+            info!("停止接收组播消息");
         });
     }
 
     fn start_sending_loop(&'static self) {
+        trace!("开始发送组播消息");
+        // TODO: 允许只接收消息不发送消息，类似蓝牙的本机不可被发现
         tokio::spawn(async move {
             loop {
                 if should_stop_broadcasting().await {
