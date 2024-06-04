@@ -20,6 +20,8 @@ pub enum AlleyError {
     #[cfg(target_os = "linux")]
     #[error(transparent)]
     EnvVar(#[from] std::env::VarError),
+    #[error("Invalid message type: {0}")]
+    InvalidMessageType(u8),
 }
 
 impl Serialize for AlleyError {

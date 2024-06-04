@@ -2,7 +2,7 @@ mod util;
 
 use std::{
     io,
-    net::SocketAddr,
+    net::{Ipv4Addr, SocketAddr},
     path::{Path, PathBuf},
     time::Instant,
 };
@@ -13,7 +13,7 @@ use tauri::Manager;
 use tokio::{
     fs,
     io::{AsyncReadExt, AsyncWriteExt},
-    net::TcpStream,
+    net::{TcpListener, TcpStream},
 };
 
 use crate::error::{AlleyError, AlleyResult};
@@ -133,7 +133,7 @@ impl File {
         })
     }
 
-    async fn receive(stream: &mut TcpStream, window: tauri::WebviewWindow) -> AlleyResult<Self> {
+    async fn receive(stream: &mut TcpStream, window: &tauri::WebviewWindow) -> AlleyResult<Self> {
         // TODO: 获取流中的文件大小
         let size = 0;
         let formatted_size = format_file_size(size);
@@ -231,7 +231,7 @@ async fn calculate_sha1() {}
 
 #[derive(PartialEq)]
 enum MessageHeader {
-    Connection,
+    PairRequest,
     Text,
     File,
 }
@@ -240,7 +240,7 @@ impl TryFrom<u8> for MessageHeader {
     type Error = AlleyError;
     fn try_from(value: u8) -> Result<Self, Self::Error> {
         match value {
-            0 => Ok(MessageHeader::Connection),
+            0 => Ok(MessageHeader::PairRequest),
             1 => Ok(MessageHeader::Text),
             2 => Ok(MessageHeader::File),
             _ => Err(AlleyError::InvalidMessageType(value)),
@@ -255,37 +255,52 @@ pub enum Message {
 
 /// 给前端展示用的数据结构
 pub enum MessageState {
+    PairRequest,
     Text(String),
     File(File),
 }
 
-pub struct Listener(TcpStream);
+pub struct Listener {
+    local_listener: TcpListener,
+    remote_stream: TcpStream,
+}
 
 impl Listener {
+    const PORT: u16 = 5800;
+
     pub async fn new(addr: &SocketAddr) -> io::Result<Self> {
+        // 监听本地端口
+        let listener = TcpListener::bind((Ipv4Addr::UNSPECIFIED, Self::PORT)).await?;
+
+        // 连接远端
         let stream = TcpStream::connect(addr).await?;
 
-        Ok(Self(stream))
+        Ok(Self {
+            local_listener: listener,
+            remote_stream: stream,
+        })
     }
 
-    pub async fn send(
+    pub async fn handle_send(
         &mut self,
         message: Message,
         window: tauri::WebviewWindow,
     ) -> io::Result<MessageState> {
         let state = match message {
             Message::Text(s) => {
-                self.0.write_all(s.as_bytes()).await?;
+                self.remote_stream.write_all(s.as_bytes()).await?;
                 MessageState::Text(s)
             }
-            Message::Path(p) => MessageState::File(File::send(&p, &mut self.0, window).await?),
+            Message::Path(p) => {
+                MessageState::File(File::send(&p, &mut self.remote_stream, window).await?)
+            }
         };
 
         Ok(state)
     }
 
-    async fn get_message_header(&mut self) -> io::Result<MessageHeader> {
-        let n = self.0.read_u8().await?;
+    async fn get_message_header(&mut self, stream: &mut TcpStream) -> io::Result<MessageHeader> {
+        let n = stream.read_u8().await?;
 
         match MessageHeader::try_from(n) {
             Ok(header) => Ok(header),
@@ -293,36 +308,34 @@ impl Listener {
         }
     }
 
-    pub async fn handle_connection(&mut self) -> AlleyResult<()> {
+    pub async fn handle_recieve(
+        &mut self,
+        window: &tauri::WebviewWindow,
+    ) -> AlleyResult<MessageState> {
+        let (mut stream, _) = self.local_listener.accept().await?;
+
         loop {
-            let header = self.get_message_header().await?;
+            let header = self.get_message_header(&mut stream).await?;
 
-            if header == MessageHeader::Connection {
-                println!("Connection established.");
-                break;
-            } else {
-                return Err(AlleyError::InvalidMessageType(header as u8));
-            }
-        }
+            let msg = match header {
+                MessageHeader::PairRequest => {
+                    // TODO: 处理配对请求
+                    println!("Connection established.");
+                    MessageState::PairRequest
+                }
+                MessageHeader::File => {
+                    let file = File::receive(&mut stream, &window).await?;
+                    MessageState::File(file)
+                }
+                MessageHeader::Text => {
+                    let mut buf = [0u8; CHUNK_SIZE]; // 文本上限与块大小保持一致，懒得改了，8KB字符够用了
+                    let len = stream.read(&mut buf).await?;
+                    let msg = String::from_utf8_lossy(&buf[..len]);
+                    MessageState::Text(msg.to_string())
+                }
+            };
 
-        Ok(())
-    }
-
-    pub async fn receive(&mut self, window: tauri::WebviewWindow) -> AlleyResult<MessageState> {
-        let header = self.get_message_header().await?;
-
-        match header {
-            MessageHeader::File => {
-                let file = File::receive(&mut self.0, window).await?;
-                Ok(MessageState::File(file))
-            }
-            MessageHeader::Text => {
-                let mut buf = [0u8; CHUNK_SIZE]; // 文本上限与块大小保持一致，懒得改了，8KB字符够用了
-                let len = self.0.read(&mut buf).await?;
-                let msg = String::from_utf8_lossy(&buf[..len]);
-                Ok(MessageState::Text(msg.to_string()))
-            }
-            _ => Err(AlleyError::InvalidMessageType(header as u8)),
+            return Ok(msg);
         }
     }
 }
