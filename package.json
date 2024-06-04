@@ -14,7 +14,7 @@
     "trace": "cross-env RUST_BACKTRACE=1 LOG_LEVEL=5 tauri dev",
     "dev": "pnpm start:dev",
     "update:all": "pnpm up --latest && cd static && pnpm up --latest && cd ../src-tauri && cargo update",
-    "build:android": "pnpm tauri android build -t aarch64,x86-64 --split-per-abi"
+    "build:android": "pnpm tauri android build -t aarch64 x86_64 --split-per-abi"
   },
   "dependencies": {
     "@tauri-apps/api": "2.0.0-beta.11",
