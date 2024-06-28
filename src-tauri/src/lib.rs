@@ -6,9 +6,9 @@ mod lazy;
 #[cfg(target_os = "linux")]
 mod linux;
 mod multicast;
+mod peer;
 mod server;
 mod stream;
-mod tcp_listener;
 
 #[macro_use]
 extern crate lazy_static;
@@ -20,23 +20,32 @@ use std::{
     time::{Duration, SystemTime, UNIX_EPOCH},
 };
 
+use error::AlleyError;
 use once_cell::sync::Lazy;
 use qrcode_generator::QrCodeEcc;
 use serde::Serialize;
 use tauri::Manager;
 use time::macros::{format_description, offset};
-use tokio::{fs::File, sync::OnceCell};
+use tokio::{
+    fs::File,
+    sync::{OnceCell, RwLock},
+};
 use tracing::Level;
 use tracing_subscriber::fmt::time::OffsetTime;
 
 use crate::lazy::LOCAL_IP;
+use crate::peer::{MessageState, Peer};
 use crate::server::{SendFile, DOWNLOADS_DIR, MAIN_WINDOW, QR_CODE_MAP, SEND_FILES};
 use crate::{error::AlleyResult, multicast::Multicast};
 
 #[cfg(not(any(target_os = "android", target_os = "ios")))]
 pub use crate::lazy::APP_CONFIG_DIR;
 
-static MULTICAST: Lazy<OnceCell<Multicast>> = Lazy::new(|| OnceCell::new());
+static MULTICAST: Lazy<OnceCell<Multicast>> = Lazy::new(OnceCell::new);
+
+lazy_static! {
+    static ref LISTENER: RwLock<Option<Peer>> = RwLock::new(None);
+}
 
 async fn new_multicast() -> Multicast {
     Multicast::new(
@@ -58,6 +67,14 @@ async fn new_multicast() -> Multicast {
 async fn get_or_init_multicast() -> &'static Multicast {
     MULTICAST.get_or_init(new_multicast).await
 }
+
+//async fn new_listener() -> Listener {
+//    Listener::new().await.unwrap()
+//}
+//
+//async fn get_or_init_listener() -> &'static Listener {
+//    LISTENER.get_mut_or_init(new_listener).await
+//}
 
 fn now() -> AlleyResult<Duration> {
     SystemTime::now().duration_since(UNIX_EPOCH).map_err(|e| {
@@ -94,7 +111,7 @@ impl QrCode {
 
         let url = format!(
             "http://{}:{}/connect?mode={}&ts={}",
-            LOCAL_IP.to_string(),
+            *LOCAL_IP,
             5800,
             mode.to_str(),
             ts
@@ -177,7 +194,7 @@ async fn change_downloads_dir(path: PathBuf) {
     trace!("修改下载目录");
 
     let mut downloads_dir = DOWNLOADS_DIR.write().await;
-    *downloads_dir = path.clone();
+    downloads_dir.clone_from(&path);
 
     info!(message = "下载目录已修改", dir = ?path);
 }
@@ -225,6 +242,30 @@ async fn init_multicast() {
     let multicast = get_or_init_multicast().await;
 
     multicast.listen();
+}
+
+#[tauri::command]
+async fn init_listener(window: tauri::WebviewWindow) -> AlleyResult<MessageState> {
+    let mut l = LISTENER.write().await;
+    if l.is_some() {
+        return Err(AlleyError::ListenerInitialized);
+    }
+
+    let mut listener = Peer::new().await?;
+    let msg = listener.handle_recieve(&window).await?;
+
+    *l = Some(listener);
+
+    Ok(msg)
+}
+
+#[tauri::command]
+async fn handle_pair_response(response: String) {
+    let listener = LISTENER.write().await;
+
+    if let Some(l) = listener.as_ref() {
+        l.set_pair_response(response.try_into().unwrap()).await;
+    }
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
@@ -297,7 +338,7 @@ pub fn run() {
             }
             let main_window = app.handle().get_webview_window("main");
             if let Some(w) = main_window {
-                if let Err(_) = MAIN_WINDOW.set(w) {
+                if MAIN_WINDOW.set(w).is_err() {
                     error!(message = "设置主窗口失败");
                     app.handle().exit(1);
                 }
@@ -314,6 +355,8 @@ pub fn run() {
             get_send_files_url_qr_code,
             is_linux,
             init_multicast,
+            init_listener,
+            handle_pair_response,
         ])
         .run(tauri::generate_context!())
         .map_err(|e| {

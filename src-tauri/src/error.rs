@@ -22,6 +22,14 @@ pub enum AlleyError {
     EnvVar(#[from] std::env::VarError),
     #[error("Invalid message type: {0}")]
     InvalidMessageType(u8),
+    #[error("Invalid message type: {0}")]
+    InvalidPairResponse(String),
+    #[error("Listener has initialized")]
+    ListenerInitialized,
+    #[error(transparent)]
+    Elapsed(#[from] tokio::time::error::Elapsed),
+    #[error("Remote has refused pair")]
+    PairingRefuse,
 }
 
 impl Serialize for AlleyError {

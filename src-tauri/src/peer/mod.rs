@@ -1,12 +1,15 @@
+mod task;
 mod util;
 
 use std::{
     io,
-    net::{Ipv4Addr, SocketAddr},
+    net::{IpAddr, Ipv4Addr, SocketAddr},
     path::{Path, PathBuf},
-    time::Instant,
+    sync::Arc,
+    time::{Duration, Instant},
 };
 
+use bytes::BytesMut;
 use serde::Serialize;
 use sha1::{Digest, Sha1};
 use tauri::Manager;
@@ -14,45 +17,18 @@ use tokio::{
     fs,
     io::{AsyncReadExt, AsyncWriteExt},
     net::{TcpListener, TcpStream},
+    sync::Mutex,
+    time::timeout,
 };
 
 use crate::error::{AlleyError, AlleyResult};
 
-use self::util::format_file_size;
+use self::{task::Task, util::format_file_size};
 
 const CHUNK_SIZE: usize = 8192; // 每个块8KB
 
-#[derive(Debug, Serialize, Clone)]
-struct Task<'a> {
-    path: &'a Path,
-    name: &'a str,
-    percent: f64,
-    speed: f64, // MB/s
-    size: &'a str,
-    aborted: bool,
-}
-
-impl<'a> Task<'a> {
-    fn new(
-        path: &'a Path,
-        name: &'a str,
-        size: &'a str,
-        percent: f64,
-        speed: f64,
-        aborted: bool,
-    ) -> Self {
-        Self {
-            path,
-            name,
-            percent,
-            speed,
-            size,
-            aborted,
-        }
-    }
-}
-
-struct File {
+#[derive(Debug, Serialize)]
+pub struct File {
     size: u64,
     path: PathBuf,
 }
@@ -113,7 +89,7 @@ impl File {
             let _ = window.emit(
                 "send-file",
                 Task::new(
-                    &path,
+                    path,
                     path.file_name().unwrap().to_str().unwrap(),
                     &formatted_size,
                     percent,
@@ -184,7 +160,7 @@ impl File {
                     let _ = window.emit(
                         "receive-file",
                         Task::new(
-                            &path,
+                            path,
                             path.file_name().unwrap().to_str().unwrap(),
                             &formatted_size,
                             percent,
@@ -227,8 +203,6 @@ impl File {
     }
 }
 
-async fn calculate_sha1() {}
-
 #[derive(PartialEq)]
 enum MessageHeader {
     PairRequest,
@@ -254,88 +228,141 @@ pub enum Message {
 }
 
 /// 给前端展示用的数据结构
+#[derive(Debug, Serialize)]
 pub enum MessageState {
     PairRequest,
     Text(String),
     File(File),
 }
 
-pub struct Listener {
-    local_listener: TcpListener,
-    remote_stream: TcpStream,
+#[derive(Debug, PartialEq)]
+pub(crate) enum PairResponse {
+    Accept,
+    Reject,
 }
 
-impl Listener {
+impl TryFrom<String> for PairResponse {
+    type Error = AlleyError;
+    fn try_from(value: String) -> AlleyResult<Self> {
+        match value.as_str() {
+            "accept" => Ok(PairResponse::Accept),
+            "reject" => Ok(PairResponse::Reject),
+            _ => Err(AlleyError::InvalidPairResponse(value.to_string())),
+        }
+    }
+}
+
+impl From<&PairResponse> for u8 {
+    fn from(val: &PairResponse) -> Self {
+        match val {
+            PairResponse::Accept => 0,
+            PairResponse::Reject => 1,
+        }
+    }
+}
+
+pub struct Peer {
+    local_listener: TcpListener,
+    paired_peer: Option<(IpAddr, Arc<Mutex<TcpStream>>)>,
+}
+
+impl Peer {
     const PORT: u16 = 5800;
 
-    pub async fn new(addr: &SocketAddr) -> io::Result<Self> {
+    pub(super) async fn new() -> io::Result<Self> {
         // 监听本地端口
         let listener = TcpListener::bind((Ipv4Addr::UNSPECIFIED, Self::PORT)).await?;
 
-        // 连接远端
-        let stream = TcpStream::connect(addr).await?;
-
         Ok(Self {
             local_listener: listener,
-            remote_stream: stream,
+            paired_peer: None,
         })
     }
 
-    pub async fn handle_send(
-        &mut self,
-        message: Message,
-        window: tauri::WebviewWindow,
-    ) -> io::Result<MessageState> {
-        let state = match message {
-            Message::Text(s) => {
-                self.remote_stream.write_all(s.as_bytes()).await?;
-                MessageState::Text(s)
+    pub(super) async fn listen(&mut self) -> AlleyResult<()> {
+        loop {
+            let (mut stream, remote_addr) = self.local_listener.accept().await?;
+            if let Some((paired_addr, _)) = &self.paired_peer {
+                if *paired_addr != remote_addr.ip() {
+                    stream.write_all(b"BUSY").await?;
+                    continue;
+                }
             }
-            Message::Path(p) => {
-                MessageState::File(File::send(&p, &mut self.remote_stream, window).await?)
-            }
-        };
 
-        Ok(state)
+            self.handle_incoming_connection(stream).await?;
+        }
+    }
+
+    fn pair(&mut self, peer_addr: IpAddr, stream: TcpStream) {
+        if self.paired_peer.is_none() {
+            self.paired_peer = Some((peer_addr, Arc::new(Mutex::new(stream))));
+        }
+    }
+
+    fn handle_pairing_request(&self) {}
+
+    async fn handle_incoming_connection(&mut self, mut stream: TcpStream) -> AlleyResult<()> {
+        let mut buffer = BytesMut::with_capacity(1024);
+        stream.read_buf(&mut buffer).await?;
+        let data = String::from_utf8_lossy(&buffer);
+        if data.starts_with("PAIR?") {
+            // Example pairing request
+            // Handle pairing request
+            let remote_addr = stream.peer_addr()?;
+            self.handle_pairing_request();
+            self.pair(remote_addr.ip(), stream);
+        } else if let Some((_, ref stream)) = &self.paired_peer {
+            // Handle regular communication (text messages, files)
+            let mut stream_lock = stream.lock().await;
+            stream_lock.read(&mut buffer).await;
+            let received_data = String::from_utf8_lossy(&buffer);
+            println!("Received: {}", received_data.trim());
+        }
+
+        Ok(())
+    }
+
+    async fn send_pairing_request(&mut self, addr: &IpAddr) -> AlleyResult<()> {
+        let mut stream = TcpStream::connect(SocketAddr::new(*addr, Self::PORT)).await?;
+
+        stream.write_all(b"PAIR?").await?;
+
+        let mut response = String::new();
+        timeout(
+            Duration::from_secs(10),
+            stream.read_to_string(&mut response),
+        )
+        .await?;
+
+        if response.trim() == "PAIROK" {
+            self.pair(*addr, stream); // 成功配对，保存流
+            Ok(())
+        } else {
+            Err(AlleyError::PairingRefuse)
+        }
+    }
+
+    async fn send_text_message(&self, message: &str) -> AlleyResult<()> {
+        if let Some((_, ref stream)) = &self.paired_peer {
+            let mut stream_lock = stream.lock().await;
+            stream_lock.write_all(message.as_bytes()).await?;
+        }
+
+        Ok(())
+    }
+
+    async fn send_file(&self, file_path: &str) -> AlleyResult<()> {
+        if let Some((_, ref stream)) = &self.paired_peer {}
+
+        Ok(())
     }
 
     async fn get_message_header(&mut self, stream: &mut TcpStream) -> io::Result<MessageHeader> {
-        let n = stream.read_u8().await?;
+        let n: u8 = stream.read_u8().await?;
 
         match MessageHeader::try_from(n) {
             Ok(header) => Ok(header),
             Err(e) => Err(io::Error::new(io::ErrorKind::InvalidData, e)),
-        }
-    }
-
-    pub async fn handle_recieve(
-        &mut self,
-        window: &tauri::WebviewWindow,
-    ) -> AlleyResult<MessageState> {
-        let (mut stream, _) = self.local_listener.accept().await?;
-
-        loop {
-            let header = self.get_message_header(&mut stream).await?;
-
-            let msg = match header {
-                MessageHeader::PairRequest => {
-                    // TODO: 处理配对请求
-                    println!("Connection established.");
-                    MessageState::PairRequest
-                }
-                MessageHeader::File => {
-                    let file = File::receive(&mut stream, &window).await?;
-                    MessageState::File(file)
-                }
-                MessageHeader::Text => {
-                    let mut buf = [0u8; CHUNK_SIZE]; // 文本上限与块大小保持一致，懒得改了，8KB字符够用了
-                    let len = stream.read(&mut buf).await?;
-                    let msg = String::from_utf8_lossy(&buf[..len]);
-                    MessageState::Text(msg.to_string())
-                }
-            };
-
-            return Ok(msg);
         }
     }
 }

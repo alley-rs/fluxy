@@ -31,7 +31,7 @@ impl Stream for ReadProgressStream {
     type Item = Result<Bytes>;
 
     fn poll_next(mut self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Option<Self::Item>> {
-        let start = self.start.get_or_init(|| Instant::now()).clone();
+        let start = *self.start.get_or_init(Instant::now);
 
         let body = &mut self.inner;
 

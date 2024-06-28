@@ -1,5 +1,6 @@
 use std::{
     collections::HashMap,
+    fmt::Display,
     io,
     net::{IpAddr, Ipv4Addr, SocketAddr, SocketAddrV4},
     str::FromStr,
@@ -219,11 +220,11 @@ struct RemoteTerminalInfo {
     version: String,
 }
 
-impl RemoteTerminalInfo {
-    fn to_string(&self) -> String {
+impl Display for RemoteTerminalInfo {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match &self.name {
-            Some(s) => s.to_owned(),
-            None => format!("{}-{}", self.hostname, self.os_type),
+            Some(s) => write!(f, "{}", s),
+            None => write!(f, "{}-{}", self.hostname, self.os_type),
         }
     }
 }

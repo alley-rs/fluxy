@@ -11,3 +11,5 @@ pub(super) fn format_file_size(size: u64) -> String {
         _ => format!("{:.2} GB", size_f64 / GB),
     }
 }
+
+pub(super) async fn calculate_sha1() {}

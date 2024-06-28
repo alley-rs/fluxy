@@ -1,0 +1,10 @@
+{
+  "cargo": {
+    "buildScripts": {
+      "enable": true
+    }
+  },
+  "procMacro": {
+    "enable": true
+  }
+}
