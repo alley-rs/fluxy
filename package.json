@@ -4,7 +4,7 @@
   "version": "0.2.0",
   "type": "module",
   "scripts": {
-    "install:all": "pnpm i && cd static && pnpm i",
+    "install:all": "bun i && cd static && bun i",
     "dev:vite": "vite",
     "build:vite": "tsc && vite build && cd static && tsc && vite build",
     "build": "tauri build",
@@ -12,9 +12,9 @@
     "tauri": "tauri",
     "start:dev": "cross-env RUST_BACKTRACE=1 LOG_LEVEL=4 tauri dev",
     "trace": "cross-env RUST_BACKTRACE=1 LOG_LEVEL=5 tauri dev",
-    "dev": "pnpm start:dev",
-    "update:all": "pnpm up --latest && cd static && pnpm up --latest && cd ../src-tauri && cargo update",
-    "build:android": "pnpm tauri android build -t aarch64 x86_64 --split-per-abi"
+    "dev": "bun rune start:dev",
+    "update:all": "bun run update && cd static && bun run update && cd ../src-tauri && cargo update",
+    "build:android": "bun run tauri android build -t aarch64 x86_64 --split-per-abi"
   },
   "dependencies": {
     "@tauri-apps/api": "2.0.0-beta.11",
@@ -30,20 +30,13 @@
   },
   "devDependencies": {
     "@tauri-apps/cli": "2.0.0-beta.12",
-    "@types/node": "^20.14.0",
-    "@biomejs/biome": "*",
+    "@types/node": "^20.14.2",
+    "@biomejs/biome": "^1.8.1",
     "cross-env": "^7.0.3",
     "internal-ip": "^7.0.0",
-    "sass": "^1.77.4",
+    "sass": "^1.77.5",
     "typescript": "^5.4.5",
-    "vite": "^5.2.12",
+    "vite": "^5.3.1",
     "vite-plugin-solid": "^2.10.2"
-  },
-  "pnpm": {
-    "updateConfig": {
-      "ignoreDependencies": [
-        "internal-ip"
-      ]
-    }
   }
 }
