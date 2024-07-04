@@ -1,3 +1,4 @@
+mod error;
 mod logger;
 
 use std::collections::HashMap;
@@ -25,6 +26,8 @@ use crate::lazy::LOCAL_IP;
 use crate::server::logger::Logger;
 use crate::stream::ReadProgressStream;
 
+use self::error::{ServerError, ServerResult};
+
 const UPLOAD_EVENT: &str = "upload://progress";
 pub static MAIN_WINDOW: OnceLock<Window> = OnceLock::new();
 
@@ -33,55 +36,6 @@ lazy_static! {
         RwLock::new(dirs::download_dir().unwrap().join("alley"));
     pub(super) static ref QR_CODE_MAP: RwLock<HashMap<u64, bool>> = RwLock::new(HashMap::new());
     pub(super) static ref SEND_FILES: RwLock<Option<Vec<SendFile>>> = RwLock::new(None);
-}
-
-type Result<T> = std::result::Result<T, ServerError>;
-
-#[derive(Serialize)]
-#[serde(untagged)]
-enum ServerError {
-    Bad {
-        error: String,
-        advice: Option<String>,
-    },
-    Internal,
-}
-
-impl ServerError {
-    fn new<'a, O1: Into<Option<&'a str>>, O2: Into<Option<&'a str>>>(
-        error: O1,
-        advice: O2,
-    ) -> Self {
-        let msg: Option<&str> = error.into();
-        let advice: Option<&str> = advice.into();
-        let advice = match advice {
-            None => None,
-            Some(s) => Some(s.to_owned()),
-        };
-
-        match msg {
-            None => Self::Internal,
-            Some(s) => Self::Bad {
-                error: s.into(),
-                advice,
-            },
-        }
-    }
-}
-
-#[async_trait]
-impl Writer for ServerError {
-    async fn write(self, _req: &mut Request, _depot: &mut Depot, res: &mut Response) {
-        match &self {
-            ServerError::Bad { .. } => {
-                res.status_code(StatusCode::BAD_REQUEST);
-                res.render(Json(&self));
-            }
-            ServerError::Internal => {
-                res.status_code(StatusCode::INTERNAL_SERVER_ERROR);
-            }
-        }
-    }
 }
 
 #[derive(Debug, Serialize, Clone)]
@@ -116,7 +70,7 @@ impl<'a> Task<'a> {
 
 #[cfg(debug_assertions)]
 #[handler]
-async fn index(req: &Request, res: &mut Response) -> Result<()> {
+async fn index(req: &Request, res: &mut Response) -> ServerResult<()> {
     let mode = match req.query::<String>("mode") {
         None => {
             return Err(ServerError::new(
@@ -129,15 +83,14 @@ async fn index(req: &Request, res: &mut Response) -> Result<()> {
 
     res.render(Redirect::found(format!(
         "http://{}:5173?mode={}",
-        LOCAL_IP.to_owned(),
-        mode
+        *LOCAL_IP, mode
     )));
 
     Ok(())
 }
 
 #[handler]
-async fn connect(req: &Request, res: &mut Response) -> Result<()> {
+async fn connect(req: &Request, res: &mut Response) -> ServerResult<()> {
     debug!("有客户端连接: addr={}", req.remote_addr());
 
     let id = match req.query::<u64>("ts") {
@@ -216,7 +169,7 @@ impl SendFile {
 }
 
 #[handler]
-async fn download_file(req: &Request, res: &mut Response) -> Result<()> {
+async fn download_file(req: &Request, res: &mut Response) -> ServerResult<()> {
     let path = match req.param::<PathBuf>("path") {
         None => {
             error!("请求 url 中未找到 path");
@@ -245,7 +198,7 @@ async fn download_file(req: &Request, res: &mut Response) -> Result<()> {
 }
 
 #[handler]
-async fn files(res: &mut Response) -> Result<()> {
+async fn files(res: &mut Response) -> ServerResult<()> {
     let send_files_guard = SEND_FILES.read().await;
 
     let send_files = match send_files_guard.as_ref() {
@@ -273,7 +226,7 @@ async fn files(res: &mut Response) -> Result<()> {
 }
 
 #[handler]
-async fn upload(req: &mut Request) -> Result<()> {
+async fn upload(req: &mut Request) -> ServerResult<()> {
     debug!(message = "收到上传任务", ip = ?req.remote_addr());
 
     let name = match req.query::<String>("name") {
