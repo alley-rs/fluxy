@@ -39,10 +39,10 @@
 
 > 点击图片可查看大图。
 
-|      | PC 端扫描前                                          | 手机端                                                              | PC 端扫描后                                                       | 手机上传                                                          | PC端接收                                                      |
-| ---- | ---------------------------------------------------- | ------------------------------------------------------------------- | ----------------------------------------------------------------- | ----------------------------------------------------------------- | ------------------------------------------------------------- |
-| 亮色 | ![output](./docs/images/light/2-receive-qrcode.avif) | ![output](./docs/images/light/mobile-send-index.avif)               | ![output](./docs/images/light/4-pc-receive-empty.avif)            | ![output](./docs/images/light/5-mobile-uploading.avif)            | ![output](./docs/images/light/6-pc-receiving.avif)            |
-| 暗色 | ![output](./docs/images/dark/2-receive-qrcode.avif)  | ![3-mobile-send-index](./docs/images/dark/3-mobile-send-index.avif) | ![4-pc-receive-empty](./docs/images/dark/4-pc-receive-empty.avif) | ![5-mobile-uploading](./docs/images/dark/5-mobile-uploading.avif) | ![6-pc-receiving.png](./docs/images/dark/6-pc-receiving.avif) |
+|      | PC 端扫描前                                                  | 手机端                                                            | PC 端扫描后                                                      | 手机上传                                                         | PC端接收                                                 |
+| ---- | ------------------------------------------------------------ | ----------------------------------------------------------------- | ---------------------------------------------------------------- | ---------------------------------------------------------------- | -------------------------------------------------------- |
+| 亮色 | ![receive-qrcode](./docs/images/light/2-receive-qrcode.avif) | ![mobile-send-index](./docs/images/light/mobile-send-index.avif)  | ![pc-receive-empty](./docs/images/light/4-pc-receive-empty.avif) | ![mobile-uploading](./docs/images/light/5-mobile-uploading.avif) | ![pc-receiving](./docs/images/light/6-pc-receiving.avif) |
+| 暗色 | ![receive-qrcode](./docs/images/dark/2-receive-qrcode.avif)  | ![mobile-send-index](./docs/images/dark/3-mobile-send-index.avif) | ![pc-receive-empty](./docs/images/dark/4-pc-receive-empty.avif)  | ![mobile-uploading](./docs/images/dark/5-mobile-uploading.avif)  | ![pc-receiving](./docs/images/dark/6-pc-receiving.avif)  |
 
 所有平台的 PC 端接收到的文件默认保存路径均为`~/Downloads/alley`，你可以自行修改保存目录。
 
@@ -54,10 +54,10 @@ _受限于手机操作系统的限制，手机浏览器无法实现批量下载�
 
 > 点击图片可查看大图。
 
-|      | PC 端待选文件                                                 | PC 端待发文件列表                                 | PC 端发送二维码                                         | 手机端接收页                                                                |
-| ---- | ------------------------------------------------------------- | ------------------------------------------------- | ------------------------------------------------------- | --------------------------------------------------------------------------- |
-| 亮色 | ![output](./docs/images/light/7-wait-selecting.avif)          | ![output](./docs/images/light/8-selected.avif)    | ![output](./docs/images/light/9-send-qrcode.avif)       | ![output](./docs/images/light/mobile-download-list.avif)                    |
-| 暗色 | ![7-wait-selecting](./docs/images/dark/7-wait-selecting.avif) | ![8-selected](./docs/images/dark/8-selected.avif) | ![9-send-qrcode](./docs/images/dark/9-send-qrcode.avif) | ![10-mobile-download-list](./docs/images/dark/10-mobile-download-list.avif) |
+|      | PC 端待选文件                                                | PC 端待发文件列表                                | PC 端发送二维码                                        | 手机端接收页                                                             |
+| ---- | ------------------------------------------------------------ | ------------------------------------------------ | ------------------------------------------------------ | ------------------------------------------------------------------------ |
+| 亮色 | ![wait-selecting](./docs/images/light/7-wait-selecting.avif) | ![selected](./docs/images/light/8-selected.avif) | ![send-qrcode](./docs/images/light/9-send-qrcode.avif) | ![mobile-download-list](./docs/images/light/mobile-download-list.avif)   |
+| 暗色 | ![wait-selecting](./docs/images/dark/7-wait-selecting.avif)  | ![selected](./docs/images/dark/8-selected.avif)  | ![send-qrcode](./docs/images/dark/9-send-qrcode.avif)  | ![mobile-download-list](./docs/images/dark/10-mobile-download-list.avif) |
 
 ## 常见问题
 
