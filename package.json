@@ -1,10 +1,10 @@
 {
-  "name": "alley",
+  "name": "fluxy",
   "private": true,
   "version": "0.1.6",
   "type": "module",
   "scripts": {
-    "install:all": "pnpm i && cd static && pnpm i",
+    "install:all": "bun i && cd static && bun i",
     "dev:vite": "vite",
     "build:vite": "tsc && vite build && cd static && tsc && vite build",
     "build": "tauri build",
@@ -12,21 +12,21 @@
     "tauri": "tauri",
     "start:dev": "cross-env RUST_BACKTRACE=1 LOG_LEVEL=4 tauri dev",
     "trace": "cross-env RUST_BACKTRACE=1 LOG_LEVEL=5 tauri dev",
-    "dev": "pnpm start:dev",
-    "update:all": "pnpm up --latest && cd static && pnpm up --latest && cd ../src-tauri && cargo update"
+    "dev": "bun start:dev",
+    "update:all": "bun update && cd static && bun update && cd ../src-tauri && cargo update"
   },
   "dependencies": {
-    "@tauri-apps/api": "^1.5.3",
-    "alley-components": "^0.1.4",
+    "@tauri-apps/api": "^1.6.0",
+    "alley-components": "^0.2.2",
     "solid-icons": "^1.1.0",
-    "solid-js": "^1.8.16"
+    "solid-js": "^1.8.18"
   },
   "devDependencies": {
-    "@tauri-apps/cli": "^1.5.11",
+    "@tauri-apps/cli": "^1.6.0",
     "cross-env": "^7.0.3",
-    "sass": "^1.75.0",
-    "typescript": "^5.4.5",
-    "vite": "^5.2.8",
+    "sass": "^1.77.6",
+    "typescript": "^5.5.3",
+    "vite": "^5.3.3",
     "vite-plugin-solid": "^2.10.2"
   }
 }
