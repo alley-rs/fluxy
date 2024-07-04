@@ -61,6 +61,7 @@ import {
   SiYaml,
   SiSqlite,
   SiCsharp,
+  SiGnubash,
 } from "solid-icons/si";
 import {
   RiDocumentNumbersFill,
@@ -166,6 +167,8 @@ const FileTypeIcon = (ext: string) => {
       return <SiOpenwrt />;
 
     /* 代码文件 */
+    case "SH":
+      return <SiGnubash />;
     case "PY":
       return <BiLogosPython />;
     case "JS":
