@@ -17,6 +17,10 @@
     margin-bottom: 10px;
     overflow-y: auto;
 
+    &-wrapper {
+      flex: 1;
+    }
+
     .alley-list {
       flex: 1;
     }
