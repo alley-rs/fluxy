@@ -1,7 +1,7 @@
 {
   "build": {
-    "beforeDevCommand": "pnpm dev:vite",
-    "beforeBuildCommand": "pnpm build:vite",
+    "beforeDevCommand": "bun run dev:vite",
+    "beforeBuildCommand": "bun run build:vite",
     "devPath": "http://localhost:1420/",
     "withGlobalTauri": false
   },
