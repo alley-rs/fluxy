@@ -184,6 +184,7 @@ const FileTypeIcon = (ext: string) => {
     case "CPP":
       return <BiLogosCPlusPlus />;
     case "JAVA":
+    case "JAR":
       return <BsFiletypeJava />;
     case "LUA":
       return <SiLua />;
