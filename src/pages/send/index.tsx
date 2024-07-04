@@ -28,6 +28,7 @@ import {
   LazyListItem,
   LazyQrcode,
   LazyTooltip,
+  LazyTypographyText,
 } from "~/lazy";
 import { addClassNames } from "alley-components/lib/utils/class";
 import { open } from "@tauri-apps/api/shell";
@@ -89,6 +90,7 @@ const Send = (props: SendProps) => {
 
   return (
     <>
+      {/* biome-ignore lint/style/noNonNullAssertion: <explanation> */}
       <Show when={!qrcode()} fallback={<LazyQrcode qrcode={qrcode()!} />}>
         <LazyFlex
           class="send"
@@ -107,39 +109,45 @@ const Send = (props: SendProps) => {
             justify={filesPostion()}
           >
             {files().length ? (
-              <LazyList
-                dataSource={files()}
-                renderItem={(file) => (
-                  <LazyListItem
-                    avatar={LazyFileTypeIcon(file.extension)}
-                    title={
-                      <LazyTooltip text="单击预览文件" placement="top">
-                        <LazyLink onClick={() => open(file.path)}>
-                          {file.name}
-                        </LazyLink>
-                      </LazyTooltip>
-                    }
-                    description={
-                      <>
-                        <span>大小: {file.size}</span>
-                        &nbsp;&nbsp;&nbsp;&nbsp;
-                        <span>类型: {file.extension}</span>
-                      </>
-                    }
-                    extra={[
-                      <LazyButton
-                        class="delete-file"
-                        shape="circle"
-                        type="plain"
-                        danger
-                        onClick={() => removeFile(file.path)}
-                      >
-                        <AiOutlineCloseCircle />
-                      </LazyButton>,
-                    ]}
-                  />
-                )}
-              />
+              <LazyFlex direction="vertical" class="file-list-wrapper">
+                <LazyList
+                  dataSource={files()}
+                  renderItem={(file) => (
+                    <LazyListItem
+                      avatar={LazyFileTypeIcon(file.extension)}
+                      title={
+                        <LazyTooltip text="单击预览文件" placement="top">
+                          <LazyLink onClick={() => open(file.path)}>
+                            {file.name}
+                          </LazyLink>
+                        </LazyTooltip>
+                      }
+                      description={
+                        <>
+                          <span>大小: {file.size}</span>
+                          &nbsp;&nbsp;&nbsp;&nbsp;
+                          <span>类型: {file.extension}</span>
+                        </>
+                      }
+                      extra={[
+                        <LazyButton
+                          class="delete-file"
+                          shape="circle"
+                          type="plain"
+                          danger
+                          onClick={() => removeFile(file.path)}
+                        >
+                          <AiOutlineCloseCircle />
+                        </LazyButton>,
+                      ]}
+                    />
+                  )}
+                />
+
+                <LazyTypographyText type="secondary">
+                  可继续拖入文件
+                </LazyTypographyText>
+              </LazyFlex>
             ) : (
               <LazyEmpty description="将文件拖到此处" />
             )}
@@ -158,29 +166,29 @@ const Send = (props: SendProps) => {
 
       {isEmpty() || qrcode()
         ? suspense(
+          <LazyFloatButton
+            icon={<AiOutlineHome />}
+            onClick={props.toHome}
+            tooltip="回到主页"
+            bottom={qrcode() ? 20 : 60}
+          />,
+        )
+        : suspense(
+          <LazyFloatButtonGroup bottom={60}>
+            <LazyFloatButton
+              icon={<AiOutlineClear />}
+              onClick={() => setFiles([])}
+              danger
+              tooltip={"清空文件列表"}
+            />
+
             <LazyFloatButton
               icon={<AiOutlineHome />}
               onClick={props.toHome}
-              tooltip="回到主页"
-              bottom={qrcode() ? 20 : 60}
-            />,
-          )
-        : suspense(
-            <LazyFloatButtonGroup bottom={60}>
-              <LazyFloatButton
-                icon={<AiOutlineClear />}
-                onClick={() => setFiles([])}
-                danger
-                tooltip={"清空文件列表"}
-              />
-
-              <LazyFloatButton
-                icon={<AiOutlineHome />}
-                onClick={props.toHome}
-                tooltip={"回到主页"}
-              />
-            </LazyFloatButtonGroup>,
-          )}
+              tooltip={"回到主页"}
+            />
+          </LazyFloatButtonGroup>,
+        )}
     </>
   );
 };
