@@ -94,11 +94,7 @@ jobs:
         with:
           node-version: 20
 
-      - uses: pnpm/action-setup@v2
-        name: install pnpm
-        with:
-          version: 8
-          run_install: false
+      - uses: oven-sh/setup-bun@v1
 
       - name: install Rust stable
         uses: dtolnay/rust-toolchain@stable
@@ -121,7 +117,7 @@ jobs:
           echo "BUILD_VERSION=$version" >> $Env:GITHUB_ENV
 
       - name: install frontend dependencies
-        run: pnpm install:all
+        run: bun run install:all
 
       - uses: tauri-apps/tauri-action@v0
         if: matrix.platform == 'macos-latest'
