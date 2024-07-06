@@ -208,7 +208,7 @@ async fn main() -> FluxyResult<()> {
 
     // NOTE: _guard must be a top-level variable
     let (writer, _guard) = {
-        let file_appender = tracing_appender::rolling::never(&*APP_CONFIG_DIR, "alley.log");
+        let file_appender = tracing_appender::rolling::never(&*APP_CONFIG_DIR, "fluxy.log");
         tracing_appender::non_blocking(file_appender)
     };
 
@@ -222,7 +222,7 @@ async fn main() -> FluxyResult<()> {
         .with_max_level(Level::TRACE)
         .with_file(true)
         .with_line_number(true)
-        .with_env_filter("alley")
+        .with_env_filter("fluxy")
         .with_timer(timer)
         .with_writer(writer);
 
