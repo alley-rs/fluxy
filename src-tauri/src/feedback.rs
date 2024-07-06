@@ -57,13 +57,19 @@ pub async fn new_about_window(handle: tauri::AppHandle) -> FluxyResult<()> {
         return Ok(());
     }
 
-    WindowBuilder::new(&handle, "about", WindowUrl::App("about.html".into()))
+    #[allow(unused_mut)]
+    let mut builder = WindowBuilder::new(&handle, "about", WindowUrl::App("about.html".into()))
         .title("关于和帮助")
-        .hidden_title(true)
-        .inner_size(280., 160.)
-        .resizable(false)
         .minimizable(false)
-        .build()?;
+        .inner_size(280., 160.)
+        .resizable(false);
+
+    #[cfg(target_os = "macos")]
+    {
+        builder = builder.hidden_title(true);
+    }
+
+    builder.build()?;
 
     Ok(())
 }
