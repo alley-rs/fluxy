@@ -1,8 +1,8 @@
 use std::{env, process::Command};
 
-use crate::error::AlleyResult;
+use crate::error::FluxyResult;
 
-pub(super) fn get_scale_factor() -> AlleyResult<f64> {
+pub(super) fn get_scale_factor() -> FluxyResult<f64> {
     let desktop_session = env::var("DESKTOP_SESSION").map_err(|e| {
         error!(message = "从环境变量中获取桌面会话失败", error = ?e);
         e
