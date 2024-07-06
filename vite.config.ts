@@ -1,14 +1,19 @@
 import { defineConfig } from "vite";
 import solid from "vite-plugin-solid";
-import path from "path";
+import path from "node:path";
 
 const pathSrc = path.resolve(__dirname, "src");
 
 // https://vitejs.dev/config/
 export default defineConfig(async () => ({
-  // build: {
-  //   outDir: "./src-tauri/static",
-  // },
+  build: {
+    rollupOptions: {
+      input: {
+        main: path.resolve(__dirname, "index.html"),
+        about: path.resolve(__dirname, "about.html"),
+      },
+    },
+  },
 
   resolve: {
     alias: {

@@ -28,3 +28,5 @@ export const isLinux = async () => await invoke<boolean>("is_linux");
 export const getStarState = async () => await invoke<boolean>("get_star_state");
 
 export const stared = async () => invoke<void>("stared");
+
+export const newAboutWindow = async () => invoke<void>("new_about_window");

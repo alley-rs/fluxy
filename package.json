@@ -17,12 +17,13 @@
   },
   "dependencies": {
     "@tauri-apps/api": "^1.6.0",
-    "alley-components": "^0.2.3",
+    "alley-components": "^0.2.4",
     "solid-icons": "^1.1.0",
     "solid-js": "^1.8.18"
   },
   "devDependencies": {
     "@tauri-apps/cli": "^1.6.0",
+    "@types/node": "^20.14.10",
     "cross-env": "^7.0.3",
     "sass": "^1.77.6",
     "typescript": "^5.5.3",
