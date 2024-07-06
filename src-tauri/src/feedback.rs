@@ -1,3 +1,4 @@
+use tauri::{Manager, WindowBuilder, WindowUrl};
 use tokio::{
     fs::File,
     io::{AsyncReadExt, AsyncWriteExt},
@@ -45,6 +46,24 @@ pub async fn stared() -> FluxyResult<()> {
         e
     })?;
     info!("已保存 star 状态");
+
+    Ok(())
+}
+
+#[tauri::command]
+pub async fn new_about_window(handle: tauri::AppHandle) -> FluxyResult<()> {
+    if let Some(w) = handle.get_window("about") {
+        w.set_focus()?;
+        return Ok(());
+    }
+
+    WindowBuilder::new(&handle, "about", WindowUrl::App("about.html".into()))
+        .title("关于和帮助")
+        .hidden_title(true)
+        .inner_size(280., 160.)
+        .resizable(false)
+        .minimizable(false)
+        .build()?;
 
     Ok(())
 }

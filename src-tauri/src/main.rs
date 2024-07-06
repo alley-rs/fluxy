@@ -29,7 +29,7 @@ use tokio::fs::File;
 use tracing::Level;
 use tracing_subscriber::fmt::time::OffsetTime;
 
-use crate::feedback::{get_star_state, stared};
+use crate::feedback::{get_star_state, new_about_window, stared};
 use crate::lazy::LOCAL_IP;
 #[cfg(target_os = "macos")]
 use crate::menu::{handle_menu_event, new_menu};
@@ -270,6 +270,7 @@ async fn main() -> FluxyResult<()> {
             is_linux,
             get_star_state,
             stared,
+            new_about_window,
         ]);
 
     // windows 和 linux 的菜单在窗口内, 无法自动切换暗色, 所以不使用菜单
