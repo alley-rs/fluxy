@@ -6,6 +6,7 @@ mod feedback;
 mod lazy;
 #[cfg(target_os = "linux")]
 mod linux;
+mod menu;
 mod server;
 mod stream;
 
@@ -27,10 +28,13 @@ use tokio::fs::File;
 use tracing::Level;
 use tracing_subscriber::fmt::time::OffsetTime;
 
-use crate::feedback::{get_star_state, stared};
-use crate::lazy::LOCAL_IP;
 use crate::server::{SendFile, DOWNLOADS_DIR, MAIN_WINDOW, QR_CODE_MAP, SEND_FILES};
 use crate::{error::FluxyResult, lazy::APP_CONFIG_DIR};
+use crate::{
+    feedback::{get_star_state, stared},
+    menu::new_menu,
+};
+use crate::{lazy::LOCAL_IP, menu::handle_menu_event};
 
 fn now() -> FluxyResult<Duration> {
     SystemTime::now().duration_since(UNIX_EPOCH).map_err(|e| {
@@ -267,6 +271,8 @@ async fn main() -> FluxyResult<()> {
             get_star_state,
             stared,
         ])
+        .menu(new_menu())
+        .on_menu_event(|event| handle_menu_event(event.window(), event.menu_item_id()))
         .build(tauri::generate_context!())
         .map_err(|e| {
             error!(message = "创建 app 失败", error = ?e);
