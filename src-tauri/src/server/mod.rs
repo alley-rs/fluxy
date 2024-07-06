@@ -20,7 +20,7 @@ use tokio::fs::File;
 use tokio::sync::RwLock;
 use tokio_util::io::StreamReader;
 
-use crate::error::AlleyResult;
+use crate::error::FluxyResult;
 #[cfg(debug_assertions)]
 use crate::lazy::LOCAL_IP;
 use crate::server::logger::Logger;
@@ -330,7 +330,7 @@ async fn upload(req: &mut Request) -> ServerResult<()> {
     Ok(())
 }
 
-pub(super) async fn serve() -> AlleyResult<()> {
+pub(super) async fn serve() -> FluxyResult<()> {
     // 程序启动时的默认下载目录
     let default_downloads_dir = DOWNLOADS_DIR.read().await;
     if !default_downloads_dir.exists() {

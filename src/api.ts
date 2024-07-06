@@ -24,3 +24,7 @@ export const getSendFilesUrlQrCode = async (files: SendFile[]) =>
   await invoke<QrCode>("get_send_files_url_qr_code", { files });
 
 export const isLinux = async () => await invoke<boolean>("is_linux");
+
+export const getStarState = async () => await invoke<boolean>("get_star_state");
+
+export const stared = async () => invoke<void>("stared");

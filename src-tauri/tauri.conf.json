@@ -18,7 +18,9 @@
       },
       "dialog": {
         "all": false,
-        "open": true
+        "open": true,
+        "message": true,
+        "confirm": true
       },
       "clipboard": {
         "all": false,
