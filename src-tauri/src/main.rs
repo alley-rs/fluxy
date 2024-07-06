@@ -6,6 +6,7 @@ mod feedback;
 mod lazy;
 #[cfg(target_os = "linux")]
 mod linux;
+#[cfg(target_os = "macos")]
 mod menu;
 mod server;
 mod stream;
@@ -28,13 +29,12 @@ use tokio::fs::File;
 use tracing::Level;
 use tracing_subscriber::fmt::time::OffsetTime;
 
+use crate::feedback::{get_star_state, stared};
+use crate::lazy::LOCAL_IP;
+#[cfg(target_os = "macos")]
+use crate::menu::{handle_menu_event, new_menu};
 use crate::server::{SendFile, DOWNLOADS_DIR, MAIN_WINDOW, QR_CODE_MAP, SEND_FILES};
 use crate::{error::FluxyResult, lazy::APP_CONFIG_DIR};
-use crate::{
-    feedback::{get_star_state, stared},
-    menu::new_menu,
-};
-use crate::{lazy::LOCAL_IP, menu::handle_menu_event};
 
 fn now() -> FluxyResult<Duration> {
     SystemTime::now().duration_since(UNIX_EPOCH).map_err(|e| {
@@ -250,7 +250,7 @@ async fn main() -> FluxyResult<()> {
     tokio::spawn(server::serve());
     info!("已创建 serve 线程");
 
-    let app = tauri::Builder::default()
+    let mut builder = tauri::Builder::default()
         .setup(|app| {
             if let Some(w) = app.get_window("main") {
                 if MAIN_WINDOW.set(w).is_err() {
@@ -270,14 +270,20 @@ async fn main() -> FluxyResult<()> {
             is_linux,
             get_star_state,
             stared,
-        ])
-        .menu(new_menu())
-        .on_menu_event(|event| handle_menu_event(event.window(), event.menu_item_id()))
-        .build(tauri::generate_context!())
-        .map_err(|e| {
-            error!(message = "创建 app 失败", error = ?e);
-            e
-        })?;
+        ]);
+
+    // windows 和 linux 的菜单在窗口内, 无法自动切换暗色, 所以不使用菜单
+    #[cfg(target_os = "macos")]
+    {
+        builder = builder
+            .menu(new_menu())
+            .on_menu_event(|event| handle_menu_event(event.window(), event.menu_item_id()));
+    }
+
+    let app = builder.build(tauri::generate_context!()).map_err(|e| {
+        error!(message = "创建 app 失败", error = ?e);
+        e
+    })?;
 
     app.run(|_app_handle, event| {
         if let tauri::RunEvent::Updater(e) = event {
