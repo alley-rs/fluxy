@@ -1,4 +1,4 @@
-import { Match, Switch, createSignal } from "solid-js";
+import { Match, Switch, createSignal, onMount } from "solid-js";
 import { TbArrowsTransferUp, TbArrowsTransferDown } from "solid-icons/tb";
 import { BiRegularSun, BiSolidMoon } from "solid-icons/bi";
 import {
@@ -11,16 +11,48 @@ import {
 import { suspense } from "./advance";
 import "~/App.scss";
 import useDark from "alley-components/lib/hooks/useDark";
+import { getStarState, stared } from "./api";
+import { confirm, message } from "@tauri-apps/api/dialog";
+import { open } from "@tauri-apps/api/shell";
 
 enum Mode {
-  Send,
-  Receive,
+  Send = 1,
+  Receive = 2,
 }
 
 const App = () => {
   const [isDark, setIsDark] = useDark();
 
   const [mode, setMode] = createSignal<Mode | null>(null);
+
+  onMount(() => {
+    const star = async () => {
+      const starState = await getStarState();
+      if (starState) return;
+
+      const ok = await confirm("点个 star 支持一下?", {
+        okLabel: "没问题",
+        cancelLabel: "以后再说",
+      });
+      if (!ok) {
+        return;
+      }
+
+      open("https://github.com/alley-rs/fluxy");
+
+      const confirmed = await confirm(
+        "本提示是君子协定，你点击确认后将不会再弹出本弹窗",
+        { title: "你是否已 star？", okLabel: "是的", cancelLabel: "没有" },
+      );
+      if (!confirmed) return;
+
+      message("感谢您支持开源项目");
+
+      stared();
+    };
+
+    star();
+  });
 
   const toHome = () => setMode(null);
 

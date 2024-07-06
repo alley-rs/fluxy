@@ -2,6 +2,7 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 mod error;
+mod feedback;
 mod lazy;
 #[cfg(target_os = "linux")]
 mod linux;
@@ -26,11 +27,12 @@ use tokio::fs::File;
 use tracing::Level;
 use tracing_subscriber::fmt::time::OffsetTime;
 
+use crate::feedback::{get_star_state, stared};
 use crate::lazy::LOCAL_IP;
 use crate::server::{SendFile, DOWNLOADS_DIR, MAIN_WINDOW, QR_CODE_MAP, SEND_FILES};
-use crate::{error::AlleyResult, lazy::APP_CONFIG_DIR};
+use crate::{error::FluxyResult, lazy::APP_CONFIG_DIR};
 
-fn now() -> AlleyResult<Duration> {
+fn now() -> FluxyResult<Duration> {
     SystemTime::now().duration_since(UNIX_EPOCH).map_err(|e| {
         error!(message = "获取时间出错", error = ?e);
         e.into()
@@ -59,13 +61,13 @@ struct QrCode {
 }
 
 impl QrCode {
-    fn new(mode: Mode) -> AlleyResult<Self> {
+    fn new(mode: Mode) -> FluxyResult<Self> {
         let ts = now()?.as_secs();
         debug!(message = "获取到时间戳", ts = ts);
 
         let url = format!(
             "http://{}:{}/connect?mode={}&ts={}",
-            LOCAL_IP.to_string(),
+            *LOCAL_IP,
             5800,
             mode.to_str(),
             ts
@@ -101,7 +103,7 @@ async fn get_qr_code_state(id: u64) -> bool {
 }
 
 #[tauri::command]
-async fn upload_qr_code() -> AlleyResult<QrCode> {
+async fn upload_qr_code() -> FluxyResult<QrCode> {
     trace!("获取上传地址二维码");
 
     let code = QrCode::new(Mode::Send)?;
@@ -116,7 +118,7 @@ async fn upload_qr_code() -> AlleyResult<QrCode> {
 }
 
 #[tauri::command]
-async fn get_send_files_url_qr_code(files: Vec<SendFile>) -> AlleyResult<QrCode> {
+async fn get_send_files_url_qr_code(files: Vec<SendFile>) -> FluxyResult<QrCode> {
     trace!("获取发送址二维码");
     let mut send_files = SEND_FILES.write().await;
     *send_files = Some(files);
@@ -148,13 +150,13 @@ async fn change_downloads_dir(path: PathBuf) {
     trace!("修改下载目录");
 
     let mut downloads_dir = DOWNLOADS_DIR.write().await;
-    *downloads_dir = path.clone();
+    downloads_dir.clone_from(&path);
 
     info!(message = "下载目录已修改", dir = ?path);
 }
 
 #[tauri::command]
-async fn get_files_metadata(paths: Vec<PathBuf>) -> AlleyResult<Vec<SendFile>> {
+async fn get_files_metadata(paths: Vec<PathBuf>) -> FluxyResult<Vec<SendFile>> {
     trace!("获取待发送文件信息");
     let mut files = Vec::with_capacity(paths.len());
 
@@ -192,7 +194,7 @@ fn is_linux() -> bool {
 }
 
 #[tokio::main]
-async fn main() -> AlleyResult<()> {
+async fn main() -> FluxyResult<()> {
     #[cfg(debug_assertions)]
     let timer = OffsetTime::new(
         offset!(+8),
@@ -247,7 +249,7 @@ async fn main() -> AlleyResult<()> {
     let app = tauri::Builder::default()
         .setup(|app| {
             if let Some(w) = app.get_window("main") {
-                if let Err(_) = MAIN_WINDOW.set(w) {
+                if MAIN_WINDOW.set(w).is_err() {
                     error!(message = "设置主窗口失败");
                     app.handle().exit(1);
                 }
@@ -262,6 +264,8 @@ async fn main() -> AlleyResult<()> {
             get_files_metadata,
             get_send_files_url_qr_code,
             is_linux,
+            get_star_state,
+            stared,
         ])
         .build(tauri::generate_context!())
         .map_err(|e| {
@@ -269,38 +273,39 @@ async fn main() -> AlleyResult<()> {
             e
         })?;
 
-    app.run(|_app_handle, event| match event {
-        tauri::RunEvent::Updater(e) => match e {
-            UpdaterEvent::UpdateAvailable {
-                body,
-                date,
-                version,
-            } => {
-                info!(message = "版本有更新", body = body, date = ?date, version = version);
+    app.run(|_app_handle, event| {
+        if let tauri::RunEvent::Updater(e) = event {
+            match e {
+                UpdaterEvent::UpdateAvailable {
+                    body,
+                    date,
+                    version,
+                } => {
+                    info!(message = "版本有更新", body = body, date = ?date, version = version);
+                }
+                UpdaterEvent::Pending => {
+                    info!("准备下载新版本");
+                }
+                UpdaterEvent::DownloadProgress {
+                    chunk_length,
+                    content_length,
+                } => {
+                    trace!("正在下载: {}/{:?}", chunk_length, content_length);
+                }
+                UpdaterEvent::Downloaded => {
+                    info!("新版本已下载");
+                }
+                UpdaterEvent::Updated => {
+                    info!("更新完成");
+                }
+                UpdaterEvent::AlreadyUpToDate => {
+                    info!("当前已是最新版本");
+                }
+                UpdaterEvent::Error(e) => {
+                    error!(message = "更新失败", error = e);
+                }
             }
-            UpdaterEvent::Pending => {
-                info!("准备下载新版本");
-            }
-            UpdaterEvent::DownloadProgress {
-                chunk_length,
-                content_length,
-            } => {
-                trace!("正在下载: {}/{:?}", chunk_length, content_length);
-            }
-            UpdaterEvent::Downloaded => {
-                info!("新版本已下载");
-            }
-            UpdaterEvent::Updated => {
-                info!("更新完成");
-            }
-            UpdaterEvent::AlreadyUpToDate => {
-                info!("当前已是最新版本");
-            }
-            UpdaterEvent::Error(e) => {
-                error!(message = "更新失败", error = e);
-            }
-        },
-        _ => {}
+        }
     });
 
     Ok(())

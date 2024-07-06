@@ -7,7 +7,7 @@ lazy_static! {
     pub(super) static ref APP_CONFIG_DIR: PathBuf = {
         let config_dir = dirs::config_dir().unwrap();
 
-        let app_config_dir = config_dir.join("alley");
+        let app_config_dir = config_dir.join("fluxy");
 
         if !app_config_dir.exists() {
             fs::create_dir(&app_config_dir).unwrap();

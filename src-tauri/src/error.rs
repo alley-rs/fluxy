@@ -4,7 +4,7 @@ use qrcode_generator::QRCodeError;
 use serde::{Serialize, Serializer};
 
 #[derive(Debug, thiserror::Error)]
-pub(crate) enum AlleyError {
+pub(crate) enum FluxyError {
     // #[error(transparent)]
     // SetLogger(#[from] SetLoggerError),
     #[error(transparent)]
@@ -20,7 +20,7 @@ pub(crate) enum AlleyError {
     EnvVar(#[from] std::env::VarError),
 }
 
-impl Serialize for AlleyError {
+impl Serialize for FluxyError {
     fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
     where
         S: Serializer,
@@ -29,4 +29,4 @@ impl Serialize for AlleyError {
     }
 }
 
-pub(crate) type AlleyResult<T> = Result<T, AlleyError>;
+pub(crate) type FluxyResult<T> = Result<T, FluxyError>;
