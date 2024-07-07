@@ -1,6 +1,7 @@
 /* @refresh reload */
 import { render } from "solid-js/web";
 import "./index.scss";
+import "./about.scss";
 import "alley-components/lib/index.css";
 import {
   LazyButton,
@@ -30,7 +31,7 @@ const About = () => {
 
   return (
     <LazyFlex direction="vertical" align="center">
-      <img src="/icon.png" aria-label="fluxy" width="72" />
+      <img src="/icon.png" aria-label="fluxy" width="64" />
 
       <LazyTypographyTitle level={5}>{name()}</LazyTypographyTitle>
 

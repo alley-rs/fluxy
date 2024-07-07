@@ -66,7 +66,9 @@ pub async fn new_about_window(handle: tauri::AppHandle) -> FluxyResult<()> {
 
     #[cfg(target_os = "macos")]
     {
-        builder = builder.hidden_title(true);
+        builder = builder
+            .hidden_title(true)
+            .title_bar_style(tauri::TitleBarStyle::Transparent);
     }
 
     builder.build()?;
