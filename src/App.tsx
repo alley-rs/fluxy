@@ -2,8 +2,8 @@ import { Match, Switch, createSignal, onMount } from "solid-js";
 import { TbArrowsTransferUp, TbArrowsTransferDown } from "solid-icons/tb";
 import { BiRegularSun, BiSolidMoon } from "solid-icons/bi";
 import {
+  LazyAboutButton,
   LazyButton,
-  LazyFloatButton,
   LazyReceive,
   LazySend,
   LazySwitch,
@@ -12,10 +12,9 @@ import {
 import { suspense } from "./advance";
 import "~/App.scss";
 import useDark from "alley-components/lib/hooks/useDark";
-import { getStarState, newAboutWindow, stared } from "./api";
+import { getStarState, stared } from "./api";
 import { confirm, message } from "@tauri-apps/api/dialog";
 import { open } from "@tauri-apps/api/shell";
-import { AiOutlineQuestion } from "solid-icons/ai";
 
 enum Mode {
   Send = 1,
@@ -98,6 +97,8 @@ const App = () => {
                 发送
               </LazyButton>,
             )}
+
+            <LazyAboutButton />
           </div>
         }
       >
@@ -108,12 +109,6 @@ const App = () => {
           {suspense(<LazySend toHome={toHome} />)}
         </Match>
       </Switch>
-
-      <LazyFloatButton
-        icon={<AiOutlineQuestion />}
-        tooltip="关于和帮助"
-        onClick={newAboutWindow}
-      />
     </>
   );
 };

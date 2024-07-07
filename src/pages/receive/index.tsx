@@ -6,6 +6,7 @@ import {
   onCleanup,
   onMount,
   Show,
+  children,
 } from "solid-js";
 import { appWindow } from "@tauri-apps/api/window";
 import { getUploadQrCode, getQrCodeState } from "~/api";
@@ -21,10 +22,10 @@ import {
   LazyList,
   LazyFloatButtonGroup,
   LazyToast,
+  LazyAboutButton,
 } from "~/lazy";
-import { TbHome } from "solid-icons/tb";
 import { createStore } from "solid-js/store";
-import { AiFillDelete } from "solid-icons/ai";
+import { AiFillDelete, AiOutlineHome } from "solid-icons/ai";
 
 interface ReceiveProps {
   toHome: () => void;
@@ -94,40 +95,42 @@ const Receive = ({ toHome }: ReceiveProps) => {
     onCleanup(() => clearTimeout(timer));
   });
 
-  const floatButtons = () =>
-    suspense(
-      <LazyFloatButtonGroup>
-        <Show when={fileList.length}>
-          <LazyFloatButton
-            tooltip="清空已完成列表"
-            icon={<AiFillDelete />}
-            onClick={() => setFileList([])}
-            danger
-          />
-        </Show>
+  const floatButtons = children(() => (
+    <LazyFloatButtonGroup>
+      <LazyAboutButton />
 
+      <Show when={fileList.length}>
         <LazyFloatButton
-          tooltip="回到主页"
-          icon={<TbHome />}
-          onClick={() => {
-            setTaskList([]);
-            setFileList([]);
-            toHome();
-          }}
+          tooltip="清空已完成列表"
+          icon={<AiFillDelete />}
+          onClick={() => setFileList([])}
+          danger
         />
-      </LazyFloatButtonGroup>,
-    );
+      </Show>
+
+      <LazyFloatButton
+        tooltip="回到主页"
+        icon={<AiOutlineHome />}
+        onClick={() => {
+          setTaskList([]);
+          setFileList([]);
+          toHome();
+        }}
+      />
+    </LazyFloatButtonGroup>
+  ));
 
   return (
     <Switch>
       <Match when={qrcode() !== null}>
+        {/* biome-ignore lint/style/noNonNullAssertion: <explanation> */}
         <LazyQrcode qrcode={qrcode()!} />
 
         <LazyToast
           placement="top"
           open={true}
           message="请使用手机扫描此二维码"
-          onClose={() => {}}
+          onClose={() => { }}
         />
 
         {floatButtons()}
