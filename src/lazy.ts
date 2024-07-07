@@ -61,6 +61,7 @@ export const LazyLabel = lazy(
   () => import("alley-components/lib/components/label"),
 );
 export const LazyQrcode = lazy(() => import("~/components/qrcode"));
+export const LazyAboutButton = lazy(() => import("~/components/aboutButton"));
 
 export const LazySend = lazy(() => import("~/pages/send"));
 // export const LazySendFileList = lazy(() => import("~/pages/send/list"));

@@ -4,6 +4,7 @@ import {
   onCleanup,
   createMemo,
   Show,
+  children,
 } from "solid-js";
 import {
   AiOutlineClear,
@@ -15,8 +16,8 @@ import { TauriEvent } from "@tauri-apps/api/event";
 import "./index.scss";
 import { getFilesMetadata, getSendFilesUrlQrCode, getQrCodeState } from "~/api";
 import { deleteRepetition } from "./utils";
-import { suspense } from "~/advance";
 import {
+  LazyAboutButton,
   LazyButton,
   LazyEmpty,
   LazyFileTypeIcon,
@@ -87,6 +88,27 @@ const Send = (props: SendProps) => {
 
   const isEmpty = createMemo(() => files().length === 0);
   const filesPostion = () => (isEmpty() ? "center" : "start");
+
+  const floatButtons = children(() => (
+    <LazyFloatButtonGroup bottom={qrcode() ? 20 : 60}>
+      <LazyAboutButton />
+
+      <Show when={!isEmpty() && !qrcode()}>
+        <LazyFloatButton
+          icon={<AiOutlineClear />}
+          onClick={() => setFiles([])}
+          danger
+          tooltip={"清空文件列表"}
+        />
+      </Show>
+
+      <LazyFloatButton
+        tooltip="回到主页"
+        icon={<AiOutlineHome />}
+        onClick={props.toHome}
+      />
+    </LazyFloatButtonGroup>
+  ));
 
   return (
     <>
@@ -164,31 +186,7 @@ const Send = (props: SendProps) => {
         </LazyFlex>
       </Show>
 
-      {isEmpty() || qrcode()
-        ? suspense(
-          <LazyFloatButton
-            icon={<AiOutlineHome />}
-            onClick={props.toHome}
-            tooltip="回到主页"
-            bottom={qrcode() ? 20 : 60}
-          />,
-        )
-        : suspense(
-          <LazyFloatButtonGroup bottom={60}>
-            <LazyFloatButton
-              icon={<AiOutlineClear />}
-              onClick={() => setFiles([])}
-              danger
-              tooltip={"清空文件列表"}
-            />
-
-            <LazyFloatButton
-              icon={<AiOutlineHome />}
-              onClick={props.toHome}
-              tooltip={"回到主页"}
-            />
-          </LazyFloatButtonGroup>,
-        )}
+      {floatButtons()}
     </>
   );
 };
