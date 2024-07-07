@@ -250,6 +250,7 @@ async fn main() -> FluxyResult<()> {
     tokio::spawn(server::serve());
     info!("已创建 serve 线程");
 
+    #[allow(unused_mut)]
     let mut builder = tauri::Builder::default()
         .setup(|app| {
             if let Some(w) = app.get_window("main") {
