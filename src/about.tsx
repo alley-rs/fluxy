@@ -15,7 +15,7 @@ import {
 import useDark from "alley-components/lib/hooks/useDark";
 import { createSignal, onMount } from "solid-js";
 import { app } from "@tauri-apps/api";
-import { AiOutlineGlobal } from "solid-icons/ai";
+import { AiFillGithub } from "solid-icons/ai";
 import { RiCommunicationFeedbackLine } from "solid-icons/ri";
 import { open } from "@tauri-apps/api/shell";
 
@@ -45,7 +45,7 @@ const About = () => {
       <LazySpace>
         <LazyTooltip text="访问官网" placement="top">
           <LazyButton
-            icon={<AiOutlineGlobal />}
+            icon={<AiFillGithub />}
             type="plain"
             shape="circle"
             onClick={() => open("https://github.com/alley-rs/fluxy")}
