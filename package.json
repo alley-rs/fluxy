@@ -7,27 +7,28 @@
     "install:all": "bun i && cd static && bun i",
     "dev:vite": "vite",
     "build:vite": "tsc && vite build && cd static && tsc && vite build",
+    "build:static": "cd static && tsc && vite build",
     "build": "tauri build",
-    "preview": "vite preview",
     "tauri": "tauri",
-    "start:dev": "cross-env RUST_BACKTRACE=1 LOG_LEVEL=4 tauri dev",
-    "trace": "cross-env RUST_BACKTRACE=1 LOG_LEVEL=5 tauri dev",
+    "start:dev": "cross-env RUST_BACKTRACE=1 tauri dev",
+    "trace": "cross-env RUST_BACKTRACE=1 tauri dev",
+    "preview": "bun build:static && cross-env RUST_BACKTRACE=1 tauri dev --release",
     "dev": "bun start:dev",
     "update:all": "bun update && cd static && bun update && cd ../src-tauri && cargo update"
   },
   "dependencies": {
     "@tauri-apps/api": "^1.6.0",
-    "alley-components": "^0.2.4",
+    "alley-components": "^0.2.10",
     "solid-icons": "^1.1.0",
-    "solid-js": "^1.8.18"
+    "solid-js": "^1.8.19"
   },
   "devDependencies": {
     "@tauri-apps/cli": "^1.6.0",
-    "@types/node": "^20.14.10",
+    "@types/node": "^20.14.13",
     "cross-env": "^7.0.3",
-    "sass": "^1.77.6",
-    "typescript": "^5.5.3",
-    "vite": "^5.3.3",
+    "sass": "^1.77.8",
+    "typescript": "^5.5.4",
+    "vite": "^5.3.5",
     "vite-plugin-solid": "^2.10.2"
   }
 }
