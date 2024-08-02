@@ -13,7 +13,9 @@ edition = "2021"
 tauri-build = { version = "1.5", features = [] }
 
 [dependencies]
-tauri = { version = "1", features = [ "dialog-message", "dialog-confirm",
+tauri = { version = "1", features = [
+  "dialog-message",
+  "dialog-confirm",
   "clipboard-write-text",
   "updater",
   "dialog-open",
@@ -39,6 +41,7 @@ tracing-subscriber = { version = "0", features = [
 ] }
 tracing = { version = "0", features = ["log", "release_max_level_info"] }
 tracing-appender = '0'
+rust-embed = "8"
 
 
 [features]
