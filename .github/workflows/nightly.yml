@@ -50,12 +50,9 @@ jobs:
         id: get-nightly-id
         uses: actions/github-script@v7
         with:
+          baseUrl: "https://api.github.com/repos/alley-rs/fluxy/releases/tags/nightly"
           script: |
-            const { id } = await github.rest.repos.getRelease({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              tag_name: "nightly",
-            })
+            const { id } = await github.rest.repos.getRelease()
 
             return id ?? ""
 
