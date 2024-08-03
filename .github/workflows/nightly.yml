@@ -48,7 +48,7 @@ jobs:
 
       - name: check nightly
         run: |
-          release_id=$(curl -s 'https://api.github.com/repos/alley-rs/fluxy/releases/tags/nightly' | awk -F'[{},:]+' '/^  "id"/ {gsub(/^[ \\t]+/, ""); printf "%d\\n", $2}')
+          release_id=$(curl -s 'https://api.github.com/repos/alley-rs/fluxy/releases/tags/nightly' | awk -F'[{},:]+' '/^  "id"/ {print $2}' | xargs)
           echo "RELEASE_ID=$release_id"  >> $GITHUB_ENV
 
       - name: create release
