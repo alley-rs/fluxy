@@ -47,21 +47,17 @@ jobs:
             return latesVersion
 
       - name: check nightly
-        id: get-nightly-id
-        uses: actions/github-script@v7
-        with:
-          base-url: "https://api.github.com/repos/alley-rs/fluxy/releases/tags/nightly"
-          script: |
-            const { id } = await github.rest.repos.getRelease()
-
-            return id ?? ""
+        run: |
+          release_id=$(curl -s 'https://api.github.com/repos/alley-rs/fluxy/releases/tags/nightly' | awk -F'[{},:]+' '/^  "id"/ {gsub(/^[ \\t]+/, ""); printf "%d\\n", $2}')
+          echo "RELEASE_ID=$release_id"  >> $GITHUB_ENV
 
       - name: create release
-        if: ${{ steps.get-nightly-id.output == '' }}
         id: create-release
         uses: actions/github-script@v7
         with:
           script: |
+            if (process.env.RELEASE_ID) return process.env.RELEASE_ID
+
             const { data } = await github.rest.repos.createRelease({
               owner: context.repo.owner,
               repo: context.repo.repo,
