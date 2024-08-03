@@ -1,0 +1,221 @@
+name: "nightly"
+on:
+  push:
+    branches:
+      - 0.1.X
+
+jobs:
+  create-release:
+    permissions:
+      contents: write
+    runs-on: ubuntu-22.04
+    outputs:
+      release_id: ${{ steps.create-release.outputs.result }}
+      package_version: ${{ env.PACKAGE_VERSION }}
+      changelog: ${{ steps.github_release_changelog.outputs.changelog }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: get version
+        run: echo "PACKAGE_VERSION=$(node -p "require('./package.json').version")" >> $GITHUB_ENV
+
+      - name: check latest version
+        uses: actions/github-script@v7
+        id: latest-version
+        with:
+          script: |
+            const { data } = await github.request(
+              'GET /repos/{owner}/{repo}/releases/latest', 
+              {
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                headers: {
+                  'X-GitHub-Api-Version': '2022-11-28'
+                }
+              }
+            )
+
+            const latesVersion = data.tag_name.slice(1)
+
+            if (latesVersion === process.env.PACKAGE_VERSION) throw new Error("当前要发布的版本号与 latest 版本号相同")
+
+            return latesVersion
+
+      - name: build changelog
+        id: github_release_changelog
+        uses: mikepenz/release-changelog-builder-action@v3
+        with:
+          configuration: ".github/changelog-configuration.json"
+          toTag: "refs/heads/main"
+          failOnError: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: create release
+        id: create-release
+        uses: actions/github-script@v7
+        env:
+          changelog: ${{ steps.github_release_changelog.outputs.changelog }}
+        with:
+          script: |
+            const { data } = await github.rest.repos.createRelease({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              tag_name: "nightly",
+              name: "Nightly build",
+              body: process.env.changelog,
+              draft: true,
+              prerelease: true,
+            })
+            return data.id
+
+  build-tauri:
+    needs: create-release
+    permissions:
+      contents: write
+    strategy:
+      fail-fast: false
+      matrix:
+        platform: [macos-latest, ubuntu-22.04, windows-latest]
+
+    runs-on: ${{ matrix.platform }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - uses: oven-sh/setup-bun@v1
+
+      - name: install Rust stable
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: install missing Rust target for universal Mac build
+        if: matrix.platform == 'macos-latest'
+        run: rustup target add x86_64-apple-darwin
+
+      - name: install dependencies (ubuntu only)
+        if: matrix.platform == 'ubuntu-22.04'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libgtk-3-dev libwebkit2gtk-4.0-dev libappindicator3-dev librsvg2-dev patchelf
+
+      - name: get version with alpha or beta deleted on Windows
+        if: matrix.platform == 'windows-latest'
+        run: |
+          cd .scripts
+          $version = node before-build.js
+          echo "BUILD_VERSION=$version" >> $Env:GITHUB_ENV
+
+      - name: install frontend dependencies
+        run: bun run install:all
+
+      - uses: tauri-apps/tauri-action@v0
+        if: matrix.platform == 'macos-latest'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAURI_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
+          TAURI_KEY_PASSWORD: ${{ secrets.TAURI_KEY_PASSWORD }}
+        with:
+          releaseId: ${{ needs.create-release.outputs.release_id }}
+          args: "-t x86_64-apple-darwin -- --no-default-features"
+
+      - uses: thep0y/tauri-action@v0.1.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAURI_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
+          TAURI_KEY_PASSWORD: ${{ secrets.TAURI_KEY_PASSWORD }}
+          RENAME_RULE: '{"searchValue": "${{ env.BUILD_VERSION }}", "replaceValue": "${{ needs.create-release.outputs.package_version }}"}'
+        with:
+          releaseId: ${{ needs.create-release.outputs.release_id }}
+          releaseBody: ${{ needs.create-release.outputs.changelog }}
+          rename: ${{ matrix.platform == 'windows-latest' && env.RENAME_RULE || '' }}
+          args: "-- --no-default-features"
+
+  publish-release:
+    permissions:
+      contents: write
+    runs-on: ubuntu-22.04
+    needs: [create-release, build-tauri]
+
+    steps:
+      - name: publish release
+        id: publish-release
+        uses: actions/github-script@v7
+        env:
+          release_id: ${{ needs.create-release.outputs.release_id }}
+          PACKAGE_VERSION: ${{ needs.create-release.outputs.package_version }}
+        with:
+          script: |
+            github.rest.repos.updateRelease({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              release_id: process.env.release_id,
+              draft: false
+              prerelease: true,
+            })
+
+  upload_mirror_json:
+    permissions:
+      contents: write
+    runs-on: ubuntu-22.04
+    needs: [create-release, publish-release]
+    env:
+      release_id: ${{ needs.create-release.outputs.release_id }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: get latest.json
+        id: get-latest
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+            const assets = await github.rest.repos.listReleaseAssets({
+              owner: owner,
+              repo: repo,
+              release_id: process.env.release_id,
+              per_page: 50,
+            });
+            const asset = assets.data.find((e) => e.name === 'latest.json');
+
+            if (!asset) throw new Error("latest.json was not found in release assets");
+
+            const data = await github.request(
+              "GET /repos/{owner}/{repo}/releases/assets/{asset_id}",
+              {
+                owner: owner,
+                repo: repo,
+                asset_id: asset.id,
+                headers: {
+                  accept: "application/octet-stream",
+                },
+              },
+            );
+
+            return Buffer.from(data.data).toString()
+
+      - name: new mirror latest.json
+        env:
+          TEXT: ${{ steps.get-latest.outputs.result }}
+        run: |
+          cd .scripts
+          node mirror-latest-json.js
+
+      - uses: wlixcc/SFTP-Deploy-Action@v1.2.4
+        with:
+          username: thepoy
+          server: thepoy.cc
+          password: ${{ secrets.TAURI_KEY_PASSWORD }}
+          local_path: ./.scripts/mirrors/*
+          remote_path: /home/thepoy/app/alley-transfer
+          sftpArgs: "-o ConnectTimeout=5"
