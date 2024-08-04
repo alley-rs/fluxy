@@ -46,18 +46,26 @@ jobs:
 
             return latesVersion
 
-      - name: check nightly
+      - name: get old nightly release id
         run: |
           release_id=$(curl -s 'https://api.github.com/repos/alley-rs/fluxy/releases/tags/nightly' | awk -F'[{},:]+' '/^  "id"/ {print $2}' | xargs)
           echo "RELEASE_ID=$release_id"  >> $GITHUB_ENV
+
+      - name: delete old nightly release
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.repos.deleteRelease({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              release_id: process.env.RELEASE_ID,
+            })
 
       - name: create release
         id: create-release
         uses: actions/github-script@v7
         with:
           script: |
-            if (process.env.RELEASE_ID) return parseInt(process.env.RELEASE_ID)
-
             const { data } = await github.rest.repos.createRelease({
               owner: context.repo.owner,
               repo: context.repo.repo,
