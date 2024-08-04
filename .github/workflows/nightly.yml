@@ -53,6 +53,7 @@ jobs:
 
       - name: delete old nightly release
         uses: actions/github-script@v7
+        if: env.RELEASE_ID != ''
         with:
           script: |
             await github.rest.repos.deleteRelease({
