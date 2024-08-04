@@ -5,7 +5,22 @@ on:
       - main
 
 jobs:
+  check-changed-paths:
+    runs-on: ubuntu-22.04
+    outputs:
+      changed: ${{ steps.changed-front.outputs.changed }}
+    
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: marceloprado/has-changed-path@v1.0.1
+        id: changed-front
+        with:
+          paths: public src src-tauri static package.json .scripts .github
+
   create-release:
+    needs: check-changed-paths
+    if: needs.check-changed-paths.outputs.changed == 'true'
     permissions:
       contents: write
     runs-on: ubuntu-22.04
