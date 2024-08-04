@@ -51,18 +51,18 @@ jobs:
           release_id=$(curl -s 'https://api.github.com/repos/alley-rs/fluxy/releases/tags/nightly' | awk -F'[{},:]+' '/^  "id"/ {print $2}' | xargs)
           echo "RELEASE_ID=$release_id"  >> $GITHUB_ENV
 
-      - name: delete old nightly release
-        uses: actions/github-script@v7
-        if: env.RELEASE_ID != ''
-        with:
-          script: |
-            await github.rest.repos.deleteRelease({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              release_id: process.env.RELEASE_ID,
-            })
+      # - name: delete old nightly release
+      #   uses: actions/github-script@v7
+      #   if: env.RELEASE_ID != ''
+      #   with:
+      #     script: |
+      #       await github.rest.repos.deleteRelease({
+      #         owner: context.repo.owner,
+      #         repo: context.repo.repo,
+      #         release_id: process.env.RELEASE_ID,
+      #       })
 
-      - name: delete old nightly release tag
+      - name: delete old nightly release
         if: env.RELEASE_ID != ''
         run: gh release delete nightly --cleanup-tag
         env:
