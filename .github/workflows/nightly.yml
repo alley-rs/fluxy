@@ -12,6 +12,8 @@ jobs:
     
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 100
 
       - uses: marceloprado/has-changed-path@v1.0.1
         id: changed-front
