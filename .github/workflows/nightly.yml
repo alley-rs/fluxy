@@ -56,7 +56,7 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-            if (process.env.RELEASE_ID) return process.env.RELEASE_ID
+            if (process.env.RELEASE_ID) return parseInt(process.env.RELEASE_ID)
 
             const { data } = await github.rest.repos.createRelease({
               owner: context.repo.owner,
