@@ -185,6 +185,6 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               release_id: parseInt(process.env.release_id),
-              body: `## Last Commit\n\n${process.env.LAST_COMMIT_MESSAGE}`,
+              body: `> [!WARNING]\n> 每夜版可能无法自动升级。/The nightly version may not auto-update.\n\n## Last Commit\n\n${process.env.LAST_COMMIT_MESSAGE}`,
               draft: false
             })
