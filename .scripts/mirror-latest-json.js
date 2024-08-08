@@ -41,7 +41,7 @@ const run = async () => {
   text = text
     .replace("\\n}", "}") // 处理结尾的换行
     .replaceAll("\\n ", "\n") // 删除 notes 外的换行
-    .replaceAll(/\s+/g, "") // 删除所有空白符
+    .replaceAll(/\s{2,}/g, "") // 删除所有空白符
     .replaceAll('\\"', '"') // 替换转义的双引号
     .replaceAll("\\\\n", "\\n"); // 处理 notes 中的换行
 
