@@ -10,7 +10,7 @@ use std::time::Instant;
 use salvo::fs::NamedFile;
 use salvo::prelude::*;
 use serde::{Deserialize, Serialize};
-use tauri::{Manager, WebviewWindow};
+use tauri::{Emitter, WebviewWindow};
 use tokio::fs;
 use tokio::fs::File;
 use tokio::sync::RwLock;

@@ -12,7 +12,7 @@ use std::{
 use bytes::BytesMut;
 use serde::Serialize;
 use sha1::{Digest, Sha1};
-use tauri::Manager;
+use tauri::Emitter;
 use tokio::{
     fs,
     io::{AsyncReadExt, AsyncWriteExt},

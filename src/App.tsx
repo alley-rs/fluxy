@@ -5,18 +5,18 @@ import "~/App.scss";
 import useDark from "alley-components/lib/hooks/useDark";
 import RippleEffect from "./components/ripple";
 import { initMulticast } from "./api";
-import { getCurrent } from "@tauri-apps/api/webviewWindow";
+import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
 import { createStore } from "solid-js/store";
 import { AiFillAndroid } from "solid-icons/ai";
 
-const appWindow = getCurrent();
+const appWindow = getCurrentWebviewWindow();
 
 const App = () => {
   const [isDark, setIsDark] = useDark();
 
   const [remoteAccesses, setRemoteAccesses] = createStore<Remote[]>([]);
   const [receiveEvent, setReceiveEvent] = createSignal<ReceiveEvent | null>(
-    null
+    null,
   );
 
   onMount(() => {
@@ -25,7 +25,7 @@ const App = () => {
       (e) => {
         setReceiveEvent(e.payload);
         console.log(e.payload);
-      }
+      },
     );
 
     onCleanup(() => {

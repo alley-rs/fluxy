@@ -20,10 +20,10 @@ use std::{
     time::{Duration, SystemTime, UNIX_EPOCH},
 };
 
-use error::AlleyError;
 use once_cell::sync::Lazy;
 use qrcode_generator::QrCodeEcc;
 use serde::Serialize;
+use tauri::Emitter;
 use tauri::Manager;
 use time::macros::{format_description, offset};
 use tokio::{
@@ -36,7 +36,10 @@ use tracing_subscriber::fmt::time::OffsetTime;
 use crate::lazy::LOCAL_IP;
 use crate::peer::{MessageState, Peer};
 use crate::server::{SendFile, DOWNLOADS_DIR, MAIN_WINDOW, QR_CODE_MAP, SEND_FILES};
-use crate::{error::AlleyResult, multicast::Multicast};
+use crate::{
+    error::{AlleyError, AlleyResult},
+    multicast::Multicast,
+};
 
 #[cfg(not(any(target_os = "android", target_os = "ios")))]
 pub use crate::lazy::APP_CONFIG_DIR;
@@ -244,29 +247,29 @@ async fn init_multicast() {
     multicast.listen();
 }
 
-#[tauri::command]
-async fn init_listener(window: tauri::WebviewWindow) -> AlleyResult<MessageState> {
-    let mut l = LISTENER.write().await;
-    if l.is_some() {
-        return Err(AlleyError::ListenerInitialized);
-    }
+//#[tauri::command]
+//async fn init_listener(window: tauri::WebviewWindow) -> AlleyResult<MessageState> {
+//    let mut l = LISTENER.write().await;
+//    if l.is_some() {
+//        return Err(AlleyError::ListenerInitialized);
+//    }
+//
+//    let mut peer = Peer::new().await?;
+//    let msg = peer.handle_recieve(&window).await?;
+//
+//    *l = Some(peer);
+//
+//    Ok(msg)
+//}
 
-    let mut listener = Peer::new().await?;
-    let msg = listener.handle_recieve(&window).await?;
-
-    *l = Some(listener);
-
-    Ok(msg)
-}
-
-#[tauri::command]
-async fn handle_pair_response(response: String) {
-    let listener = LISTENER.write().await;
-
-    if let Some(l) = listener.as_ref() {
-        l.set_pair_response(response.try_into().unwrap()).await;
-    }
-}
+//#[tauri::command]
+//async fn handle_pair_response(response: String) {
+//    let listener = LISTENER.write().await;
+//
+//    if let Some(l) = listener.as_ref() {
+//        l.set_pair_response(response.try_into().unwrap()).await;
+//    }
+//}
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -355,8 +358,8 @@ pub fn run() {
             get_send_files_url_qr_code,
             is_linux,
             init_multicast,
-            init_listener,
-            handle_pair_response,
+            //init_listener,
+            //handle_pair_response,
         ])
         .run(tauri::generate_context!())
         .map_err(|e| {
