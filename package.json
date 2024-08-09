@@ -12,6 +12,7 @@
     "trace": "cross-env RUST_BACKTRACE=1 tauri dev",
     "dev": "bun run start:dev",
     "update:all": "bun update && cd src-tauri && cargo update",
+    "dev:android": "bun run tauri android dev",
     "build:android": "bun run tauri android build -t aarch64 x86_64 --split-per-abi"
   },
   "dependencies": {
