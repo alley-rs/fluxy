@@ -1,43 +1,14 @@
 {
+  "productName": "fluxy",
+  "version": "../package.json",
+  "identifier": "com.alley.fluxy",
   "build": {
-    "beforeDevCommand": "pnpm dev:vite",
-    "beforeBuildCommand": "pnpm build:vite",
-    "devUrl": "http://localhost:1420/",
+    "beforeDevCommand": "bun run dev:vite",
+    "beforeBuildCommand": "bun run build:vite",
+    "devUrl": "http://localhost:1420",
     "frontendDist": "../dist"
   },
-  "bundle": {
-    "active": true,
-    "targets": "all",
-    "icon": [
-      "icons/32x32.png",
-      "icons/128x128.png",
-      "icons/128x128@2x.png",
-      "icons/icon.icns",
-      "icons/icon.ico"
-    ],
-    "linux": {
-      "deb": {
-        "desktopTemplate": "./linux/alley.desktop"
-      }
-    }
-  },
-  "productName": "Alley",
-  "version": "../package.json",
-  "identifier": "com.thepoy.alley",
-  "plugins": {
-    "updater": {
-      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDcyNDgxNTAxQjYwQzUxNTEKUldSUlVReTJBUlZJY2o0YXI4QkNBbXplWEdabVQzWjlxd0l0ZTdhWDVaMU9waTRLa0ptT20zV1UK",
-      "endpoints": [
-        "https://app.thepoy.cc/alley-transfer/latest-mirror-1.json",
-        "https://app.thepoy.cc/alley-transfer/latest-mirror-2.json",
-        "https://app.thepoy.cc/alley-transfer/latest-mirror-3.json",
-        "https://app.thepoy.cc/alley-transfer/latest-mirror-4.json",
-        "https://github.com/thep0y/alley/releases/latest/download/latest.json"
-      ]
-    }
-  },
   "app": {
-    "withGlobalTauri": false,
     "security": {
       "csp": null
     },
@@ -49,5 +20,28 @@
         "resizable": false
       }
     ]
+  },
+  "bundle": {
+    "active": true,
+    "targets": "all",
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ]
+  },
+  "plugins": {
+    "updater": {
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDcyNDgxNTAxQjYwQzUxNTEKUldSUlVReTJBUlZJY2o0YXI4QkNBbXplWEdabVQzWjlxd0l0ZTdhWDVaMU9waTRLa0ptT20zV1UK",
+      "endpoints": [
+        "https://app.thepoy.cc/alley-transfer/latest-mirror-1.json",
+        "https://app.thepoy.cc/alley-transfer/latest-mirror-2.json",
+        "https://app.thepoy.cc/alley-transfer/latest-mirror-3.json",
+        "https://app.thepoy.cc/alley-transfer/latest-mirror-4.json",
+        "https://github.com/thep0y/alley/releases/latest/download/latest.json"
+      ]
+    }
   }
 }

@@ -7,7 +7,6 @@ mod lazy;
 mod linux;
 mod multicast;
 mod peer;
-mod server;
 mod stream;
 
 #[macro_use]
@@ -16,15 +15,14 @@ extern crate lazy_static;
 extern crate tracing;
 
 use std::{
-    path::PathBuf,
+    sync::OnceLock,
     time::{Duration, SystemTime, UNIX_EPOCH},
 };
 
 use once_cell::sync::Lazy;
 use qrcode_generator::QrCodeEcc;
 use serde::Serialize;
-use tauri::Emitter;
-use tauri::Manager;
+use tauri::{Emitter, Manager, WebviewWindow};
 use time::macros::{format_description, offset};
 use tokio::{
     fs::File,
@@ -35,7 +33,6 @@ use tracing_subscriber::fmt::time::OffsetTime;
 
 use crate::lazy::LOCAL_IP;
 use crate::peer::{MessageState, Peer};
-use crate::server::{SendFile, DOWNLOADS_DIR, MAIN_WINDOW, QR_CODE_MAP, SEND_FILES};
 use crate::{
     error::{AlleyError, AlleyResult},
     multicast::Multicast,
@@ -49,6 +46,8 @@ static MULTICAST: Lazy<OnceCell<Multicast>> = Lazy::new(OnceCell::new);
 lazy_static! {
     static ref LISTENER: RwLock<Option<Peer>> = RwLock::new(None);
 }
+
+pub static MAIN_WINDOW: OnceLock<WebviewWindow> = OnceLock::new();
 
 async fn new_multicast() -> Multicast {
     Multicast::new(
@@ -138,18 +137,6 @@ impl QrCode {
 }
 
 #[tauri::command]
-async fn get_qr_code_state(id: u64) -> bool {
-    trace!("获取 server 地址二维码状态");
-
-    let map = QR_CODE_MAP.read().await;
-    let state = map.contains_key(&id);
-
-    info!(message = "server 地址二维码可用状态", state = !state);
-
-    state
-}
-
-#[tauri::command]
 async fn upload_qr_code() -> AlleyResult<QrCode> {
     trace!("获取上传地址二维码");
 
@@ -162,77 +149,6 @@ async fn upload_qr_code() -> AlleyResult<QrCode> {
     );
 
     Ok(code)
-}
-
-#[tauri::command]
-async fn get_send_files_url_qr_code(files: Vec<SendFile>) -> AlleyResult<QrCode> {
-    trace!("获取发送址二维码");
-    let mut send_files = SEND_FILES.write().await;
-    *send_files = Some(files);
-
-    let code = QrCode::new(Mode::Receive)?;
-
-    info!(
-        message = "发送地址二维码已创建",
-        url = code.url,
-        svg = code.svg
-    );
-
-    Ok(code)
-}
-
-#[tauri::command]
-async fn downloads_dir() -> PathBuf {
-    trace!("获取下载目录");
-
-    let path = DOWNLOADS_DIR.read().await.to_path_buf();
-
-    info!(message = "当前下载目录为", dir = ?path);
-
-    path
-}
-
-#[tauri::command]
-async fn change_downloads_dir(path: PathBuf) {
-    trace!("修改下载目录");
-
-    let mut downloads_dir = DOWNLOADS_DIR.write().await;
-    downloads_dir.clone_from(&path);
-
-    info!(message = "下载目录已修改", dir = ?path);
-}
-
-#[tauri::command]
-async fn get_files_metadata(paths: Vec<PathBuf>) -> AlleyResult<Vec<SendFile>> {
-    trace!("获取待发送文件信息");
-    let mut files = Vec::with_capacity(paths.len());
-
-    for path in paths.iter() {
-        if path.is_dir() {
-            continue;
-        }
-
-        let filename = path.file_name().unwrap().to_str().unwrap();
-        let extension = path.extension().unwrap().to_str().unwrap();
-        let file = File::open(path).await.map_err(|e| {
-            error!(message = "打开文件失败", path = ?path, error = ?e);
-            e
-        })?;
-        let size = file
-            .metadata()
-            .await
-            .map_err(|e| {
-                error!(message = "获取文件元信息失败", path = ?path, error = ?e);
-                e
-            })?
-            .len();
-
-        files.push(SendFile::new(filename, path, extension, size))
-    }
-
-    info!("所有待发送文件信息: {:?}", files);
-
-    Ok(files)
 }
 
 #[tauri::command]
@@ -336,7 +252,6 @@ pub fn run() {
 
             #[cfg(target_os = "android")]
             {
-                app.handle().plugin(file_picker_android::init())?;
                 app.handle().plugin(tauri_plugin_barcode_scanner::init())?;
             }
             let main_window = app.handle().get_webview_window("main");
@@ -351,11 +266,6 @@ pub fn run() {
         })
         .invoke_handler(tauri::generate_handler![
             upload_qr_code,
-            get_qr_code_state,
-            downloads_dir,
-            change_downloads_dir,
-            get_files_metadata,
-            get_send_files_url_qr_code,
             is_linux,
             init_multicast,
             //init_listener,

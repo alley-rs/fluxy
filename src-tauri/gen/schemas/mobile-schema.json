@@ -2202,26 +2202,6 @@
           ]
         },
         {
-          "type": "string",
-          "enum": [
-            "file-picker-android:default"
-          ]
-        },
-        {
-          "description": "file-picker-android:allow-pickFiles -> Enables the pickFiles command without any pre-configured scope.",
-          "type": "string",
-          "enum": [
-            "file-picker-android:allow-pickFiles"
-          ]
-        },
-        {
-          "description": "file-picker-android:deny-pickFiles -> Denies the pickFiles command without any pre-configured scope.",
-          "type": "string",
-          "enum": [
-            "file-picker-android:deny-pickFiles"
-          ]
-        },
-        {
           "description": "os:default -> This permission set configures which\noperating system information are available\nto gather from the frontend.\n\n#### Granted Permissions\n\nAll information except the host name are available.\n\n",
           "type": "string",
           "enum": [

@@ -7,31 +7,38 @@ plugins {
     id("rust")
 }
 
-val keyPropertiesFile = rootProject.file("key.properties")
-val keyProperties = Properties()
-keyProperties.load(FileInputStream(keyPropertiesFile))
+val tauriProperties = Properties().apply {
+    val propFile = file("tauri.properties")
+    if (propFile.exists()) {
+        propFile.inputStream().use { load(it) }
+    }
+}
 
 android {
-    compileSdk = 33
-    namespace = "com.thepoy.alley"
+    compileSdk = 34
+    namespace = "com.alley.fluxy"
     defaultConfig {
         manifestPlaceholders["usesCleartextTraffic"] = "false"
-        applicationId = "com.thepoy.alley"
+        applicationId = "com.alley.fluxy"
         minSdk = 24
-        targetSdk = 33
-        versionCode = 1
-        versionName = "0.2.0"
+        targetSdk = 34
+        versionCode = tauriProperties.getProperty("tauri.android.versionCode", "1").toInt()
+        versionName = tauriProperties.getProperty("tauri.android.versionName", "1.0")
     }
-
     signingConfigs {
-       create("release") {
-           keyAlias = keyProperties["keyAlias"] as String
-           keyPassword = keyProperties["keyPassword"] as String
-           storeFile = file(keyProperties["storeFile"] as String)
-           storePassword = keyProperties["storePassword"] as String
-       }
-    }
+        create("release") {
+            val keystorePropertiesFile = rootProject.file("keystore.properties")
+            val keystoreProperties = Properties()
+            if (keystorePropertiesFile.exists()) {
+                keystoreProperties.load(FileInputStream(keystorePropertiesFile))
+            }
 
+            keyAlias = keystoreProperties["keyAlias"] as String
+            keyPassword = keystoreProperties["keyPassword"] as String
+            storeFile = file(keystoreProperties["storeFile"] as String)
+            storePassword = keystoreProperties["storePassword"] as String
+        }
+    }
     buildTypes {
         getByName("debug") {
             manifestPlaceholders["usesCleartextTraffic"] = "true"
@@ -56,6 +63,9 @@ android {
     }
     kotlinOptions {
         jvmTarget = "1.8"
+    }
+    buildFeatures {
+        buildConfig = true
     }
 }
 

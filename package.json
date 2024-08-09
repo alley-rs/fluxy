@@ -1,12 +1,10 @@
 {
-  "name": "alley",
-  "private": true,
+  "name": "fluxy",
   "version": "0.2.0",
   "type": "module",
   "scripts": {
-    "install:all": "bun i && cd static && bun i",
     "dev:vite": "vite",
-    "build:vite": "tsc && vite build && cd static && tsc && vite build",
+    "build:vite": "tsc && vite build",
     "build": "tauri build",
     "preview": "vite preview",
     "tauri": "tauri",

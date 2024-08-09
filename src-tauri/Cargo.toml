@@ -1,5 +1,5 @@
 [package]
-name = "alley"
+name = "fluxy"
 version = "0.0.0"
 description = "局域网文件传输工具"
 authors = ["thep0y"]
@@ -8,25 +8,22 @@ repository = "https://github.com/alley-rs/alley-transfer"
 edition = "2021"
 
 [lib]
-name = "app_lib"
-# crate-type = ["staticlib", "cdylib", "rlib", "lib"]
+name = "fluxy_lib"
 crate-type = ["lib", "cdylib", "staticlib"]
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
 [build-dependencies]
-tauri-build = { version = "2.0.0-rc.1", features = [] }
+tauri-build = { version = "2.0.0-rc", features = [] }
 
 [dependencies]
-tauri = { version = "2.0.0-rc.1", features = [] }
+tauri = { version = "2.0.0-rc", features = [] }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 dirs = "5"
 lazy_static = "1"
 salvo = { version = "0", features = ["serve-static"] }
 tokio = { version = "1", default-features = false, features = [
-  "macros",
-  "net",
+    "macros",
+    "net",
 ] }
 tokio-util = "0.7"
 local-ip-address = "0.6"
@@ -36,9 +33,9 @@ futures = "0.3"
 time = { version = "0.3", features = ['macros'] }
 thiserror = "1"
 tracing-subscriber = { version = "0.3", features = [
-  'time',
-  'env-filter',
-  'json',
+    'time',
+    'env-filter',
+    'json',
 ] }
 tracing = { version = "0.1", features = ["log", "release_max_level_info"] }
 rust-embed = "8"
@@ -46,7 +43,7 @@ hostname = "^0.4"
 os_info = { version = "3", default-features = false }
 once_cell = "1"
 sha1 = "0"
-tauri-plugin-os = "2.0.0-rc.0"
+tauri-plugin-os = "2.0.0-rc"
 
 [target."cfg(any(target_os = \"windows\", target_os = \"macos\", target_os = \"linux\"))".dependencies]
 tracing-appender = '0.2'
@@ -58,18 +55,12 @@ tauri-plugin-shell = "2.0.0-rc.0"
 tauri-plugin-dialog = "2.0.0-rc.0"
 
 [target."cfg(target_os = \"android\")".dependencies]
-file-picker-android = { git = "https://github.com/Berrysoft/file-picker-android" }
+# file-picker-android = { git = "https://github.com/Berrysoft/file-picker-android" }
 tauri-plugin-barcode-scanner = "2.0.0-rc.0"
 
-
-[features]
-# this feature is used for production builds or when `devPath` points to the filesystem
-# DO NOT REMOVE!!
-custom-protocol = ["tauri/custom-protocol"]
-
 [profile.release]
-panic = "abort"   # Strip expensive panic clean-up logic
-codegen-units = 1 # Compile crates one after another so the compiler can optimize better
-lto = true        # Enables link to optimizations
-opt-level = "s"   # Optimize for binary size
-strip = true      # Remove debug symbols
+panic = "abort"
+codegen-units = 1
+lto = true
+opt-level = "s"
+strip = true

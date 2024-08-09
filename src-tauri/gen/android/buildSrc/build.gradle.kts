@@ -12,6 +12,7 @@ gradlePlugin {
 }
 
 repositories {
+    maven { url=uri ("https://mirrors.huaweicloud.com/repository/maven/")}
     maven { url=uri ("https://www.jitpack.io")}
     maven { url=uri ("https://maven.aliyun.com/repository/releases")}
     maven { url=uri ("https://maven.aliyun.com/repository/google")}
@@ -25,6 +26,6 @@ repositories {
 
 dependencies {
     compileOnly(gradleApi())
-    implementation("com.android.tools.build:gradle:8.0.0")
+    implementation("com.android.tools.build:gradle:8.3.0")
 }
 
