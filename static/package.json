@@ -12,12 +12,12 @@
   "dependencies": {
     "@tauri-apps/api": "^1.6.0",
     "solid-icons": "^1.1.0",
-    "solid-js": "^1.8.19"
+    "solid-js": "^1.8.20"
   },
   "devDependencies": {
     "sass": "^1.77.8",
     "typescript": "^5.5.4",
-    "vite": "^5.3.5",
+    "vite": "^5.4.0",
     "vite-plugin-solid": "^2.10.2"
   }
 }
