@@ -1,13 +1,14 @@
-import { JSX, createEffect, createSignal, createUniqueId } from "solid-js";
+import { type JSX, createEffect, createSignal, createUniqueId } from "solid-js";
 import { createStore } from "solid-js/store";
 import { getFileItemIndex } from "./util";
 import request from "./request";
 import asyncPool from "~/components/upload/asyncPool";
-import Button from "../button";
 import ErrorBlock from "../error-block";
 import List from "../list";
 import FileItem from "./fileItem";
 import "./index.scss";
+import Button from "../button";
+import { AiOutlinePlus } from "solid-icons/ai";
 
 interface UploadProps {
   action: string;
@@ -56,7 +57,9 @@ const Upload = ({ action, headers, withCredentials, method }: UploadProps) => {
       fileItems.push({ file, id: createUniqueId() });
     }
 
-    fileItems.forEach((f) => send(f));
+    for (const f of fileItems) {
+      send(f);
+    }
 
     setFileItems(fileItems);
   };
@@ -64,9 +67,16 @@ const Upload = ({ action, headers, withCredentials, method }: UploadProps) => {
   const onClick: JSX.EventHandlerUnion<HTMLDivElement, MouseEvent> = (e) => {
     const target = e.target as HTMLElement;
 
-    if (target && target.tagName === "BUTTON") {
+    if (
+      target &&
+      (target.tagName === "BUTTON" ||
+        target.parentElement?.tagName === "BUTTON" ||
+        target.parentElement?.parentElement?.tagName === "BUTTON")
+    ) {
       setFileItems([]);
       setRequestTasks([]);
+      // biome-ignore lint/style/noNonNullAssertion: <explanation>
+      fileInput!.value = ""; // 点击按钮后清空 input files
       fileInput?.click();
       target.blur();
     }
@@ -81,7 +91,7 @@ const Upload = ({ action, headers, withCredentials, method }: UploadProps) => {
       headers,
       withCredentials,
       onProgress,
-      onError: function (e): void {
+      onError: (e) => {
         console.log(e);
         // todo: 反馈上传错误
       },
@@ -120,7 +130,7 @@ const Upload = ({ action, headers, withCredentials, method }: UploadProps) => {
             <ErrorBlock
               status="empty"
               title="未选择文件"
-              description="点击最下面的按钮选择文件"
+              description="点击左上角的加号按钮选择文件"
             />
           </div>
         ) : (
@@ -155,11 +165,10 @@ const Upload = ({ action, headers, withCredentials, method }: UploadProps) => {
       />
 
       <Button
-        block
         class="submit-button"
         disabled={fileItems.findIndex((f) => f.speed !== undefined) >= 0}
       >
-        选择文件
+        <AiOutlinePlus />
       </Button>
     </div>
   );

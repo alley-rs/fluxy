@@ -7,7 +7,7 @@
   overflow-y: auto;
 
   .upload-file-list {
-    height: 80%;
+    // height: 100%;
     border-radius: 5px;
     flex-grow: 14;
     overflow-y: auto;
@@ -34,8 +34,11 @@
   }
 
   .submit-button {
-    margin-top: 5px;
-    flex-grow: 1;
+    position: fixed;
+    left: 10px;
+    top: 10px;
+    border-radius: 50%;
+    padding: 8px;
   }
 
   .empty {
