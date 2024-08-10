@@ -4,7 +4,7 @@
 
 # FLUXY
 
-在局域网的同网段中各终端快速互传文件的工具，适配 Windows、macOS 和 Linux 桌面发行版，为频繁在手机与电脑间互传文件的用户提供便捷、舒适的体验。
+FLUXY 是一款用于局域网内快速文件传输的工具，支持 Windows、macOS 和 Linux，旨在提供流畅的文件交换体验，尤其适用于手机与电脑间的频繁文件传输。
 
 在未开发手机端前，只能通过手机浏览器上传和接收文件，为了更好的上传体验，建议使用 [Edge](https://play.google.com/store/search?q=edge&c=apps)、[Chrome](https://play.google.com/store/search?q=Chrome&c=apps) 、[Firefox](https://play.google.com/store/apps/details?id=org.mozilla.firefox) 或 [QQ浏览器](https://browser.qq.com/mobile)。
 
@@ -16,16 +16,9 @@
 
 - 体积小
 
-  | 平台及格式                              | 体积（v0.1.1） |
-  | --------------------------------------- | -------------- |
-  | macOS aarch64 - dmg                     | 2.64 MB        |
-  | Linux(Debian/Ubuntu/Deepin) amd64 - deb | 2.86 MB        |
-  | Windows amd64 - msi                     | 2.79 MB        |
-  | Windows amd64 - exe                     | 2.68 MB        |
-
 ## 使用
 
-打开软件后需要选择传输模式：
+启动 FLUXY 后，请选择传输模式：
 
 | 亮色                                             | 暗色                                            |
 | ------------------------------------------------ | ----------------------------------------------- |
@@ -33,7 +26,7 @@
 
 ### 接收模式
 
-选择接收模式后会出现一个二维码，使用手机扫描二维码会通过默认浏览器打开一个页面，同时 PC 端的页面也会变化。
+PC 端显示二维码供手机扫描。
 
 在手机上点击页面最下面的的`选择文件`按钮即可上传多个文件，同时 PC 端也能看到收取文件的进度。
 
@@ -44,7 +37,7 @@
 | 亮色 | ![receive-qrcode](./docs/images/light/2-receive-qrcode.avif) | ![mobile-send-index](./docs/images/light/mobile-send-index.avif)  | ![pc-receive-empty](./docs/images/light/4-pc-receive-empty.avif) | ![mobile-uploading](./docs/images/light/5-mobile-uploading.avif) | ![pc-receiving](./docs/images/light/6-pc-receiving.avif) |
 | 暗色 | ![receive-qrcode](./docs/images/dark/2-receive-qrcode.avif)  | ![mobile-send-index](./docs/images/dark/3-mobile-send-index.avif) | ![pc-receive-empty](./docs/images/dark/4-pc-receive-empty.avif)  | ![mobile-uploading](./docs/images/dark/5-mobile-uploading.avif)  | ![pc-receiving](./docs/images/dark/6-pc-receiving.avif)  |
 
-所有平台的 PC 端接收到的文件默认保存路径均为`~/Downloads/alley`，你可以自行修改保存目录。
+默认保存路径为 `~/Downloads/alley`，可以自行修改。
 
 ### 发送模式
 
@@ -63,7 +56,7 @@ _受限于手机操作系统的限制，手机浏览器无法实现批量下载�
 
 ### macOS 提示已损坏
 
-本程序没有通过 apple 开发者签名，不被系统信任，会提示损坏，如果在设置中已经打开了信任所有来源后仍提示损坏，可通过终端强制信任。在终端中输入下面的命令后回车并输入密码即可：
+由于 FLUXY 未经过 Apple 开发者签名，可能会出现系统信任问题。您可以通过以下命令强制信任程序：
 
 ```bash
 sudo xattr -r -d com.apple.quarantine /Applications/fluxy.app
