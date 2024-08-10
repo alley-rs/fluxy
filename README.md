@@ -66,7 +66,7 @@ _受限于手机操作系统的限制，手机浏览器无法实现批量下载�
 本程序没有通过 apple 开发者签名，不被系统信任，会提示损坏，如果在设置中已经打开了信任所有来源后仍提示损坏，可通过终端强制信任。在终端中输入下面的命令后回车并输入密码即可：
 
 ```bash
-sudo xattr -r -d com.apple.quarantine /Applications/Alley.app
+sudo xattr -r -d com.apple.quarantine /Applications/fluxy.app
 ```
 
 关闭终端后就可以正常打开程序了。
