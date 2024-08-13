@@ -299,24 +299,34 @@ impl Peer {
         }
     }
 
-    fn handle_pairing_request(&self) {}
+    async fn handle_pairing_request(&mut self, mut stream: TcpStream) -> io::Result<()> {
+        // TODO: 这里添加用户交互逻辑，通过GUI询问用户是否接受配对
+
+        let accept = true; // 假设用户同意配对
+
+        if accept {
+            stream.write_all(b"PAIROK").await?;
+            let addr = stream.peer_addr()?;
+            self.pair(addr.ip(), stream);
+            Ok(())
+        } else {
+            stream.write_all(b"PAIRNO").await?;
+            Err(io::Error::new(io::ErrorKind::Other, "Pairing refused"))
+        }
+    }
 
     async fn handle_incoming_connection(&mut self, mut stream: TcpStream) -> AlleyResult<()> {
         let mut buffer = BytesMut::with_capacity(1024);
         stream.read_buf(&mut buffer).await?;
         let data = String::from_utf8_lossy(&buffer);
         if data.starts_with("PAIR?") {
-            // Example pairing request
-            // Handle pairing request
-            let remote_addr = stream.peer_addr()?;
-            self.handle_pairing_request();
-            self.pair(remote_addr.ip(), stream);
-        } else if let Some((_, ref stream)) = &self.paired_peer {
-            // Handle regular communication (text messages, files)
-            let mut stream_lock = stream.lock().await;
-            stream_lock.read(&mut buffer).await;
-            let received_data = String::from_utf8_lossy(&buffer);
-            println!("Received: {}", received_data.trim());
+            self.handle_pairing_request(stream).await?;
+        } else if data.starts_with("FILE") {
+            let file_path = data.trim_start_matches("FILE").trim();
+            self.receive_file(&mut stream, file_path).await?;
+        } else {
+            // 处理文本消息
+            println!("Received: {}", data.trim());
         }
 
         Ok(())
@@ -332,7 +342,7 @@ impl Peer {
             Duration::from_secs(10),
             stream.read_to_string(&mut response),
         )
-        .await?;
+        .await??;
 
         if response.trim() == "PAIROK" {
             self.pair(*addr, stream); // 成功配对，保存流
@@ -352,7 +362,38 @@ impl Peer {
     }
 
     async fn send_file(&self, file_path: &str) -> AlleyResult<()> {
-        if let Some((_, ref stream)) = &self.paired_peer {}
+        if let Some((_, ref stream)) = &self.paired_peer {
+            let mut file = fs::File::open(file_path).await?;
+            let mut buffer = [0; 1024];
+
+            let mut stream_lock = stream.lock().await;
+            stream_lock.write_all(b"FILE").await?;
+            stream_lock.write_all(file_path.as_bytes()).await?;
+            stream_lock.write_all(b"\n").await?;
+
+            loop {
+                let n = file.read(&mut buffer).await?;
+                if n == 0 {
+                    break;
+                }
+                stream_lock.write_all(&buffer[..n]).await?;
+            }
+        }
+
+        Ok(())
+    }
+
+    async fn receive_file(&self, stream: &mut TcpStream, file_path: &str) -> io::Result<()> {
+        let mut file = fs::File::create(file_path).await?;
+        let mut buffer = [0; 1024];
+
+        loop {
+            let n = stream.read(&mut buffer).await?;
+            if n == 0 {
+                break;
+            }
+            file.write_all(&buffer[..n]).await?;
+        }
 
         Ok(())
     }

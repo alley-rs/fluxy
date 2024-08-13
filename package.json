@@ -29,7 +29,7 @@
   },
   "devDependencies": {
     "@tauri-apps/cli": "2.0.0-rc.2",
-    "@types/node": "^20.14.14",
+    "@types/node": "^20.14.15",
     "@biomejs/biome": "^1.8.3",
     "cross-env": "^7.0.3",
     "internal-ip": "^7.0.0",

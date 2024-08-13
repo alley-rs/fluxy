@@ -14,29 +14,17 @@ extern crate lazy_static;
 #[macro_use]
 extern crate tracing;
 
-use std::{
-    sync::OnceLock,
-    time::{Duration, SystemTime, UNIX_EPOCH},
-};
+use std::sync::OnceLock;
 
 use once_cell::sync::Lazy;
-use qrcode_generator::QrCodeEcc;
-use serde::Serialize;
 use tauri::{Emitter, Manager, WebviewWindow};
 use time::macros::{format_description, offset};
-use tokio::{
-    fs::File,
-    sync::{OnceCell, RwLock},
-};
+use tokio::sync::{OnceCell, RwLock};
 use tracing::Level;
 use tracing_subscriber::fmt::time::OffsetTime;
 
-use crate::lazy::LOCAL_IP;
-use crate::peer::{MessageState, Peer};
-use crate::{
-    error::{AlleyError, AlleyResult},
-    multicast::Multicast,
-};
+use crate::multicast::Multicast;
+use crate::peer::Peer;
 
 #[cfg(not(any(target_os = "android", target_os = "ios")))]
 pub use crate::lazy::APP_CONFIG_DIR;
@@ -78,78 +66,12 @@ async fn get_or_init_multicast() -> &'static Multicast {
 //    LISTENER.get_mut_or_init(new_listener).await
 //}
 
-fn now() -> AlleyResult<Duration> {
-    SystemTime::now().duration_since(UNIX_EPOCH).map_err(|e| {
-        error!(message = "获取时间出错", error = ?e);
-        e.into()
-    })
-}
-
-enum Mode {
-    Send,
-    Receive,
-}
-
-impl Mode {
-    fn to_str(&self) -> &'static str {
-        match self {
-            Mode::Send => "send",
-            Mode::Receive => "receive",
-        }
-    }
-}
-
-#[derive(Debug, Serialize)]
-struct QrCode {
-    svg: String,
-    url: String,
-    id: u64,
-}
-
-impl QrCode {
-    fn new(mode: Mode) -> AlleyResult<Self> {
-        let ts = now()?.as_secs();
-        debug!(message = "获取到时间戳", ts = ts);
-
-        let url = format!(
-            "http://{}:{}/connect?mode={}&ts={}",
-            *LOCAL_IP,
-            5800,
-            mode.to_str(),
-            ts
-        );
-        debug!(message = "二维码信息", url = url);
-
-        let code = qrcode_generator::to_svg_to_string(&url, QrCodeEcc::Low, 256, None::<&str>)
-            .map_err(|e| {
-                error!(message = "创建二维码失败", error = ?e);
-                e
-            })?;
-
-        info!("已创建二维码");
-
-        Ok(Self {
-            svg: code,
-            url,
-            id: ts,
-        })
-    }
-}
-
-#[tauri::command]
-async fn upload_qr_code() -> AlleyResult<QrCode> {
-    trace!("获取上传地址二维码");
-
-    let code = QrCode::new(Mode::Send)?;
-
-    info!(
-        message = "上传地址二维码已创建",
-        url = code.url,
-        svg = code.svg
-    );
-
-    Ok(code)
-}
+// fn now() -> AlleyResult<Duration> {
+//     SystemTime::now().duration_since(UNIX_EPOCH).map_err(|e| {
+//         error!(message = "获取时间出错", error = ?e);
+//         e.into()
+//     })
+// }
 
 #[tauri::command]
 fn is_linux() -> bool {
@@ -265,7 +187,6 @@ pub fn run() {
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![
-            upload_qr_code,
             is_linux,
             init_multicast,
             //init_listener,
