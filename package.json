@@ -20,15 +20,15 @@
     "@tauri-apps/api": "^1.6.0",
     "alley-components": "^0.2.10",
     "solid-icons": "^1.1.0",
-    "solid-js": "^1.8.20"
+    "solid-js": "^1.8.21"
   },
   "devDependencies": {
     "@tauri-apps/cli": "^1.6.0",
-    "@types/node": "^22.1.0",
+    "@types/node": "^22.4.0",
     "cross-env": "^7.0.3",
     "sass": "^1.77.8",
     "typescript": "^5.5.4",
-    "vite": "^5.4.0",
+    "vite": "^5.4.1",
     "vite-plugin-solid": "^2.10.2"
   }
 }
