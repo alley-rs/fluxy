@@ -20,10 +20,9 @@ serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 dirs = "5"
 lazy_static = "1"
-salvo = { version = "0", features = ["serve-static"] }
 tokio = { version = "1", default-features = false, features = [
-    "macros",
-    "net",
+  "macros",
+  "net",
 ] }
 tokio-util = "0.7"
 local-ip-address = "0.6"
@@ -32,12 +31,12 @@ bytes = '1'
 futures = "0.3"
 time = { version = "0.3", features = ['macros'] }
 thiserror = "1"
-tracing-subscriber = { version = "0.3", features = [
-    'time',
-    'env-filter',
-    'json',
+tracing = { version = "0", features = ["log", "release_max_level_info"] }
+tracing-subscriber = { version = "0", features = [
+  'time',
+  'env-filter',
+  'json',
 ] }
-tracing = { version = "0.1", features = ["log", "release_max_level_info"] }
 rust-embed = "8"
 hostname = "^0.4"
 os_info = { version = "3", default-features = false }
@@ -45,7 +44,7 @@ once_cell = "1"
 sha1 = "0"
 tauri-plugin-os = "2.0.0-rc"
 
-[target."cfg(any(target_os = \"windows\", target_os = \"macos\", target_os = \"linux\"))".dependencies]
+[target."cfg(any(target_os = \"macos\", target_os = \"windows\", target_os = \"linux\"))".dependencies]
 tracing-appender = '0.2'
 tauri-plugin-updater = "2.0.0-rc.0" # 这个插件不支持手机
 

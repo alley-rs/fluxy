@@ -7,7 +7,8 @@ mod lazy;
 mod linux;
 mod multicast;
 mod peer;
-mod stream;
+mod setup;
+//mod stream;
 
 #[macro_use]
 extern crate lazy_static;
@@ -17,14 +18,12 @@ extern crate tracing;
 use std::sync::OnceLock;
 
 use once_cell::sync::Lazy;
-use tauri::{Emitter, Manager, WebviewWindow};
-use time::macros::{format_description, offset};
+use tauri::{Emitter, WebviewWindow};
 use tokio::sync::{OnceCell, RwLock};
-use tracing::Level;
-use tracing_subscriber::fmt::time::OffsetTime;
 
 use crate::multicast::Multicast;
 use crate::peer::Peer;
+use crate::setup::{setup_app, setup_logging};
 
 #[cfg(not(any(target_os = "android", target_os = "ios")))]
 pub use crate::lazy::APP_CONFIG_DIR;
@@ -111,37 +110,7 @@ async fn init_multicast() {
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
-    #[cfg(debug_assertions)]
-    let fmt = format_description!("[hour]:[minute]:[second].[subsecond digits:3]");
-    #[cfg(not(debug_assertions))]
-    let fmt =
-        format_description!("[year]-[month]-[day] [hour]:[minute]:[second].[subsecond digits:3]");
-
-    let timer = OffsetTime::new(offset!(+8), fmt);
-
-    #[cfg(all(desktop, not(debug_assertions)))]
-    // NOTE: _guard must be a top-level variable
-    let (writer, _guard) = {
-        let file_appender = tracing_appender::rolling::never(&*APP_CONFIG_DIR, "alley.log");
-        tracing_appender::non_blocking(file_appender)
-    };
-
-    #[cfg(any(debug_assertions, mobile))]
-    let writer = std::io::stderr;
-
-    let builder = tracing_subscriber::fmt()
-        .with_max_level(Level::TRACE)
-        .with_file(true)
-        .with_line_number(true)
-        .with_env_filter("app_lib,salvo_core::server")
-        .with_timer(timer)
-        .with_writer(writer);
-
-    #[cfg(any(debug_assertions, mobile))]
-    builder.init();
-
-    #[cfg(all(not(debug_assertions), desktop))]
-    builder.json().init();
+    setup_logging();
 
     #[cfg(target_os = "linux")]
     {
@@ -154,38 +123,9 @@ pub fn run() {
         }
     }
 
-    // tauri::async_runtime::spawn(server::serve());
-    // info!("已创建 serve 线程");
-
     tauri::Builder::default()
         .plugin(tauri_plugin_os::init())
-        .setup(|app| {
-            #[cfg(desktop)]
-            {
-                app.handle()
-                    .plugin(tauri_plugin_updater::Builder::new().build())?;
-
-                // 下面三个插件未兼容手机，在兼容前不编译到手机端
-                app.handle()
-                    .plugin(tauri_plugin_clipboard_manager::init())?;
-                app.handle().plugin(tauri_plugin_dialog::init())?;
-                app.handle().plugin(tauri_plugin_shell::init())?;
-            }
-
-            #[cfg(target_os = "android")]
-            {
-                app.handle().plugin(tauri_plugin_barcode_scanner::init())?;
-            }
-            let main_window = app.handle().get_webview_window("main");
-            if let Some(w) = main_window {
-                if MAIN_WINDOW.set(w).is_err() {
-                    error!(message = "设置主窗口失败");
-                    app.handle().exit(1);
-                }
-            }
-
-            Ok(())
-        })
+        .setup(setup_app)
         .invoke_handler(tauri::generate_handler![
             is_linux,
             init_multicast,
@@ -197,5 +137,5 @@ pub fn run() {
             error!(message = "创建 app 失败", error = ?e);
             e
         })
-        .unwrap();
+        .expect("Error while running tauri application");
 }
