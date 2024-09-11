@@ -1,6 +1,6 @@
 import { defineConfig } from "vite";
 import solid from "vite-plugin-solid";
-import path from "path";
+import path from "node:path";
 
 const pathSrc = path.resolve(__dirname, "src");
 
