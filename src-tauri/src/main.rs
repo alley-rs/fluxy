@@ -321,7 +321,9 @@ async fn main() -> FluxyResult<()> {
         tauri::RunEvent::WindowEvent { label, event, .. } => {
             if label == "main" {
                 if let tauri::WindowEvent::CloseRequested { .. } = event {
-                    app_handle.exit(0);
+                    if let Some(w) = app_handle.get_window("about") {
+                        w.close().unwrap();
+                    }
                 }
             }
         }
