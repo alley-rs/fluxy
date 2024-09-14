@@ -1,8 +1,3 @@
-/* @refresh reload */
-import { render } from "solid-js/web";
-import "./index.scss";
-import "./about.scss";
-import "alley-components/lib/index.css";
 import {
   LazyButton,
   LazyFlex,
@@ -18,6 +13,7 @@ import { app } from "@tauri-apps/api";
 import { AiFillGithub } from "solid-icons/ai";
 import { RiCommunicationFeedbackLine } from "solid-icons/ri";
 import { open } from "@tauri-apps/api/shell";
+import "./about.scss";
 
 const About = () => {
   const [name, setName] = createSignal("");
@@ -65,11 +61,4 @@ const About = () => {
   );
 };
 
-const root = document.getElementById("about");
-
-if (import.meta.env.MODE === "production") {
-  document.addEventListener("contextmenu", (event) => event.preventDefault());
-}
-
-// biome-ignore lint/style/noNonNullAssertion: <explanation>
-render(() => <About />, root!);
+export default About;

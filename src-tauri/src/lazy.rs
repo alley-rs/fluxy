@@ -3,7 +3,7 @@ use std::{fs, path::PathBuf};
 use local_ip_address::local_ip;
 
 lazy_static! {
-    pub(super) static ref LOCAL_IP: String = local_ip().unwrap().to_string();
+    pub(super) static ref LOCAL_IP: String = local_ip().expect("获取本地ip失败").to_string();
     pub(super) static ref APP_CONFIG_DIR: PathBuf = {
         let config_dir = dirs::config_dir().unwrap();
 

@@ -1,13 +1,20 @@
 import { AiOutlineQuestion } from "solid-icons/ai";
-import { newAboutWindow } from "~/api";
+import { useContext } from "solid-js";
+import { AppContext } from "~/context";
 import { LazyFloatButton } from "~/lazy";
 
-const AboutButton = () => (
-  <LazyFloatButton
-    icon={<AiOutlineQuestion />}
-    tooltip="关于和帮助"
-    onClick={newAboutWindow}
-  />
-);
+const AboutButton = () => {
+  const {
+    about: { onShow },
+  } = useContext(AppContext)!;
+
+  return (
+    <LazyFloatButton
+      icon={<AiOutlineQuestion />}
+      tooltip="关于和帮助"
+      onClick={onShow}
+    />
+  );
+};
 
 export default AboutButton;

@@ -5,6 +5,7 @@ import {
   createMemo,
   Show,
   children,
+  useContext,
 } from "solid-js";
 import {
   AiOutlineClear,
@@ -33,12 +34,11 @@ import {
 } from "~/lazy";
 import { addClassNames } from "alley-components/lib/utils/class";
 import { open } from "@tauri-apps/api/shell";
+import { AppContext } from "~/context";
 
-interface SendProps {
-  toHome: () => void;
-}
+const Send = () => {
+  const { goHome } = useContext(AppContext)!;
 
-const Send = (props: SendProps) => {
   const [files, setFiles] = createSignal<SendFile[]>([]);
 
   const [qrcode, setQrcode] = createSignal<QrCode | null>(null);
@@ -105,7 +105,7 @@ const Send = (props: SendProps) => {
       <LazyFloatButton
         tooltip="回到主页"
         icon={<AiOutlineHome />}
-        onClick={props.toHome}
+        onClick={goHome}
       />
     </LazyFloatButtonGroup>
   ));

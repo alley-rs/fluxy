@@ -13,7 +13,8 @@
       "recommended": true,
       "correctness": {
         "useJsxKeyInIterable": "off"
-      }
+      },
+      "style": { "noNonNullAssertion": "off" }
     }
   }
 }
