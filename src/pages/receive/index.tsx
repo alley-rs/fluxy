@@ -7,6 +7,7 @@ import {
   onMount,
   Show,
   children,
+  useContext,
 } from "solid-js";
 import { appWindow } from "@tauri-apps/api/window";
 import { getUploadQrCode, getQrCodeState } from "~/api";
@@ -26,12 +27,11 @@ import {
 } from "~/lazy";
 import { createStore } from "solid-js/store";
 import { AiFillDelete, AiOutlineHome } from "solid-icons/ai";
+import { AppContext } from "~/context";
 
-interface ReceiveProps {
-  toHome: () => void;
-}
+const Receive = () => {
+  const { goHome } = useContext(AppContext)!;
 
-const Receive = ({ toHome }: ReceiveProps) => {
   const [qrcode, setQrcode] = createSignal<QrCode | null>(null);
 
   const [taskList, setTaskList] = createStore<TaskMessage[]>([]);
@@ -114,7 +114,7 @@ const Receive = ({ toHome }: ReceiveProps) => {
         onClick={() => {
           setTaskList([]);
           setFileList([]);
-          toHome();
+          goHome();
         }}
       />
     </LazyFloatButtonGroup>

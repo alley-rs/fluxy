@@ -4,6 +4,7 @@ import { BiRegularSun, BiSolidMoon } from "solid-icons/bi";
 import {
   LazyAboutButton,
   LazyButton,
+  LazyDialog,
   LazyReceive,
   LazySend,
   LazySwitch,
@@ -12,9 +13,9 @@ import {
 import { suspense } from "./advance";
 import "~/App.scss";
 import useDark from "alley-components/lib/hooks/useDark";
-import { getStarState, stared } from "./api";
-import { confirm, message } from "@tauri-apps/api/dialog";
-import { open } from "@tauri-apps/api/shell";
+import About from "./about";
+import { AppContext } from "./context";
+import { showMainWindow } from "./api";
 
 enum Mode {
   Send = 1,
@@ -25,40 +26,19 @@ const App = () => {
   const [isDark, setIsDark] = useDark();
 
   const [mode, setMode] = createSignal<Mode | null>(null);
+  const [showAbout, setShowAbout] = createSignal<boolean>(false);
 
-  onMount(() => {
-    const star = async () => {
-      const starState = await getStarState();
-      if (starState) return;
+  const goHome = () => setMode(null);
 
-      const ok = await confirm("点个 star 支持一下?", {
-        okLabel: "没问题",
-        cancelLabel: "以后再说",
-      });
-      if (!ok) {
-        return;
-      }
-
-      open("https://github.com/alley-rs/fluxy");
-
-      const confirmed = await confirm(
-        "本提示是君子协定，你点击确认后将不会再弹出本弹窗",
-        { title: "你是否已 star？", okLabel: "是的", cancelLabel: "没有" },
-      );
-      if (!confirmed) return;
-
-      message("感谢您支持开源项目");
-
-      stared();
-    };
-
-    star();
-  });
-
-  const toHome = () => setMode(null);
+  onMount(() => showMainWindow());
 
   return (
-    <>
+    <AppContext.Provider
+      value={{
+        goHome,
+        about: { show: showAbout, onShow: () => setShowAbout(true) },
+      }}
+    >
       <LazyTooltip text={`切换为${isDark() ? "亮" : "暗"}色`} placement="left">
         <LazySwitch
           class="dark-switch"
@@ -103,13 +83,20 @@ const App = () => {
         }
       >
         <Match when={mode() === Mode.Receive}>
-          {suspense(<LazyReceive toHome={toHome} />)}
+          {suspense(<LazyReceive />)}
         </Match>
-        <Match when={mode() === Mode.Send}>
-          {suspense(<LazySend toHome={toHome} />)}
-        </Match>
+        <Match when={mode() === Mode.Send}>{suspense(<LazySend />)}</Match>
       </Switch>
-    </>
+
+      <LazyDialog
+        show={showAbout()}
+        onClose={() => setShowAbout(false)}
+        showCloseIcon
+        showMask
+      >
+        <About />
+      </LazyDialog>
+    </AppContext.Provider>
   );
 };
 
