@@ -22,7 +22,7 @@ use std::{
 
 use qrcode_generator::QrCodeEcc;
 use serde::Serialize;
-use tauri::{Manager, UpdaterEvent};
+use tauri::{AppHandle, Manager, UpdaterEvent};
 use time::macros::{format_description, offset};
 use tokio::fs::File;
 use tracing::Level;
@@ -195,6 +195,16 @@ fn is_linux() -> bool {
     cfg!(target_os = "linux")
 }
 
+/// 防止启动时闪白屏
+#[tauri::command]
+async fn show_main_window(app: AppHandle) {
+    debug!("Showing main window");
+
+    let main_window = app.get_window("main").unwrap();
+
+    main_window.show().unwrap();
+}
+
 #[tokio::main]
 async fn main() -> FluxyResult<()> {
     #[cfg(debug_assertions)]
@@ -267,6 +277,7 @@ async fn main() -> FluxyResult<()> {
             get_files_metadata,
             get_send_files_url_qr_code,
             is_linux,
+            show_main_window
         ]);
 
     // windows 和 linux 的菜单在窗口内, 无法自动切换暗色, 所以不使用菜单

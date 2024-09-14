@@ -60,7 +60,8 @@
         "title": "小路速传",
         "width": 400,
         "height": 600,
-        "resizable": false
+        "resizable": false,
+        "visible": false
       }
     ]
   }
