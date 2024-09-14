@@ -1,4 +1,4 @@
-import { Match, Switch, createSignal } from "solid-js";
+import { Match, Switch, createSignal, onMount } from "solid-js";
 import { TbArrowsTransferUp, TbArrowsTransferDown } from "solid-icons/tb";
 import { BiRegularSun, BiSolidMoon } from "solid-icons/bi";
 import {
@@ -15,6 +15,7 @@ import "~/App.scss";
 import useDark from "alley-components/lib/hooks/useDark";
 import About from "./about";
 import { AppContext } from "./context";
+import { showMainWindow } from "./api";
 
 enum Mode {
   Send = 1,
@@ -28,6 +29,8 @@ const App = () => {
   const [showAbout, setShowAbout] = createSignal<boolean>(false);
 
   const goHome = () => setMode(null);
+
+  onMount(() => showMainWindow());
 
   return (
     <AppContext.Provider
