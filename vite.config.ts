@@ -6,15 +6,6 @@ const pathSrc = path.resolve(__dirname, "src");
 
 // https://vitejs.dev/config/
 export default defineConfig(async () => ({
-  build: {
-    rollupOptions: {
-      input: {
-        main: path.resolve(__dirname, "index.html"),
-        about: path.resolve(__dirname, "about.html"),
-      },
-    },
-  },
-
   resolve: {
     alias: {
       "~/": `${pathSrc}/`,

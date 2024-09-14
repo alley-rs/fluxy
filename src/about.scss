@@ -1,9 +1,3 @@
-:root {
-  --about-backgroud-color: #eaeced;
-
-  background-color: var(--about-backgroud-color) !important;
-}
-
 #about {
   height: 100vh;
 
@@ -11,8 +5,4 @@
     user-select: none;
     -webkit-user-drag: none;
   }
-}
-
-.dark {
-  --about-backgroud-color: var(--alley-color-bg);
 }

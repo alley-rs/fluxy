@@ -1,6 +1,8 @@
 :root {
   --color-scrollbar: rgba(0, 0, 0, 0.1);
   --color-scrollbar-hover: rgba(0, 0, 0, 0.4);
+
+  --alley-color-mask: rgb(0 0 0 / 30%);
 }
 
 ::-webkit-scrollbar {
