@@ -33,6 +33,12 @@
       "deb": {
         "desktopTemplate": "./linux/alley.desktop"
       },
+      "windows": {
+        "wix": { "language": "zh-CN" },
+        "nsis": {
+          "languages": ["SimpChinese"]
+        }
+      },
       "identifier": "com.thepoy.alley",
       "icon": [
         "icons/32x32.png",

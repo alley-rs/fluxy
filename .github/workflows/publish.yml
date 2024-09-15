@@ -139,6 +139,7 @@ jobs:
           releaseId: ${{ needs.create-release.outputs.release_id }}
           releaseBody: ${{ needs.create-release.outputs.changelog }}
           rename: ${{ matrix.platform == 'windows-latest' && env.RENAME_RULE || '' }}
+          updaterJsonPreferNsis: true
           args: "-- --no-default-features"
 
   publish-release:
