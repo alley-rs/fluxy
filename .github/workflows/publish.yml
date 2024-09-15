@@ -83,7 +83,15 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        platform: [macos-latest, ubuntu-22.04, windows-latest]
+        include:
+          - platform: "macos-latest"
+            args: "--target aarch64-apple-darwin"
+          - platform: "macos-latest"
+            args: "--target x86_64-apple-darwin"
+          - platform: "ubuntu-22.04"
+            args: ""
+          - platform: "windows-latest"
+            args: ""
 
     runs-on: ${{ matrix.platform }}
     steps:
@@ -92,16 +100,14 @@ jobs:
       - name: setup node
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: lts/*
 
       - uses: oven-sh/setup-bun@v1
 
       - name: install Rust stable
         uses: dtolnay/rust-toolchain@stable
-
-      - name: install missing Rust target for universal Mac build
-        if: matrix.platform == 'macos-latest'
-        run: rustup target add x86_64-apple-darwin
+        with:
+          targets: ${{ matrix.platform == 'macos-latest' && 'aarch64-apple-darwin,x86_64-apple-darwin' || '' }}
 
       - name: install dependencies (ubuntu only)
         if: matrix.platform == 'ubuntu-22.04'
@@ -109,38 +115,19 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y libgtk-3-dev libwebkit2gtk-4.0-dev libappindicator3-dev librsvg2-dev patchelf
 
-      - name: get version with alpha or beta deleted on Windows
-        if: matrix.platform == 'windows-latest'
-        run: |
-          cd .scripts
-          $version = node before-build.js
-          echo "BUILD_VERSION=$version" >> $Env:GITHUB_ENV
-
       - name: install frontend dependencies
         run: bun run install:all
 
       - uses: tauri-apps/tauri-action@v0
-        if: matrix.platform == 'macos-latest'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAURI_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
           TAURI_KEY_PASSWORD: ${{ secrets.TAURI_KEY_PASSWORD }}
-        with:
-          releaseId: ${{ needs.create-release.outputs.release_id }}
-          args: "-t x86_64-apple-darwin -- --no-default-features"
-
-      - uses: thep0y/tauri-action@v0.1.0
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          TAURI_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
-          TAURI_KEY_PASSWORD: ${{ secrets.TAURI_KEY_PASSWORD }}
-          RENAME_RULE: '{"searchValue": "${{ env.BUILD_VERSION }}", "replaceValue": "${{ needs.create-release.outputs.package_version }}"}'
         with:
           releaseId: ${{ needs.create-release.outputs.release_id }}
           releaseBody: ${{ needs.create-release.outputs.changelog }}
-          rename: ${{ matrix.platform == 'windows-latest' && env.RENAME_RULE || '' }}
           updaterJsonPreferNsis: true
-          args: "-- --no-default-features"
+          args: ${{ matrix.args }}
 
   publish-release:
     permissions:
