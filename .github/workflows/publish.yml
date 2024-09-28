@@ -207,3 +207,23 @@ jobs:
           local_path: ./.scripts/mirrors/*
           remote_path: /home/thepoy/app/alley-transfer
           sftpArgs: "-o ConnectTimeout=5"
+
+  delete-nightly-release-and-tag:
+    permissions:
+      contents: write
+    runs-on: ubuntu-22.04
+    needs: upload_mirror_json
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: get old nightly release id
+        run: |
+          release_id=$(curl -s 'https://api.github.com/repos/alley-rs/lsar/releases/tags/nightly' | awk -F'[{},:]+' '/^  "id"/ {print $2}' | xargs)
+          echo "RELEASE_ID=$release_id"  >> $GITHUB_ENV
+
+      - name: delete old nightly release
+        if: env.RELEASE_ID != ''
+        run: gh release delete nightly --cleanup-tag
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
