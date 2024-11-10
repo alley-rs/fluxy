@@ -22,7 +22,6 @@ import {
   LazyQrcode,
   LazyList,
   LazyFloatButtonGroup,
-  LazyToast,
   LazyAboutButton,
 } from "~/lazy";
 import { createStore } from "solid-js/store";
@@ -30,7 +29,7 @@ import { AiFillDelete, AiOutlineHome } from "solid-icons/ai";
 import { AppContext } from "~/context";
 
 const Receive = () => {
-  const { goHome } = useContext(AppContext)!;
+  const { goHome, translations } = useContext(AppContext)!;
 
   const [qrcode, setQrcode] = createSignal<QrCode | null>(null);
 
@@ -101,7 +100,7 @@ const Receive = () => {
 
       <Show when={fileList.length}>
         <LazyFloatButton
-          tooltip="清空已完成列表"
+          tooltip={translations()?.clear_button_text}
           icon={<AiFillDelete />}
           onClick={() => setFileList([])}
           danger
@@ -109,7 +108,7 @@ const Receive = () => {
       </Show>
 
       <LazyFloatButton
-        tooltip="回到主页"
+        tooltip={translations()!.home_button_text}
         icon={<AiOutlineHome />}
         onClick={() => {
           setTaskList([]);
@@ -123,15 +122,7 @@ const Receive = () => {
   return (
     <Switch>
       <Match when={qrcode() !== null}>
-        {/* biome-ignore lint/style/noNonNullAssertion: <explanation> */}
         <LazyQrcode qrcode={qrcode()!} />
-
-        <LazyToast
-          placement="top"
-          open={true}
-          message="请使用手机扫描此二维码"
-          onClose={() => { }}
-        />
 
         {floatButtons()}
       </Match>
@@ -148,7 +139,9 @@ const Receive = () => {
             align="center"
             justify="center"
           >
-            <LazyEmpty description="请在手机端上传文件" />
+            <LazyEmpty
+              description={translations()?.receive_page_empty_description}
+            />
           </LazyFlex>
         </LazyFlex>
 

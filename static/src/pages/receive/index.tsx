@@ -1,4 +1,4 @@
-import { Match, Switch, createResource } from "solid-js";
+import { Match, Show, Switch, createResource, useContext } from "solid-js";
 import { AiOutlineCloudDownload } from "solid-icons/ai";
 import Result from "~/components/result";
 import SpinLoading from "~/components/loading/spin";
@@ -8,6 +8,8 @@ import List from "~/components/list";
 import fileType from "./fileType";
 import Link from "~/components/link";
 import "./index.scss";
+import LocaleContext from "~/context";
+import ZH_CN from "~/i18n/zh_cn";
 
 type ResponseData = SendFile[] | BadRequest;
 
@@ -24,11 +26,13 @@ const fetchData = async (): Promise<ResponseData> => {
 };
 
 const Receive = () => {
+  const locale = useContext(LocaleContext)!;
+
   const [data] = createResource(fetchData);
 
   return (
     <div class="container" id="receive">
-      <div class="header">接收文件</div>
+      <div class="header">{locale.receive_page_title}</div>
 
       <Switch>
         <Match when={data.loading || !data()}>
@@ -51,14 +55,11 @@ const Receive = () => {
 
         <Match when={(data() as SendFile[]).length}>
           <div class="content">
-            <Toast
-              message="不要刷新此页面，否则文件列表将会被清空"
-              duration={3000}
-            />
+            <Toast message={locale.receive_page_toast} duration={3000} />
 
             <List
               class="receive-file-list"
-              header="点击文件名或右侧按钮即可下载"
+              header={locale.receive_page_file_list_header}
               dataSource={data() as SendFile[]}
               renderItem={(item, index) => {
                 const url = "/download/" + encodeURIComponent(item.path);
@@ -78,8 +79,12 @@ const Receive = () => {
                     }
                     description={
                       <Space gap={12} class="file-description">
-                        <span>大小：{item.size}</span>
-                        <span>类型：{fileType(item.extension)}</span>
+                        <span>
+                          {locale.file_item_file_size_label}：{item.size}
+                        </span>
+                        <Show when={locale === ZH_CN}>
+                          <span>类型：{fileType(item.extension)}</span>
+                        </Show>
                       </Space>
                     }
                     extra={[

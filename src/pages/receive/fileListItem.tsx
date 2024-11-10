@@ -1,4 +1,4 @@
-import { Show } from "solid-js";
+import { Show, useContext } from "solid-js";
 import { open } from "@tauri-apps/api/shell";
 import { AiFillCheckCircle } from "solid-icons/ai";
 import fileType from "./fileType";
@@ -10,6 +10,7 @@ import {
   LazyTooltip,
   LazyTypographyText,
 } from "~/lazy";
+import { AppContext } from "~/context";
 
 interface FileListItemProps {
   index?: number;
@@ -21,6 +22,8 @@ interface FileListItemProps {
 }
 
 const FileListItem = (props: FileListItemProps) => {
+  const { translations } = useContext(AppContext)!;
+
   const extension = getExtension(props.name);
 
   return (
@@ -38,7 +41,10 @@ const FileListItem = (props: FileListItemProps) => {
               <LazyTypographyText disabled>{props.name}</LazyTypographyText>
             }
           >
-            <LazyTooltip text="单击使用默认程序打开此文件" placement="top">
+            <LazyTooltip
+              text={translations()!.receive_page_list_item_tooltip}
+              placement="top"
+            >
               <LazyLink onClick={() => open(props.path)}>{props.name}</LazyLink>
             </LazyTooltip>
           </Show>
@@ -46,8 +52,12 @@ const FileListItem = (props: FileListItemProps) => {
       }
       description={
         <LazySpace gap={24}>
-          <span>大小: {props.size}</span>
-          <span>类型：{fileType(extension)}</span>
+          <span>
+            {translations()?.list_item_file_size_label}: {props.size}
+          </span>
+          <span>
+            {translations()?.list_item_file_type_label}: {fileType(extension)}
+          </span>
         </LazySpace>
       }
       extra={

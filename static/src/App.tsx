@@ -5,6 +5,8 @@ import Send from "~/pages/send";
 import Receive from "~/pages/receive";
 import SwitchDark from "~/components/switch";
 import "~/App.scss";
+import { getLocale } from "./i18n";
+import LocaleContext from "./context";
 
 type Mode = "receive" | "send";
 
@@ -13,6 +15,8 @@ const App = () => {
   const url = new URL(href);
   const params = new URLSearchParams(url.search);
   const mode = params.get("mode") as Mode | null;
+
+  const locale = getLocale();
 
   const [isDark, setIsDark] = createSignal(false);
 
@@ -43,7 +47,7 @@ const App = () => {
   });
 
   return (
-    <div>
+    <LocaleContext.Provider value={locale}>
       <SwitchDark
         class="dark-switch"
         checked={isDark()}
@@ -61,8 +65,8 @@ const App = () => {
           <div class="container">
             <Result
               status="error"
-              title="无效的请求"
-              description="缺少查询参数: mode"
+              title={locale.invalid_request}
+              description={locale.mode_is_required}
               fullScreen
             />
           </div>
@@ -76,7 +80,7 @@ const App = () => {
           <Receive />
         </Match>
       </Switch>
-    </div>
+    </LocaleContext.Provider>
   );
 };
 
