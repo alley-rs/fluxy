@@ -10,7 +10,8 @@ import {
 } from "~/lazy";
 import "./index.scss";
 import { AiFillCopy } from "solid-icons/ai";
-import { createSignal } from "solid-js";
+import { createSignal, useContext } from "solid-js";
+import { AppContext } from "~/context";
 
 interface QRCodeProps {
   qrcode: QrCode;
@@ -19,6 +20,7 @@ interface QRCodeProps {
 const baseClassName = "qr-code";
 
 const QRCode = ({ qrcode }: QRCodeProps) => {
+  const { translations } = useContext(AppContext)!;
   const [showToast, setShowToast] = createSignal(false);
 
   return (
@@ -28,10 +30,17 @@ const QRCode = ({ qrcode }: QRCodeProps) => {
       justify="center"
       direction="vertical"
     >
-      <h2>扫码连接</h2>
+      <LazyToast
+        placement="top"
+        open={true}
+        message={translations()?.qrcode_page_toast_message}
+        onClose={() => { }}
+      />
+
+      <h2>{translations()?.qrcode_page_title}</h2>
       <div class={`${baseClassName}-svg`} innerHTML={qrcode.svg} />
 
-      <div>或在另一台电脑中通过浏览器中访问</div>
+      <div>{translations()?.qrcode_page_url_label}</div>
 
       <LazySpace direction="vertical" gap={8}>
         <LazyLink
@@ -42,7 +51,7 @@ const QRCode = ({ qrcode }: QRCodeProps) => {
           {qrcode.url}
         </LazyLink>
 
-        <LazyTooltip text="复制链接到剪贴板">
+        <LazyTooltip text={translations()!.qrcode_page_url_tooltip}>
           <LazyButton
             icon={<AiFillCopy />}
             shape="circle"
@@ -61,7 +70,7 @@ const QRCode = ({ qrcode }: QRCodeProps) => {
         autoHideDuration={1000}
         alert={{
           type: "success",
-          message: "已复制链接",
+          message: translations()?.qrcode_page_url_copied_message,
         }}
       />
     </LazyFlex>

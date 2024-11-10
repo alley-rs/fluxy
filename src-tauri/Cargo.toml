@@ -42,6 +42,7 @@ tracing-subscriber = { version = "0", features = [
 tracing = { version = "0", features = ["log", "release_max_level_info"] }
 tracing-appender = '0'
 rust-embed = "8"
+sys-locale = "0"
 
 
 [features]

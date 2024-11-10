@@ -1,4 +1,4 @@
-import { Match, Switch, createSignal, onMount } from "solid-js";
+import { Match, Switch, createResource, createSignal, onMount } from "solid-js";
 import { TbArrowsTransferUp, TbArrowsTransferDown } from "solid-icons/tb";
 import { BiRegularSun, BiSolidMoon } from "solid-icons/bi";
 import {
@@ -15,7 +15,7 @@ import "~/App.scss";
 import useDark from "alley-components/lib/hooks/useDark";
 import About from "./about";
 import { AppContext } from "./context";
-import { showMainWindow } from "./api";
+import { getLocaleTranslations, showMainWindow } from "./api";
 
 enum Mode {
   Send = 1,
@@ -27,6 +27,7 @@ const App = () => {
 
   const [mode, setMode] = createSignal<Mode | null>(null);
   const [showAbout, setShowAbout] = createSignal<boolean>(false);
+  const [translations] = createResource(getLocaleTranslations);
 
   const goHome = () => setMode(null);
 
@@ -36,10 +37,18 @@ const App = () => {
     <AppContext.Provider
       value={{
         goHome,
+        translations,
         about: { show: showAbout, onShow: () => setShowAbout(true) },
       }}
     >
-      <LazyTooltip text={`切换为${isDark() ? "亮" : "暗"}色`} placement="left">
+      <LazyTooltip
+        text={
+          isDark()
+            ? translations()!.dark_mode_tooltip
+            : translations()!.light_mode_tooltip
+        }
+        placement="left"
+      >
         <LazySwitch
           class="dark-switch"
           checked={isDark()}
@@ -56,7 +65,7 @@ const App = () => {
       <Switch
         fallback={
           <div id="index">
-            <div>选择传输方式</div>
+            <div>{translations()?.home_label_text}</div>
 
             {suspense(
               <LazyButton
@@ -64,7 +73,7 @@ const App = () => {
                 icon={<TbArrowsTransferDown />}
                 onClick={() => setMode(Mode.Receive)}
               >
-                接收
+                {translations()?.home_receive_button_text}
               </LazyButton>,
             )}
 
@@ -74,7 +83,7 @@ const App = () => {
                 icon={<TbArrowsTransferUp />}
                 onClick={() => setMode(Mode.Send)}
               >
-                发送
+                {translations()?.home_send_button_text}
               </LazyButton>,
             )}
 
