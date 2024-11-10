@@ -21,7 +21,7 @@ pub enum Locale {
 impl From<String> for Locale {
     fn from(value: String) -> Self {
         match value.as_ref() {
-            "zh-CNa" => Self::ZhCN,
+            "zh-CN" => Self::ZhCN,
             _ => Self::EnUS,
         }
     }
