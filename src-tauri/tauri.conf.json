@@ -34,9 +34,9 @@
         "desktopTemplate": "./linux/alley.desktop"
       },
       "windows": {
-        "wix": { "language": "zh-CN" },
+        "wix": { "language": ["zh-CN", "en-US"] },
         "nsis": {
-          "languages": ["SimpChinese"]
+          "displayLanguageSelector": true
         }
       },
       "identifier": "com.thepoy.alley",
@@ -67,7 +67,8 @@
         "width": 400,
         "height": 600,
         "resizable": false,
-        "visible": false
+        "visible": false,
+        "fileDropEnabled": true
       }
     ]
   }
