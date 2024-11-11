@@ -36,6 +36,7 @@
       "windows": {
         "wix": { "language": ["zh-CN", "en-US"] },
         "nsis": {
+          "languages": ["SimpChinese", "English"],
           "displayLanguageSelector": true
         }
       },
