@@ -2,6 +2,7 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 mod error;
+mod i18n;
 mod lazy;
 #[cfg(target_os = "linux")]
 mod linux;
@@ -22,12 +23,14 @@ use std::{
 
 use qrcode_generator::QrCodeEcc;
 use serde::Serialize;
+use sys_locale::get_locale;
 use tauri::{AppHandle, Manager, UpdaterEvent};
 use time::macros::{format_description, offset};
 use tokio::fs::File;
 use tracing::Level;
 use tracing_subscriber::fmt::time::OffsetTime;
 
+use crate::i18n::{Locale, Translations, LOCALES};
 use crate::lazy::LOCAL_IP;
 #[cfg(target_os = "macos")]
 use crate::menu::{handle_menu_event, new_menu};
@@ -191,6 +194,12 @@ async fn get_files_metadata(paths: Vec<PathBuf>) -> FluxyResult<Vec<SendFile>> {
 }
 
 #[tauri::command]
+fn get_locale_translations() -> &'static Translations {
+    let locale: Locale = get_locale().unwrap_or_else(|| String::from("en-US")).into();
+    LOCALES[&locale]
+}
+
+#[tauri::command]
 fn is_linux() -> bool {
     cfg!(target_os = "linux")
 }
@@ -244,6 +253,11 @@ async fn main() -> FluxyResult<()> {
     #[cfg(not(debug_assertions))]
     builder.json().init();
 
+    let locale = get_locale().unwrap_or_else(|| String::from("en-US"));
+    debug!("current locale: {}", locale);
+    let locale: Locale = locale.into();
+    let translations = LOCALES[&locale];
+
     #[cfg(target_os = "linux")]
     {
         let scale_factor = crate::linux::get_scale_factor()?;
@@ -262,6 +276,7 @@ async fn main() -> FluxyResult<()> {
     let mut builder = tauri::Builder::default()
         .setup(|app| {
             if let Some(w) = app.get_window("main") {
+                w.set_title(translations.window_title).unwrap();
                 if MAIN_WINDOW.set(w).is_err() {
                     error!(message = "设置主窗口失败");
                     app.handle().exit(1);
@@ -277,7 +292,8 @@ async fn main() -> FluxyResult<()> {
             get_files_metadata,
             get_send_files_url_qr_code,
             is_linux,
-            show_main_window
+            show_main_window,
+            get_locale_translations
         ]);
 
     // windows 和 linux 的菜单在窗口内, 无法自动切换暗色, 所以不使用菜单

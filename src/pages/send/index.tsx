@@ -37,7 +37,7 @@ import { open } from "@tauri-apps/api/shell";
 import { AppContext } from "~/context";
 
 const Send = () => {
-  const { goHome } = useContext(AppContext)!;
+  const { goHome, translations } = useContext(AppContext)!;
 
   const [files, setFiles] = createSignal<SendFile[]>([]);
 
@@ -98,12 +98,12 @@ const Send = () => {
           icon={<AiOutlineClear />}
           onClick={() => setFiles([])}
           danger
-          tooltip={"清空文件列表"}
+          tooltip={translations()?.clear_button_text}
         />
       </Show>
 
       <LazyFloatButton
-        tooltip="回到主页"
+        tooltip={translations()?.home_button_text}
         icon={<AiOutlineHome />}
         onClick={goHome}
       />
@@ -120,7 +120,7 @@ const Send = () => {
           justify="center"
           direction="vertical"
         >
-          <div class="send-header">发送文件</div>
+          <div class="send-header">{translations()?.send_page_title}</div>
 
           <LazyFlex
             class={addClassNames(
@@ -138,7 +138,10 @@ const Send = () => {
                     <LazyListItem
                       avatar={LazyFileTypeIcon(file.extension)}
                       title={
-                        <LazyTooltip text="单击预览文件" placement="top">
+                        <LazyTooltip
+                          text={translations()!.send_page_list_item_tooltip}
+                          placement="top"
+                        >
                           <LazyLink onClick={() => open(file.path)}>
                             {file.name}
                           </LazyLink>
@@ -146,9 +149,15 @@ const Send = () => {
                       }
                       description={
                         <>
-                          <span>大小: {file.size}</span>
+                          <span>
+                            {translations()?.list_item_file_size_label}:{" "}
+                            {file.size}
+                          </span>
                           &nbsp;&nbsp;&nbsp;&nbsp;
-                          <span>类型: {file.extension}</span>
+                          <span>
+                            {translations()?.list_item_file_type_label}:{" "}
+                            {file.extension}
+                          </span>
                         </>
                       }
                       extra={[
@@ -167,11 +176,13 @@ const Send = () => {
                 />
 
                 <LazyTypographyText type="secondary">
-                  可继续拖入文件
+                  {translations()?.send_page_drop_description}
                 </LazyTypographyText>
               </LazyFlex>
             ) : (
-              <LazyEmpty description="将文件拖到此处" />
+              <LazyEmpty
+                description={translations()?.send_page_empty_drop_description}
+              />
             )}
           </LazyFlex>
 
@@ -181,7 +192,7 @@ const Send = () => {
             block
             disabled={isEmpty()}
           >
-            确认
+            {translations()?.ok_button_text}
           </LazyButton>
         </LazyFlex>
       </Show>

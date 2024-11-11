@@ -6,6 +6,9 @@ import Space from "~/components/space";
 import DotLoading from "~/components/loading/dot";
 import List from "~/components/list";
 import Progress from "../progress";
+import { Show, useContext } from "solid-js";
+import LocaleContext from "~/context";
+import ZH_CN from "~/i18n/zh_cn";
 
 const getExtension = (name: string): string => {
   const dotIndex = name.lastIndexOf(".");
@@ -24,6 +27,7 @@ interface FileItemProps {
 }
 
 const FileItem = (props: FileItemProps) => {
+  const locale = useContext(LocaleContext)!;
   const extension = getExtension(props.file.name);
 
   return (
@@ -36,8 +40,15 @@ const FileItem = (props: FileItemProps) => {
       }
       description={
         <Space gap={24}>
-          <span>大小: {formatFileSize(props.file.size)}</span>
-          <span>类型：{fileType(extension)}</span>
+          <span>
+            {locale.file_item_file_size_label}：
+            {formatFileSize(props.file.size)}
+          </span>
+          <Show when={locale === ZH_CN}>
+            <span>
+              {locale.file_item_file_type_label}：{fileType(extension)}
+            </span>
+          </Show>
         </Space>
       }
       extra={

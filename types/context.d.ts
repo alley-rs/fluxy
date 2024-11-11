@@ -8,4 +8,5 @@ interface AppContext {
     show: Accessor<boolean>;
     onShow: () => void;
   };
+  translations: Resource<Translations>;
 }

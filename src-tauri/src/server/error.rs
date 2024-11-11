@@ -20,10 +20,7 @@ impl ServerError {
     ) -> Self {
         let msg: Option<&str> = error.into();
         let advice: Option<&str> = advice.into();
-        let advice = match advice {
-            None => None,
-            Some(s) => Some(s.to_owned()),
-        };
+        let advice = advice.map(|s| s.to_owned());
 
         match msg {
             None => Self::Internal,

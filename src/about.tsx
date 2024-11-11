@@ -8,14 +8,16 @@ import {
   LazyTypographyTitle,
 } from "./lazy";
 import useDark from "alley-components/lib/hooks/useDark";
-import { createSignal, onMount } from "solid-js";
+import { createSignal, onMount, useContext } from "solid-js";
 import { app } from "@tauri-apps/api";
 import { AiFillGithub } from "solid-icons/ai";
 import { RiCommunicationFeedbackLine } from "solid-icons/ri";
 import { open } from "@tauri-apps/api/shell";
 import "./about.scss";
+import { AppContext } from "./context";
 
 const About = () => {
+  const { translations } = useContext(AppContext)!;
   const [name, setName] = createSignal("");
   const [version, setVersion] = createSignal("");
 
@@ -39,7 +41,10 @@ const About = () => {
       </LazySpace>
 
       <LazySpace>
-        <LazyTooltip text="访问官网" placement="top">
+        <LazyTooltip
+          text={translations()!.about_dialog_github_tooltip}
+          placement="top"
+        >
           <LazyButton
             icon={<AiFillGithub />}
             type="plain"
@@ -48,7 +53,10 @@ const About = () => {
           />
         </LazyTooltip>
 
-        <LazyTooltip text="反馈问题或寻求帮助" placement="top">
+        <LazyTooltip
+          text={translations()!.about_dialog_feedback_tooltip}
+          placement="top"
+        >
           <LazyButton
             icon={<RiCommunicationFeedbackLine />}
             type="plain"

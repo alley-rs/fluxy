@@ -6,12 +6,13 @@ import { LazyFloatButton } from "~/lazy";
 const AboutButton = () => {
   const {
     about: { onShow },
+    translations,
   } = useContext(AppContext)!;
 
   return (
     <LazyFloatButton
       icon={<AiOutlineQuestion />}
-      tooltip="关于和帮助"
+      tooltip={translations()!.about_button_tooltip}
       onClick={onShow}
     />
   );

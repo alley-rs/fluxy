@@ -1,4 +1,10 @@
-import { type JSX, createEffect, createSignal, createUniqueId } from "solid-js";
+import {
+  type JSX,
+  createEffect,
+  createSignal,
+  createUniqueId,
+  useContext,
+} from "solid-js";
 import { createStore } from "solid-js/store";
 import { getFileItemIndex } from "./util";
 import request from "./request";
@@ -9,6 +15,7 @@ import FileItem from "./fileItem";
 import "./index.scss";
 import Button from "../button";
 import { AiOutlinePlus } from "solid-icons/ai";
+import LocaleContext from "~/context";
 
 interface UploadProps {
   action: string;
@@ -18,6 +25,8 @@ interface UploadProps {
 }
 
 const Upload = ({ action, headers, withCredentials, method }: UploadProps) => {
+  const locale = useContext(LocaleContext)!;
+
   let fileInput: HTMLInputElement | undefined;
 
   const [fileItems, setFileItems] = createStore<FileListItem[]>([]);
@@ -129,13 +138,13 @@ const Upload = ({ action, headers, withCredentials, method }: UploadProps) => {
           <div class="empty">
             <ErrorBlock
               status="empty"
-              title="未选择文件"
-              description="点击左上角的加号按钮选择文件"
+              title={locale.send_page_empty_title}
+              description={locale.send_page_empty_description}
             />
           </div>
         ) : (
           <List
-            header="未完成的任务可点击右侧红色按钮中断"
+            header={locale.send_page_uploading_tooltip}
             dataSource={fileItems}
             renderItem={(item, index) => (
               <FileItem

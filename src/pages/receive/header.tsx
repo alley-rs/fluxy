@@ -1,14 +1,17 @@
 import { open as pick } from "@tauri-apps/api/dialog";
 import { open } from "@tauri-apps/api/shell";
-import { createEffect, createSignal, onMount } from "solid-js";
+import { createEffect, createSignal, onMount, useContext } from "solid-js";
 import { changeDownloadsDir, getDownloadsDir, isLinux } from "~/api";
 import type { MenuItemProps } from "alley-components/lib/components/dropdown";
 import Loading from "alley-components/lib/components/spinner";
 import { LazyCol, LazyDropdown, LazyLink, LazyRow, LazyTooltip } from "~/lazy";
+import { AppContext } from "~/context";
 
 const baseClassName = "receive-header";
 
 const Header = () => {
+  const { translations } = useContext(AppContext)!;
+
   const [downloadDir, setDownloadDir] = createSignal<string | undefined>(
     undefined,
   );
@@ -44,11 +47,11 @@ const Header = () => {
 
   const dropdownItems: MenuItemProps[] = [
     {
-      label: "打开",
+      label: translations()!.receive_page_dropdown_open_button_label,
       onClick: () => open(downloadDir()!),
     },
     {
-      label: "修改",
+      label: translations()!.receive_page_dropdown_pick_button_label,
       onClick: () => pickDirectory(),
     },
   ];
@@ -69,7 +72,9 @@ const Header = () => {
           top={dropdownTop()}
           left={18}
         >
-          <span class={`${baseClassName}-label-text`}>保存目录</span>
+          <span class={`${baseClassName}-label-text`}>
+            {translations()?.receive_page_directory_path_label}
+          </span>
         </LazyDropdown>
       </LazyCol>
 
@@ -79,7 +84,10 @@ const Header = () => {
         align="center"
         justify="center"
       >
-        <LazyTooltip text="单击在文件管理器中打开" placement="bottom">
+        <LazyTooltip
+          text={translations()!.receive_page_directory_path_tooltip}
+          placement="bottom"
+        >
           <LazyLink
             onClick={async () => {
               setOpenDropDown(false);
