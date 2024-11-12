@@ -112,7 +112,6 @@ const Send = () => {
 
   return (
     <>
-      {/* biome-ignore lint/style/noNonNullAssertion: <explanation> */}
       <Show when={!qrcode()} fallback={<LazyQrcode qrcode={qrcode()!} />}>
         <LazyFlex
           class="send"
