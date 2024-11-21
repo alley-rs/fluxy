@@ -1,6 +1,10 @@
 <img src="https://gw.alipayobjects.com/zos/antfincdn/R8sN%24GNdh6/language.svg" width="18"> English | [简体中文](./README.md)
 
-<p align="center"><img height="128" width="128" src="./src-tauri/icons/icon.png" /></p>
+<p align="center">
+<img height="128" width="128" src="./src-tauri/icons/icon.png" />
+<br/>
+<a href="https://github.com/alley-rs/fluxy/releases/latest"><img src="https://img.shields.io/github/downloads/alley-rs/fluxy/total.svg?style=flat-square" alt="GitHub releases"></a>
+</p>
 
 # FLUXY
 
