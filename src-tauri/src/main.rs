@@ -207,11 +207,12 @@ fn is_linux() -> bool {
 /// 防止启动时闪白屏
 #[tauri::command]
 async fn show_main_window(app: AppHandle) {
-    debug!("Showing main window");
+    debug!("Showing and focusing main window");
 
     let main_window = app.get_window("main").unwrap();
 
     main_window.show().unwrap();
+    main_window.set_focus().unwrap();
 }
 
 #[tokio::main]

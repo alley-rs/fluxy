@@ -1,20 +1,23 @@
 <img src="https://gw.alipayobjects.com/zos/antfincdn/R8sN%24GNdh6/language.svg" width="18"> English | [简体中文](./README.md)
 
-<p align="center"><img height="128" width="128" src="./src-tauri/icons/icon.png" /></p>
+<p align="center">
+<img height="128" width="128" src="./src-tauri/icons/icon.png" />
+<br/>
+<a href="https://github.com/alley-rs/fluxy/releases/latest"><img src="https://img.shields.io/github/downloads/alley-rs/fluxy/total.svg?style=flat-square" alt="GitHub releases"></a>
+</p>
 
-# ALLEY
+# FLUXY
 
-ALLEY is a tool for quickly transferring files between terminals on the same local network segment. It is compatible with Windows, macOS, and Linux desktop distributions, providing a convenient and comfortable experience for users who frequently transfer files between their phones and computers.
+FLUXY is a fast file transfer tool for local area networks, supporting Windows, macOS, and Linux. It aims to provide a smooth file exchange experience, particularly for frequent file transfers between mobile phones and computers.
 
-Before the development of the mobile version, users could only upload and receive files through the mobile browser. For a better upload experience, it is recommended to use [Edge](https://play.google.com/store/search?q=edge&c=apps), [Chrome](https://play.google.com/store/search?q=Chrome&c=apps), [Firefox](https://play.google.com/store/apps/details?id=org.mozilla.firefox), or [QQ Browser](https://browser.qq.com/mobile).
+Before developing the mobile app, files could only be uploaded and received through the mobile browser. To improve the upload experience, it is recommended to use [Edge](https://play.google.com/store/search?q=edge&c=apps), [Chrome](https://play.google.com/store/search?q=Chrome&c=apps), [Firefox](https://play.google.com/store/apps/details?id=org.mozilla.firefox), or [QQ Browser](https://browser.qq.com/mobile).
 
 ## Features
 
-This software may have distinctive features compared to other similar software:
+The key features that distinguish this software from other similar tools:
 
-- Open source
-
-- Small footprint
+- Open-source
+- Small in size
 
   | Platform and Format                      | Size (v0.1.0-alpha.7) |
   | ---------------------------------------- | --------------------- |
@@ -23,36 +26,54 @@ This software may have distinctive features compared to other similar software:
   | Windows amd64 - msi                      | 4.29 MB               |
   | Windows amd64 - exe                      | 4.07 MB               |
 
-- Ugly interface (lack of design talent)
-
 ## Usage
 
-After opening the software, you need to select the transfer mode:
+After launching FLUXY, please select the transfer mode:
 
-![Transfer Mode Selection](./docs/images/home.png)
+| Light Mode                                                  | Dark Mode                                                  |
+| ----------------------------------------------------------- | ---------------------------------------------------------- |
+| ![Transfer Mode Selection](./docs/images/light/1-home.avif) | ![Transfer Mode Selection](./docs/images/dark/1-home.avif) |
 
 ### Receive Mode
 
-After selecting the receive mode, a QR code will appear. Scanning the QR code with your phone will open a page in the default browser, and the PC-side page will also change.
+The PC will display a QR code for the mobile phone to scan.
 
-On the phone, click the `Select Files` button at the bottom of the page to upload multiple files. At the same time, the PC side can see the progress of receiving files.
+On the mobile device, click the "Select File" button at the bottom of the page to upload multiple files, and the PC will also be able to see the progress of the file reception.
 
-> Click on the image to view a larger version.
+> Click the images to view them in full size.
 
-| Before PC Scan                              | Mobile Side                                    | After PC Scan                                 | Mobile Upload                                 | PC Side Receive                           |
-| ------------------------------------------- | ---------------------------------------------- | --------------------------------------------- | --------------------------------------------- | ----------------------------------------- |
-| ![output](./docs/images/receive-qrcode.png) | ![output](./docs/images/mobile-send-index.jpg) | ![output](./docs/images/pc-receive-empty.png) | ![output](./docs/images/mobile-uploading.png) | ![output](./docs/images/pc-receiving.png) |
+|       | PC Before Scanning                                            | Mobile                                                            | PC After Scanning                                                | Mobile Uploading                                                 | PC Receiving                                             |
+| ----- | ------------------------------------------------------------- | ----------------------------------------------------------------- | ---------------------------------------------------------------- | ---------------------------------------------------------------- | -------------------------------------------------------- |
+| Light | ![Receive QR Code](./docs/images/light/2-receive-qrcode.avif) | ![Mobile Send Index](./docs/images/light/mobile-send-index.avif)  | ![PC Receive Empty](./docs/images/light/4-pc-receive-empty.avif) | ![Mobile Uploading](./docs/images/light/5-mobile-uploading.avif) | ![PC Receiving](./docs/images/light/6-pc-receiving.avif) |
+| Dark  | ![Receive QR Code](./docs/images/dark/2-receive-qrcode.avif)  | ![Mobile Send Index](./docs/images/dark/3-mobile-send-index.avif) | ![PC Receive Empty](./docs/images/dark/4-pc-receive-empty.avif)  | ![Mobile Uploading](./docs/images/dark/5-mobile-uploading.avif)  | ![PC Receiving](./docs/images/dark/6-pc-receiving.avif)  |
 
-The default save path for files received on the PC side for all platforms is `~/Downloads/alley`. You can modify the save directory yourself.
+The default save path is `~/Downloads/alley`, which can be modified.
 
 ### Send Mode
 
-After selecting the send mode, you can drag the files to be sent into the software window through the file manager. After clicking the confirm button, a QR code will appear. Scanning it with the phone will open the file list sent by the PC side, and clicking on the file name will save the file to the phone.
+After selecting the send mode, you can drag the files to be sent into the software window through the file manager, and then click the confirm button to generate a QR code. Scan the QR code with your mobile device to open the list of files sent from the PC, and click the file name to save the file to your mobile phone.
 
-_Due to limitations of the mobile operating system, mobile browsers cannot achieve batch downloading, only individual downloads._
+_Due to limitations of mobile operating systems, mobile browsers cannot implement batch downloads, and can only download files one by one._
 
-> Click on the image to view a larger version.
+> Click the images to view them in full size.
 
-| PC Side Files to Be Sent                    | PC Side File List to Send             | PC Side Send QR Code                     | Mobile Side Receive Page                          |
-| ------------------------------------------- | ------------------------------------- | ---------------------------------------- | ------------------------------------------------- |
-| ![output](./docs/images/wait-selecting.png) | ![output](./docs/images/selected.png) | ![output](./docs/images/send-qrcode.png) | ![output](./docs/images/mobile-download-list.png) |
+|       | PC Waiting for Selection                                         | PC File List                                     | PC Send QR Code                                         | Mobile Receive Page                                                      |
+| ----- | ---------------------------------------------------------------- | ------------------------------------------------ | ------------------------------------------------------- | ------------------------------------------------------------------------ |
+| Light | ![Wait for Selection](./docs/images/light/7-wait-selecting.avif) | ![Selected](./docs/images/light/8-selected.avif) | ![Send QR Code](./docs/images/light/9-send-qrcode.avif) | ![Mobile Download List](./docs/images/light/mobile-download-list.avif)   |
+| Dark  | ![Wait for Selection](./docs/images/dark/7-wait-selecting.avif)  | ![Selected](./docs/images/dark/8-selected.avif)  | ![Send QR Code](./docs/images/dark/9-send-qrcode.avif)  | ![Mobile Download List](./docs/images/dark/10-mobile-download-list.avif) |
+
+## Troubleshooting
+
+### macOS "Damaged" Warning
+
+Because FLUXY is not signed by an Apple developer, there may be a system trust issue. You can force trust the program using the following command:
+
+```bash
+sudo xattr -r -d com.apple.quarantine /Applications/fluxy.app
+```
+
+After closing the terminal, you should be able to open the program normally.
+
+### Clearing Caches
+
+The frontend pages use the system WebView for rendering, and the cache files are also created by the system WebView. When the cache takes up a large amount of disk space, you can delete the cache directory using some cleanup tools or manually, without affecting the program's operation.

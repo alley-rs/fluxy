@@ -19,9 +19,18 @@ pub enum Locale {
 }
 
 impl From<String> for Locale {
+    #[cfg(not(target_os = "macos"))]
     fn from(value: String) -> Self {
         match value.as_ref() {
             "zh-CN" => Self::ZhCN,
+            _ => Self::EnUS,
+        }
+    }
+
+    #[cfg(target_os = "macos")]
+    fn from(value: String) -> Self {
+        match value.as_ref() {
+            "zh-Hans-CN" => Self::ZhCN,
             _ => Self::EnUS,
         }
     }
