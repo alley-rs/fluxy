@@ -51,7 +51,13 @@ const TitleBar = () => {
             title={translations()?.home_button_text}
           />
 
-          <span style={{ "font-weight": 500, "font-size": "0.9rem" }}>
+          <span
+            style={{
+              "font-weight": 500,
+              "font-size": "0.9rem",
+              "margin-left": ".5rem",
+            }}
+          >
             {mode() === Mode.Receive
               ? translations()?.home_receive_button_text
               : translations()?.home_send_button_text}
