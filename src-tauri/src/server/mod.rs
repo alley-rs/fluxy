@@ -364,7 +364,7 @@ pub(super) async fn serve() -> FluxyResult<()> {
     #[cfg(not(debug_assertions))]
     {
         router = router.push(
-            Router::with_path("<**path>").get(static_embed::<Assets>().fallback("index.html")),
+            Router::with_path("{*path}").get(static_embed::<Assets>().fallback("index.html")),
         );
     }
 
