@@ -94,7 +94,7 @@ const ReceivePage = () => {
         <div
           style={{
             flex: 1,
-            padding: "16px 24px",
+            padding: "16px",
             display: "flex",
             "flex-direction": "column",
             gap: tokens.spacing.md,
@@ -108,6 +108,7 @@ const ReceivePage = () => {
               display: "flex",
               "flex-direction": "column",
               gap: tokens.spacing.sm,
+              "overflow-y": "auto",
             }}
           >
             <For each={fileList}>

@@ -79,7 +79,7 @@ const FileListItem = (props: FileListItemProps) => {
   );
 
   return (
-    <Card>
+    <Card style={{ overflow: "unset", margin: "8px" }}>
       <Flex
         direction="horizontal"
         justify="between"

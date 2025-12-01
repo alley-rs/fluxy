@@ -39,7 +39,7 @@ const Header = () => {
   if (!downloadDir) return <Loading />;
 
   return (
-    <Card>
+    <Card style={{ overflow: "unset" }}>
       <div
         style={{
           display: "flex",
