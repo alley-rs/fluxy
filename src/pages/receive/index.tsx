@@ -1,36 +1,26 @@
 import {
-  Match,
-  Switch,
   createEffect,
   createSignal,
+  For,
+  Match,
   onCleanup,
   onMount,
-  Show,
-  children,
-  useContext,
+  Switch,
 } from "solid-js";
-import { appWindow } from "@tauri-apps/api/window";
-import { getUploadQrCode, getQrCodeState } from "~/api";
-import FileListItem from "./fileListItem";
-import "./index.scss";
-import { suspense } from "~/advance";
-import {
-  LazyReceiveHeader,
-  LazyFloatButton,
-  LazyFlex,
-  LazyEmpty,
-  LazyQrcode,
-  LazyList,
-  LazyFloatButtonGroup,
-  LazyAboutButton,
-} from "~/lazy";
+
 import { createStore } from "solid-js/store";
-import { AiFillDelete, AiOutlineHome } from "solid-icons/ai";
-import { AppContext } from "~/context";
 
-const Receive = () => {
-  const { goHome, translations } = useContext(AppContext)!;
+import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
 
+import { getQrCodeState, getUploadQrCode } from "~/api";
+import { LazyQrcode } from "~/lazy";
+import Header from "./header";
+import FileListItem from "./FileListItem";
+import { tokens } from "~/themes/themes.css";
+
+const appWindow = getCurrentWebviewWindow();
+
+const ReceivePage = () => {
   const [qrcode, setQrcode] = createSignal<QrCode | null>(null);
 
   const [taskList, setTaskList] = createStore<TaskMessage[]>([]);
@@ -94,96 +84,60 @@ const Receive = () => {
     onCleanup(() => clearTimeout(timer));
   });
 
-  const floatButtons = children(() => (
-    <LazyFloatButtonGroup>
-      <LazyAboutButton />
-
-      <Show when={fileList.length}>
-        <LazyFloatButton
-          tooltip={translations()?.clear_button_text}
-          icon={<AiFillDelete />}
-          onClick={() => setFileList([])}
-          danger
-        />
-      </Show>
-
-      <LazyFloatButton
-        tooltip={translations()!.home_button_text}
-        icon={<AiOutlineHome />}
-        onClick={() => {
-          setTaskList([]);
-          setFileList([]);
-          goHome();
-        }}
-      />
-    </LazyFloatButtonGroup>
-  ));
-
   return (
     <Switch>
       <Match when={qrcode() !== null}>
         <LazyQrcode qrcode={qrcode()!} />
-
-        {floatButtons()}
       </Match>
-      <Match when={!taskList.length && !fileList.length}>
-        <LazyFlex
-          direction="vertical"
-          align="center"
-          style={{ height: "100vh", padding: 0 }}
+
+      <Match when={qrcode() === null}>
+        <div
+          style={{
+            flex: 1,
+            padding: "16px 24px",
+            display: "flex",
+            "flex-direction": "column",
+            gap: tokens.spacing.md,
+          }}
         >
-          {suspense(<LazyReceiveHeader />)}
-          <LazyFlex
-            class="receive-file-list-empty"
-            flex={8}
-            align="center"
-            justify="center"
+          <Header />
+
+          <div
+            style={{
+              flex: 10,
+              display: "flex",
+              "flex-direction": "column",
+              gap: tokens.spacing.sm,
+            }}
           >
-            <LazyEmpty
-              description={translations()?.receive_page_empty_description}
-            />
-          </LazyFlex>
-        </LazyFlex>
-
-        {floatButtons()}
-      </Match>
-      <Match when={qrcode() === null && (taskList.length || fileList.length)}>
-        <LazyFlex direction="vertical" style={{ height: "100vh" }}>
-          {suspense(<LazyReceiveHeader />)}
-
-          <ul class="receive-file-list">
-            <LazyList
-              dataSource={fileList}
-              renderItem={(item, index) => (
+            <For each={fileList}>
+              {(file, index) => (
                 <FileListItem
-                  index={index}
-                  name={item.name}
+                  path={file.path}
+                  name={file.name}
+                  size={file.size}
                   percent={100}
-                  size={item.size}
-                  path={item.path}
+                  index={index()}
                 />
               )}
-            />
+            </For>
 
-            <LazyList
-              dataSource={taskList}
-              renderItem={(item) => (
+            <For each={taskList}>
+              {(task) => (
                 <FileListItem
-                  path={item.path}
-                  name={item.name}
-                  percent={Math.round(item.percent)}
-                  speed={item.speed}
-                  size={item.size}
+                  path={task.path}
+                  name={task.name}
+                  size={task.size}
+                  percent={task.percent}
+                  speed={task.speed}
                 />
               )}
-            />
-          </ul>
-        </LazyFlex>
-
-        {floatButtons()}
+            </For>
+          </div>
+        </div>
       </Match>
     </Switch>
   );
 };
 
-export default Receive;
+export default ReceivePage;

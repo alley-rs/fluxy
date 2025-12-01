@@ -1,53 +1,48 @@
 import {
   createEffect,
-  createSignal,
-  onCleanup,
   createMemo,
+  createSignal,
+  For,
+  onCleanup,
+  onMount,
   Show,
-  children,
   useContext,
 } from "solid-js";
-import {
-  AiOutlineClear,
-  AiOutlineCloseCircle,
-  AiOutlineHome,
-} from "solid-icons/ai";
-import { appWindow } from "@tauri-apps/api/window";
-import { TauriEvent } from "@tauri-apps/api/event";
-import "./index.scss";
-import { getFilesMetadata, getSendFilesUrlQrCode, getQrCodeState } from "~/api";
-import { deleteRepetition } from "./utils";
-import {
-  LazyAboutButton,
-  LazyButton,
-  LazyEmpty,
-  LazyFileTypeIcon,
-  LazyFlex,
-  LazyFloatButton,
-  LazyFloatButtonGroup,
-  LazyLink,
-  LazyList,
-  LazyListItem,
-  LazyQrcode,
-  LazyTooltip,
-  LazyTypographyText,
-} from "~/lazy";
-import { addClassNames } from "alley-components/lib/utils/class";
-import { open } from "@tauri-apps/api/shell";
+
+import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
+
+import Flex from "~/components/flex";
+
 import { AppContext } from "~/context";
+import { TauriEvent } from "@tauri-apps/api/event";
+import { deleteRepetition } from "./utils";
+import { getFilesMetadata, getQrCodeState, getSendFilesUrlQrCode } from "~/api";
+import { Card } from "~/components/card";
+import FileTypeIcon from "~/components/file-type-icon";
+import { AiOutlineDelete } from "solid-icons/ai";
 
-const Send = () => {
-  const { goHome, translations } = useContext(AppContext)!;
+import * as styles from "./index.css";
+import MiddleEllipsisText from "~/components/ellipsis";
+import { createStore } from "solid-js/store";
+import { LazyButton, LazyQrcode } from "~/lazy";
+import EmptyList from "~/components/emptyList";
+import { toast } from "~/components/toast";
 
-  const [files, setFiles] = createSignal<SendFile[]>([]);
+const appWindow = getCurrentWebviewWindow();
+
+const SendPage = () => {
+  const { translations } = useContext(AppContext)!;
+
+  const [files, setFiles] = createStore<SendFile[]>([]);
 
   const [qrcode, setQrcode] = createSignal<QrCode | null>(null);
 
-  createEffect(() => {
-    const unlisten = appWindow.listen<string[]>(
-      TauriEvent.WINDOW_FILE_DROP,
+  onMount(() => {
+    const unlisten = appWindow.listen<{ paths: string[] }>(
+      TauriEvent.DRAG_DROP,
       async (e) => {
-        const paths = deleteRepetition(e.payload, files());
+        console.log(e.payload);
+        const paths = deleteRepetition(e.payload.paths, files);
         const sendFiles = await getFilesMetadata(paths);
 
         setFiles((pre) => [...pre, ...sendFiles]);
@@ -68,6 +63,7 @@ const Send = () => {
 
       if (used) {
         clearTimeout(timer);
+        toast.warning("文件未下载完成时请勿退出此程序", { position: "bottom" });
         setQrcode(null);
       }
     }, 500);
@@ -82,123 +78,85 @@ const Send = () => {
     setFiles((pre) => pre.filter((f) => f.path !== path));
 
   const newSendFilesQrCode = async () => {
-    const code = await getSendFilesUrlQrCode(files());
+    const code = await getSendFilesUrlQrCode(files);
     setQrcode(code);
   };
 
-  const isEmpty = createMemo(() => files().length === 0);
-  const filesPostion = () => (isEmpty() ? "center" : "start");
-
-  const floatButtons = children(() => (
-    <LazyFloatButtonGroup bottom={qrcode() ? 20 : 60}>
-      <LazyAboutButton />
-
-      <Show when={!isEmpty() && !qrcode()}>
-        <LazyFloatButton
-          icon={<AiOutlineClear />}
-          onClick={() => setFiles([])}
-          danger
-          tooltip={translations()?.clear_button_text}
-        />
-      </Show>
-
-      <LazyFloatButton
-        tooltip={translations()?.home_button_text}
-        icon={<AiOutlineHome />}
-        onClick={goHome}
-      />
-    </LazyFloatButtonGroup>
-  ));
+  const isEmpty = createMemo(() => files.length === 0);
 
   return (
-    <>
-      <Show when={!qrcode()} fallback={<LazyQrcode qrcode={qrcode()!} />}>
-        <LazyFlex
-          class="send"
-          align="center"
-          justify="center"
+    <Show when={!qrcode()} fallback={<LazyQrcode qrcode={qrcode()!} />}>
+      <Flex direction="vertical" flex={1}>
+        <Flex
+          flex={1}
           direction="vertical"
+          justify={isEmpty() ? "center" : "start"}
+          align={isEmpty() ? "center" : "normal"}
+          gap="md"
+          wrap="nowrap"
+          style={{ "overflow-y": "auto", padding: "16px" }}
         >
-          <div class="send-header">{translations()?.send_page_title}</div>
-
-          <LazyFlex
-            class={addClassNames(
-              "file-list",
-              !files().length ? "file-list-empty" : undefined,
-            )}
-            align={filesPostion()}
-            justify={filesPostion()}
+          <Show
+            when={files.length > 0}
+            fallback={<EmptyList description="拖拽文件到此处以添加" />}
           >
-            {files().length ? (
-              <LazyFlex direction="vertical" class="file-list-wrapper">
-                <LazyList
-                  dataSource={files()}
-                  renderItem={(file) => (
-                    <LazyListItem
-                      avatar={LazyFileTypeIcon(file.extension)}
-                      title={
-                        <LazyTooltip
-                          text={translations()!.send_page_list_item_tooltip}
-                          placement="top"
-                        >
-                          <LazyLink onClick={() => open(file.path)}>
-                            {file.name}
-                          </LazyLink>
-                        </LazyTooltip>
-                      }
-                      description={
-                        <>
-                          <span>
-                            {translations()?.list_item_file_size_label}:{" "}
-                            {file.size}
-                          </span>
-                          &nbsp;&nbsp;&nbsp;&nbsp;
-                          <span>
-                            {translations()?.list_item_file_type_label}:{" "}
-                            {file.extension}
-                          </span>
-                        </>
-                      }
-                      extra={[
-                        <LazyButton
-                          class="delete-file"
-                          shape="circle"
-                          type="plain"
-                          danger
-                          onClick={() => removeFile(file.path)}
-                        >
-                          <AiOutlineCloseCircle />
-                        </LazyButton>,
-                      ]}
-                    />
-                  )}
-                />
+            <For each={files}>
+              {(item) => (
+                <Card style={{ overflow: "unset" }}>
+                  <Flex
+                    direction="horizontal"
+                    justify="between"
+                    align="center"
+                    flex={1}
+                  >
+                    <span class={styles.fileicon}>
+                      {FileTypeIcon(item.extension)}
+                    </span>
 
-                <LazyTypographyText type="secondary">
-                  {translations()?.send_page_drop_description}
-                </LazyTypographyText>
-              </LazyFlex>
-            ) : (
-              <LazyEmpty
-                description={translations()?.send_page_empty_drop_description}
-              />
-            )}
-          </LazyFlex>
+                    <Flex justify="start" align="center" gap="sm" flex={1}>
+                      <Flex direction="vertical" align="start">
+                        <MiddleEllipsisText text={item.name} maxLength={30} />
+                        <span class={styles.description}>
+                          {item.size} • {item.extension}
+                        </span>
+                      </Flex>
+                    </Flex>
 
+                    <div class={styles.removeButton}>
+                      <LazyButton
+                        variant="danger"
+                        icon={<AiOutlineDelete />}
+                        size="sm"
+                        iconOnly
+                        onClick={() => removeFile(item.path)}
+                      />
+                    </div>
+                  </Flex>
+                </Card>
+              )}
+            </For>
+          </Show>
+        </Flex>
+
+        <Flex gap="md" style={{ padding: "16px" }}>
           <LazyButton
-            filter
-            onClick={newSendFilesQrCode}
-            block
+            variant="danger"
+            onClick={() => setFiles([])}
             disabled={isEmpty()}
           >
-            {translations()?.ok_button_text}
+            {translations()?.clear_button_text}
           </LazyButton>
-        </LazyFlex>
-      </Show>
-
-      {floatButtons()}
-    </>
+          <LazyButton
+            style={{ flex: 1 }}
+            onClick={newSendFilesQrCode}
+            disabled={isEmpty()}
+          >
+            {translations()?.home_send_button_text}
+          </LazyButton>
+        </Flex>
+      </Flex>
+    </Show>
   );
 };
 
-export default Send;
+export default SendPage;

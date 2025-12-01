@@ -1,13 +1,11 @@
-import { open as pick } from "@tauri-apps/api/dialog";
-import { open } from "@tauri-apps/api/shell";
-import { createEffect, createSignal, onMount, useContext } from "solid-js";
-import { changeDownloadsDir, getDownloadsDir, isLinux } from "~/api";
-import type { MenuItemProps } from "alley-components/lib/components/dropdown";
+import { open as pick } from "@tauri-apps/plugin-dialog";
+import { open } from "@tauri-apps/plugin-shell";
+import { createEffect, createSignal, useContext } from "solid-js";
+import { changeDownloadsDir, getDownloadsDir } from "~/api";
 import Loading from "alley-components/lib/components/spinner";
-import { LazyCol, LazyDropdown, LazyLink, LazyRow, LazyTooltip } from "~/lazy";
 import { AppContext } from "~/context";
-
-const baseClassName = "receive-header";
+import { Card } from "~/components/card";
+import { LazyButton } from "~/lazy";
 
 const Header = () => {
   const { translations } = useContext(AppContext)!;
@@ -15,13 +13,6 @@ const Header = () => {
   const [downloadDir, setDownloadDir] = createSignal<string | undefined>(
     undefined,
   );
-  const [openDropDown, setOpenDropDown] = createSignal(false);
-
-  const [dropdownTop, setDownloadTop] = createSignal(40);
-
-  onMount(() => {
-    isLinux().then((f) => f && setDownloadTop(30));
-  });
 
   createEffect(() => {
     const dir = downloadDir();
@@ -45,61 +36,33 @@ const Header = () => {
     setDownloadDir(dir);
   };
 
-  const dropdownItems: MenuItemProps[] = [
-    {
-      label: translations()!.receive_page_dropdown_open_button_label,
-      onClick: () => open(downloadDir()!),
-    },
-    {
-      label: translations()!.receive_page_dropdown_pick_button_label,
-      onClick: () => pickDirectory(),
-    },
-  ];
-
   if (!downloadDir) return <Loading />;
 
   return (
-    <LazyRow class={baseClassName}>
-      <LazyCol
-        span={4}
-        class={`${baseClassName}-label`}
-        align="center"
-        justify="center"
+    <Card>
+      <div
+        style={{
+          display: "flex",
+          "align-items": "center",
+          "justify-content": "space-between",
+        }}
       >
-        <LazyDropdown
-          open={openDropDown()}
-          menu={dropdownItems}
-          top={dropdownTop()}
-          left={18}
-        >
-          <span class={`${baseClassName}-label-text`}>
-            {translations()?.receive_page_directory_path_label}
-          </span>
-        </LazyDropdown>
-      </LazyCol>
-
-      <LazyCol
-        span={15}
-        class={`${baseClassName}-directory-entry`}
-        align="center"
-        justify="center"
-      >
-        <LazyTooltip
-          text={translations()!.receive_page_directory_path_tooltip}
-          placement="bottom"
-        >
-          <LazyLink
+        <div>
+          📂
+          <span
             onClick={async () => {
-              setOpenDropDown(false);
               open(downloadDir()!);
             }}
-            wrap
           >
             {downloadDir()!}
-          </LazyLink>
-        </LazyTooltip>
-      </LazyCol>
-    </LazyRow>
+          </span>
+        </div>
+
+        <LazyButton size="sm" onClick={pickDirectory}>
+          {translations()!.receive_page_dropdown_pick_button_label}
+        </LazyButton>
+      </div>
+    </Card>
   );
 };
 
