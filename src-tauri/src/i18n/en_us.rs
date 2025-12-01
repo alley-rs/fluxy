@@ -17,7 +17,7 @@ pub(super) const EN_US: &Translations = &Translations {
     qrcode_page_url_copied_message: "Link Copied",
     qrcode_page_toast_message: "Please scan this QR code with your phone",
     ok_button_text: "Confirm",
-    clear_button_text: "Clear File List",
+    clear_button_text: "Clear",
     send_page_title: "Send Files",
     send_page_empty_drop_description: "Drag files here",
     send_page_drop_description: "You can continue dragging more files",
