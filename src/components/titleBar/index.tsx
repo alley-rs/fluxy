@@ -2,7 +2,7 @@ import { createSignal, Show, useContext } from "solid-js";
 
 import { AiFillHome } from "solid-icons/ai";
 
-import { useTheme } from "~/hooks";
+import useTheme from "~/hooks/useTheme";
 
 import { AppContext } from "~/context";
 
@@ -18,10 +18,9 @@ const appWindow = getCurrentWindow();
 const TitleBar = () => {
   const { mode, goHomePage, translations } = useContext(AppContext)!;
 
-  const [themeID, setThemeID] = createSignal<"light" | "dark">("light");
   const [isMaximized, setIsMaximized] = createSignal(false);
 
-  useTheme(themeID);
+  const [isDark, setIsDark] = useTheme();
 
   const minimizeWindow = () => appWindow.minimize();
 
@@ -69,16 +68,14 @@ const TitleBar = () => {
         <LazyButton
           class={styles.button}
           variant="secondary"
-          onClick={() =>
-            setThemeID((prev) => (prev === "light" ? "dark" : "light"))
-          }
-          icon={themeID() === "light" ? "🌙" : "☀️"}
+          onClick={() => setIsDark((prev) => !prev)}
+          icon={isDark() ? "☀️" : "🌙"}
           shape="square"
           size="sm"
           title={
-            themeID() === "light"
-              ? translations()?.light_mode_tooltip
-              : translations()?.dark_mode_tooltip
+            isDark()
+              ? translations()?.dark_mode_tooltip
+              : translations()?.light_mode_tooltip
           }
         />
 
