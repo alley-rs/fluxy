@@ -2,7 +2,23 @@ import { style } from "@vanilla-extract/css";
 import { themeContract } from "~/themes/themes.css";
 import { buttonBase } from "../button/Button.css";
 
-export const titlebar = style({
+export const macos = style({
+  height: "26px",
+  position: "fixed",
+  top: 0,
+  left: 0,
+  width: "100vw",
+  borderColor: "transparent",
+  display: "flex",
+  justifyContent: "flex-end",
+  alignItems: "center",
+
+  ":hover": {
+    boxShadow: `${themeContract.color.shadowLight} -2px -2px 4px, ${themeContract.color.shadowDark} 3px 3px 8px`,
+  },
+});
+
+export const windows = style({
   position: "fixed",
   top: 0,
   left: 0,
@@ -30,6 +46,13 @@ export const button = style({
       backgroundColor: "transparent",
     },
 
+    [`${macos} ${buttonBase}&`]: {
+      maxWidth: "36px !important",
+      minWidth: "36px !important",
+      maxHeight: "26px",
+      minHeight: "26px",
+    },
+
     [`${buttonBase}&:active:not(:disabled)`]: {
       transform: "none",
     },
@@ -54,4 +77,17 @@ export const closeButton = style({
     `,
     },
   },
+});
+
+export const title = style({
+  fontWeight: 500,
+  fontSize: "0.9rem",
+  marginLeft: ".5rem",
+});
+
+export const center = style({
+  position: "absolute",
+  left: "50%",
+  top: "50%",
+  transform: "translate(-50%, -50%)",
 });

@@ -1,0 +1,21 @@
+{
+  "app": {
+    "macOSPrivateApi": true,
+    "windows": [
+      {
+        "hiddenTitle": true,
+        "width": 480,
+        "minWidth": 480,
+        "height": 720,
+        "minHeight": 720,
+        "resizable": true,
+        "transparent": true,
+        "titleBarStyle": "Overlay",
+        "visible": false
+      }
+    ],
+    "security": {
+      "csp": null
+    }
+  }
+}

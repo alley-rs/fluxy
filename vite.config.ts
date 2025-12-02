@@ -14,7 +14,9 @@ export default defineConfig(async () => ({
     conditions: ["development", "browser"],
   },
 
-  plugins: [solid(),vanillaExtractPlugin()],
+  envPrefix: ["TAURI_ENV_PLATFORM", "TAURI_ENV_DEBUG"],
+
+  plugins: [solid(), vanillaExtractPlugin()],
 
   // Vite options tailored for Tauri development and only applied in `tauri dev` or `tauri build`
   //

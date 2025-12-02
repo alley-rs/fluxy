@@ -2,11 +2,11 @@ import { createSignal, Show, useContext } from "solid-js";
 
 import { AiFillHome } from "solid-icons/ai";
 
+import { getCurrentWindow } from "@tauri-apps/api/window";
+
 import useTheme from "~/hooks/useTheme";
 
 import { AppContext } from "~/context";
-
-import { getCurrentWindow } from "@tauri-apps/api/window";
 
 import { Mode } from "~/App";
 import { LazyButton } from "~/lazy";
@@ -15,12 +15,81 @@ import * as styles from "./index.css";
 
 const appWindow = getCurrentWindow();
 
-const TitleBar = () => {
+const isMacOS = import.meta.env.TAURI_ENV_PLATFORM === "darwin";
+
+const TitleBar = () => (isMacOS ? <MacosTitleBar /> : <WindowsTitleBar />);
+
+const PageTitle = () => {
+  const { mode, translations } = useContext(AppContext)!;
+
+  return (
+    <Show when={mode()} fallback={<span>{/* 占位 */}</span>}>
+      <span classList={{ [styles.center]: isMacOS, [styles.title]: true }}>
+        {mode() === Mode.Receive
+          ? translations()?.home_receive_button_text
+          : translations()?.home_send_button_text}
+      </span>
+    </Show>
+  );
+};
+
+const HomePageButton = () => {
   const { mode, goHomePage, translations } = useContext(AppContext)!;
 
-  const [isMaximized, setIsMaximized] = createSignal(false);
+  return (
+    <Show when={mode()} fallback={<span>{/* 占位 */}</span>}>
+      <LazyButton
+        class={styles.button}
+        variant="secondary"
+        onClick={goHomePage}
+        icon={<AiFillHome font-size="16px" />}
+        shape="square"
+        size="sm"
+        title={translations()?.home_button_text}
+      />
+    </Show>
+  );
+};
+
+const ColorModeButton = () => {
+  const { translations } = useContext(AppContext)!;
 
   const [isDark, setIsDark] = useTheme();
+
+  return (
+    <LazyButton
+      class={styles.button}
+      variant="secondary"
+      onClick={() => setIsDark((prev) => !prev)}
+      icon={isDark() ? "☀️" : "🌙"}
+      shape="square"
+      size="sm"
+      title={
+        isDark()
+          ? translations()?.dark_mode_tooltip
+          : translations()?.light_mode_tooltip
+      }
+    />
+  );
+};
+
+const MacosTitleBar = () => {
+  return (
+    <div
+      data-tauri-drag-region
+      classList={{
+        [styles.macos]: true,
+      }}
+    >
+      <PageTitle />
+      <ColorModeButton />
+      <HomePageButton />
+    </div>
+  );
+};
+
+const WindowsTitleBar = () => {
+  const [isMaximized, setIsMaximized] = createSignal(false);
 
   const minimizeWindow = () => appWindow.minimize();
 
@@ -32,52 +101,18 @@ const TitleBar = () => {
   const closeWindow = () => appWindow.close();
 
   return (
-    <div data-tauri-drag-region class={styles.titlebar}>
-      <Show when={mode()} fallback={<span>{/* 占位 */}</span>}>
-        <div
-          style={{
-            display: "inline-flex",
-            "align-items": "center",
-          }}
-        >
-          <LazyButton
-            class={styles.button}
-            variant="secondary"
-            onClick={goHomePage}
-            icon={<AiFillHome font-size="16px" />}
-            shape="square"
-            size="sm"
-            title={translations()?.home_button_text}
-          />
-
-          <span
-            style={{
-              "font-weight": 500,
-              "font-size": "0.9rem",
-              "margin-left": ".5rem",
-            }}
-          >
-            {mode() === Mode.Receive
-              ? translations()?.home_receive_button_text
-              : translations()?.home_send_button_text}
-          </span>
-        </div>
-      </Show>
+    <div
+      data-tauri-drag-region
+      classList={{
+        [styles.windows]: true,
+        [styles.macos]: isMacOS,
+      }}
+    >
+      <HomePageButton />
+      <PageTitle />
 
       <div>
-        <LazyButton
-          class={styles.button}
-          variant="secondary"
-          onClick={() => setIsDark((prev) => !prev)}
-          icon={isDark() ? "☀️" : "🌙"}
-          shape="square"
-          size="sm"
-          title={
-            isDark()
-              ? translations()?.dark_mode_tooltip
-              : translations()?.light_mode_tooltip
-          }
-        />
+        <ColorModeButton />
 
         <LazyButton
           class={styles.button}
