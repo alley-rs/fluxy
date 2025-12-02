@@ -6,8 +6,6 @@ mod i18n;
 mod lazy;
 #[cfg(target_os = "linux")]
 mod linux;
-#[cfg(target_os = "macos")]
-mod menu;
 mod server;
 mod stream;
 
@@ -32,8 +30,6 @@ use tracing_subscriber::fmt::time::OffsetTime;
 
 use crate::i18n::{Locale, Translations, LOCALES};
 use crate::lazy::LOCAL_IP;
-#[cfg(target_os = "macos")]
-use crate::menu::{handle_menu_event, new_menu};
 use crate::server::{SendFile, DOWNLOADS_DIR, MAIN_WINDOW, QR_CODE_MAP, SEND_FILES};
 use crate::{error::FluxyResult, lazy::APP_CONFIG_DIR};
 
@@ -299,14 +295,6 @@ async fn main() -> FluxyResult<()> {
             show_main_window,
             get_locale_translations
         ]);
-
-    // windows 和 linux 的菜单在窗口内, 无法自动切换暗色, 所以不使用菜单
-    #[cfg(target_os = "macos")]
-    {
-        builder = builder
-            .menu(new_menu())
-            .on_menu_event(|event| handle_menu_event(event.window(), event.menu_item_id()));
-    }
 
     builder.run(tauri::generate_context!()).map_err(|e| {
         error!(message = "创建 app 失败", error = ?e);
