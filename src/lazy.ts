@@ -2,6 +2,8 @@ import { lazy } from "solid-js";
 
 export const LazyButton = lazy(() => import("~/components/button"));
 
+export const LazyFlex = lazy(() => import("~/components/flex"));
+
 export const LazyQrcode = lazy(() => import("~/components/qrcode"));
 
 export const LazySend = lazy(() => import("~/pages/send"));
