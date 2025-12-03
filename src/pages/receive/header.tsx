@@ -1,8 +1,7 @@
 import { open as pick } from "@tauri-apps/plugin-dialog";
 import { open } from "@tauri-apps/plugin-shell";
-import { createEffect, createSignal, useContext } from "solid-js";
+import { createEffect, createSignal, Show, useContext } from "solid-js";
 import { changeDownloadsDir, getDownloadsDir } from "~/api";
-import Loading from "alley-components/lib/components/spinner";
 import { AppContext } from "~/context";
 import { Card } from "~/components/card";
 import { LazyButton } from "~/lazy";
@@ -11,7 +10,7 @@ const Header = () => {
   const { translations } = useContext(AppContext)!;
 
   const [downloadDir, setDownloadDir] = createSignal<string | undefined>(
-    undefined,
+    undefined
   );
 
   createEffect(() => {
@@ -36,32 +35,32 @@ const Header = () => {
     setDownloadDir(dir);
   };
 
-  if (!downloadDir) return <Loading />;
-
   return (
     <Card style={{ overflow: "unset" }}>
-      <div
-        style={{
-          display: "flex",
-          "align-items": "center",
-          "justify-content": "space-between",
-        }}
-      >
-        <div>
-          📂
-          <span
-            onClick={async () => {
-              open(downloadDir()!);
-            }}
-          >
-            {downloadDir()!}
-          </span>
-        </div>
+      <Show when={downloadDir()} fallback={<div>Loading...</div>}>
+        <div
+          style={{
+            display: "flex",
+            "align-items": "center",
+            "justify-content": "space-between",
+          }}
+        >
+          <div>
+            📂
+            <span
+              onClick={async () => {
+                open(downloadDir()!);
+              }}
+            >
+              {downloadDir()!}
+            </span>
+          </div>
 
-        <LazyButton size="sm" onClick={pickDirectory}>
-          {translations()!.receive_page_dropdown_pick_button_label}
-        </LazyButton>
-      </div>
+          <LazyButton size="sm" onClick={pickDirectory}>
+            {translations()!.receive_page_dropdown_pick_button_label}
+          </LazyButton>
+        </div>
+      </Show>
     </Card>
   );
 };
