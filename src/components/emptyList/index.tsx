@@ -9,7 +9,7 @@ interface EmptyListProps {
 export default function EmptyList(props: EmptyListProps) {
   const merged = mergeProps(
     { title: "暂无内容", description: "列表是空的，快来添加第一项吧" } as const,
-    props,
+    props
   );
 
   return (
@@ -60,7 +60,7 @@ export default function EmptyList(props: EmptyListProps) {
             width="50"
             height="12"
             rx="6"
-            fill="rgba(255,255,255,0.4)"
+            fill="rgba(255,255,255,0.2)"
           />
 
           {/* 夹子内部细节 */}
@@ -81,31 +81,107 @@ export default function EmptyList(props: EmptyListProps) {
           width="110"
           height="140"
           rx="6"
-          fill="white"
+          fill={styles.emptyListThemeContract.color.paper}
           opacity="0.95"
         />
 
         {/* 空列表项 - 带有圆形图标和线条 */}
         <g opacity="0.2">
           {/* 第一项 */}
-          <circle cx="100" cy="100" r="8" fill="#94a3b8" />
-          <rect x="115" y="95" width="60" height="4" rx="2" fill="#94a3b8" />
-          <rect x="115" y="103" width="40" height="3" rx="1.5" fill="#cbd5e1" />
+          <circle
+            cx="100"
+            cy="100"
+            r="8"
+            fill={styles.emptyListThemeContract.color.listItem}
+          />
+          <rect
+            x="115"
+            y="95"
+            width="60"
+            height="4"
+            rx="2"
+            fill={styles.emptyListThemeContract.color.listItem}
+          />
+          <rect
+            x="115"
+            y="103"
+            width="40"
+            height="3"
+            rx="1.5"
+            fill={styles.emptyListThemeContract.color.listItemLight}
+          />
 
           {/* 第二项 */}
-          <circle cx="100" cy="130" r="8" fill="#94a3b8" />
-          <rect x="115" y="125" width="55" height="4" rx="2" fill="#94a3b8" />
-          <rect x="115" y="133" width="45" height="3" rx="1.5" fill="#cbd5e1" />
+          <circle
+            cx="100"
+            cy="130"
+            r="8"
+            fill={styles.emptyListThemeContract.color.listItem}
+          />
+          <rect
+            x="115"
+            y="125"
+            width="55"
+            height="4"
+            rx="2"
+            fill={styles.emptyListThemeContract.color.listItem}
+          />
+          <rect
+            x="115"
+            y="133"
+            width="45"
+            height="3"
+            rx="1.5"
+            fill={styles.emptyListThemeContract.color.listItemLight}
+          />
 
           {/* 第三项 */}
-          <circle cx="100" cy="160" r="8" fill="#94a3b8" />
-          <rect x="115" y="155" width="50" height="4" rx="2" fill="#94a3b8" />
-          <rect x="115" y="163" width="35" height="3" rx="1.5" fill="#cbd5e1" />
+          <circle
+            cx="100"
+            cy="160"
+            r="8"
+            fill={styles.emptyListThemeContract.color.listItem}
+          />
+          <rect
+            x="115"
+            y="155"
+            width="50"
+            height="4"
+            rx="2"
+            fill={styles.emptyListThemeContract.color.listItem}
+          />
+          <rect
+            x="115"
+            y="163"
+            width="35"
+            height="3"
+            rx="1.5"
+            fill={styles.emptyListThemeContract.color.listItemLight}
+          />
 
           {/* 第四项 */}
-          <circle cx="100" cy="190" r="8" fill="#94a3b8" />
-          <rect x="115" y="185" width="45" height="4" rx="2" fill="#94a3b8" />
-          <rect x="115" y="193" width="50" height="3" rx="1.5" fill="#cbd5e1" />
+          <circle
+            cx="100"
+            cy="190"
+            r="8"
+            fill={styles.emptyListThemeContract.color.listItem}
+          />
+          <rect
+            x="115"
+            y="185"
+            width="45"
+            height="4"
+            rx="2"
+            fill={styles.emptyListThemeContract.color.listItem}
+          />
+          <rect
+            x="115"
+            y="193"
+            width="50"
+            height="3"
+            rx="1.5"
+            fill={styles.emptyListThemeContract.color.listItemLight}
+          />
         </g>
 
         {/* 中央空状态图标 - 盒子 */}
@@ -146,9 +222,24 @@ export default function EmptyList(props: EmptyListProps) {
 
         {/* 装饰性星星 */}
         <g opacity="0.2">
-          <circle cx="220" cy="80" r="2" fill="#94a3b8" />
-          <circle cx="60" cy="120" r="3" fill="#94a3b8" />
-          <circle cx="215" cy="180" r="2.5" fill="#94a3b8" />
+          <circle
+            cx="220"
+            cy="80"
+            r="2"
+            fill="var(--emptyList-color-decoration)"
+          />
+          <circle
+            cx="60"
+            cy="120"
+            r="3"
+            fill="var(--emptyList-color-decoration)"
+          />
+          <circle
+            cx="215"
+            cy="180"
+            r="2.5"
+            fill="var(--emptyList-color-decoration)"
+          />
         </g>
 
         {/* 渐变定义 */}
@@ -161,14 +252,26 @@ export default function EmptyList(props: EmptyListProps) {
             x2="0%"
             y2="100%"
           >
-            <stop offset="0%" stop-color="#e2e8f0" />
-            <stop offset="100%" stop-color="#cbd5e1" />
+            <stop
+              offset="0%"
+              stop-color={styles.emptyListThemeContract.color.clipboardFrom}
+            />
+            <stop
+              offset="100%"
+              stop-color={styles.emptyListThemeContract.color.clipboardTo}
+            />
           </linearGradient>
 
           {/* 夹子渐变 */}
           <linearGradient id="clipGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stop-color="#94a3b8" />
-            <stop offset="100%" stop-color="#64748b" />
+            <stop
+              offset="0%"
+              stop-color={styles.emptyListThemeContract.color.clipFrom}
+            />
+            <stop
+              offset="100%"
+              stop-color={styles.emptyListThemeContract.color.clipTo}
+            />
           </linearGradient>
 
           <linearGradient
@@ -178,19 +281,37 @@ export default function EmptyList(props: EmptyListProps) {
             x2="0%"
             y2="100%"
           >
-            <stop offset="0%" stop-color="#475569" />
-            <stop offset="100%" stop-color="#334155" />
+            <stop
+              offset="0%"
+              stop-color={styles.emptyListThemeContract.color.clipInnerFrom}
+            />
+            <stop
+              offset="100%"
+              stop-color={styles.emptyListThemeContract.color.clipInnerTo}
+            />
           </linearGradient>
 
           {/* 盒子渐变 */}
           <linearGradient id="boxGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stop-color="#cbd5e1" />
-            <stop offset="100%" stop-color="#94a3b8" />
+            <stop
+              offset="0%"
+              stop-color={styles.emptyListThemeContract.color.boxFrom}
+            />
+            <stop
+              offset="100%"
+              stop-color={styles.emptyListThemeContract.color.boxTo}
+            />
           </linearGradient>
 
           <linearGradient id="boxTopGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stop-color="#e2e8f0" />
-            <stop offset="100%" stop-color="#cbd5e1" />
+            <stop
+              offset="0%"
+              stop-color={styles.emptyListThemeContract.color.boxTopFrom}
+            />
+            <stop
+              offset="100%"
+              stop-color={styles.emptyListThemeContract.color.boxTopTo}
+            />
           </linearGradient>
 
           <linearGradient
@@ -200,14 +321,28 @@ export default function EmptyList(props: EmptyListProps) {
             x2="100%"
             y2="0%"
           >
-            <stop offset="0%" stop-color="#94a3b8" />
-            <stop offset="100%" stop-color="#64748b" />
+            <stop
+              offset="0%"
+              stop-color={styles.emptyListThemeContract.color.boxSideFrom}
+            />
+            <stop
+              offset="100%"
+              stop-color={styles.emptyListThemeContract.color.boxSideTo}
+            />
           </linearGradient>
 
           {/* 阴影渐变 */}
           <radialGradient id="shadowGradient">
-            <stop offset="0%" stop-color="#64748b" stop-opacity="0.3" />
-            <stop offset="100%" stop-color="#64748b" stop-opacity="0" />
+            <stop
+              offset="0%"
+              stop-color={styles.emptyListThemeContract.color.shadow}
+              stop-opacity="0.3"
+            />
+            <stop
+              offset="100%"
+              stop-color={styles.emptyListThemeContract.color.shadow}
+              stop-opacity="0"
+            />
           </radialGradient>
 
           {/* 滤镜 */}
