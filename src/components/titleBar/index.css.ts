@@ -83,6 +83,7 @@ export const title = style({
   fontWeight: 500,
   fontSize: "0.9rem",
   marginLeft: ".5rem",
+  pointerEvents: "none",
 });
 
 export const center = style({

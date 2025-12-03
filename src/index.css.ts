@@ -9,6 +9,12 @@ globalStyle('[data-theme="light"]', {
   vars: lightTheme,
 });
 
+globalStyle("*", {
+  userSelect: "none",
+  WebkitUserSelect: "none",
+  cursor: "default !important", // override all cursor styles
+});
+
 globalStyle("#root", {
   height: "100vh",
   paddingTop: "36px",
