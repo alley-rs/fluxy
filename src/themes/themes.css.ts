@@ -73,6 +73,8 @@ export const themeContract = createThemeContract({
 
     scrollbarThumb: null,
     scrollbarThumbHover: null,
+
+    overlay: null,
   },
 });
 
@@ -105,6 +107,8 @@ export const lightThemeVars = {
 
     scrollbarThumb: "linear-gradient(135deg, #cbd5e1 0%, #94a3b8 100%)",
     scrollbarThumbHover: "linear-gradient(135deg, #94a3b8 0%, #64748b 100%)",
+
+    overlay: "rgba(255, 255, 255, 0.7)",
   },
 };
 
@@ -135,6 +139,8 @@ export const darkThemeVars = {
 
     scrollbarThumb: "linear-gradient(135deg, #2d3748 0%, #4a5568 100%)",
     scrollbarThumbHover: "linear-gradient(135deg, #4a5568 0%, #718096 100%)",
+
+    overlay: "rgba(0, 0, 0, 0.15)",
   },
 };
 

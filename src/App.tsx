@@ -9,6 +9,7 @@ import { LazyReceive, LazySend } from "./lazy";
 
 import TitleBar from "./components/titleBar";
 import { Toaster } from "./components/toast";
+import { Overlay } from "./components/overlay";
 
 export enum Mode {
   Send = 1,
@@ -56,6 +57,8 @@ const App = () => {
       </div>
 
       <Toaster />
+
+      <Overlay />
     </AppContext.Provider>
   );
 };
