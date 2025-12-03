@@ -4,6 +4,8 @@ import { LazyButton } from "~/lazy";
 
 import { AppContext } from "~/context";
 
+import About from "~/components/about";
+
 import * as styles from "./index.css";
 
 const HomePage = () => {
@@ -11,7 +13,11 @@ const HomePage = () => {
 
   return (
     <div class={styles.home}>
-      <h1 class={styles.title}>FLUXY</h1>
+      <div class={styles.header}>
+        <h1 class={styles.title}>FLUXY</h1>
+
+        <About />
+      </div>
 
       <div class={styles.buttons}>
         <LazyButton class={styles.button} size="lg" onClick={goSendPage}>

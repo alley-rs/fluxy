@@ -15,13 +15,20 @@ export const home = style({
 });
 
 // 使用 clamp 实现响应式尺寸：最小 3rem，理想 6vw，最大 6rem
-const titleSize = "clamp(3rem, 6vw, 6rem)";
+const titleSize = "clamp(2.5rem, 6vw, 5rem)";
 
-export const title = style({
+export const header = style({
   flex: 1,
   display: "flex",
+  flexDirection: "column",
   alignItems: "center",
   fontSize: titleSize,
+});
+
+export const title = style({
+  textShadow:
+    "-2px -2px 4px rgba(255, 255, 255, 0.8), -4px -4px 8px rgba(255, 255, 255, 0.6), 2px 2px 4px rgba(45, 55, 72, 0.3), 4px 4px 8px rgba(45, 55, 72, 0.2)",
+  letterSpacing: 2,
 });
 
 export const buttons = style({
