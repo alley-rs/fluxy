@@ -17,9 +17,9 @@ globalStyle("html, body", {
 });
 
 globalStyle("body", {
-  background: themeContract.color.background,
+  backgroundColor: themeContract.color.background,
   backdropFilter: "blur(12px) saturate(1.2)",
-  WebkitBackdropFilter: "blur(12px)" /* Safari 兼容 */,
+  WebkitBackdropFilter: "blur(20px) saturate(1.2)" /* Safari 兼容 */,
   color: themeContract.color.foreground,
   transition: "all 0.3s ease",
   overflow: "hidden",
