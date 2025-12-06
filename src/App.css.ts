@@ -3,8 +3,7 @@ import { style } from "@vanilla-extract/css";
 export const app = style({
   flex: 1,
   display: "flex",
-  //   flexDirection: "column",
-  //   alignItems: "center",
-  //   justifyContent: "space-around",
-  height: "calc(100vh - 36px)",
+  height: `calc(100vh - ${
+    import.meta.env.TAURI_ENV_PLATFORM === "darwin" ? 26 : 36
+  }px)`,
 });
