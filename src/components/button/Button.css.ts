@@ -1,155 +1,284 @@
-import { style, styleVariants } from "@vanilla-extract/css";
-import { tokens, themeContract } from "../../themes/themes.css";
+import { createVar, style, styleVariants } from "@vanilla-extract/css";
 
-// 基础按钮样式
-export const buttonBase = style({
-	display: "inline-flex",
-	alignItems: "center",
-	justifyContent: "center",
-	gap: tokens.spacing.sm,
-	fontFamily: tokens.fontFamily.system,
-	fontWeight: tokens.fontWeight.medium,
-	border: "none",
-	cursor: "pointer",
-	transition: "all 0.2s ease",
-	position: "relative",
-	minHeight: "48px",
-	minWidth: "48px",
+import { tokens, themeContract, transitions } from "~/themes/themes.css";
+import {
+  interactiveShadows,
+  neumorphicSurfaceNoShadow,
+} from "~/themes/neumorphic.css";
+import {
+  componentSizes,
+  disabledStyles,
+  flex,
+  resetButton,
+} from "~/themes/primitives.css";
+import {
+  generateInnerShadow,
+  generateOuterShadow,
+  generateTextShadow,
+  generateTextShadowActive,
+} from "~/themes/helpers";
 
-	":disabled": {
-		opacity: 0.5,
-		cursor: "not-allowed",
-		pointerEvents: "none",
-	},
+/**
+ * CSS 变量定义
+ */
+export const buttonShadowOuter = createVar();
+export const buttonShadowInner = createVar();
+export const buttonBgColor = createVar();
+export const buttonTextColor = createVar();
+export const buttonTextShadow = createVar();
+export const buttonTextShadowActive = createVar();
 
-	// selectors: {
-	// 	"&:active:not(:disabled)": {
-	// 		transform: "scale(0.98)",
-	// 	},
-	// },
+/**
+ * 按钮基础样式
+ */
+export const buttonBase = style([
+  resetButton,
+  neumorphicSurfaceNoShadow,
+  flex.center,
+  {
+    fontWeight: tokens.fontWeight.medium,
+    transition: transitions.base,
+    userSelect: "none",
+    cursor: "pointer",
+    backgroundColor: buttonBgColor,
+    color: buttonTextColor,
+    boxShadow: buttonShadowOuter,
+    textShadow: buttonTextShadow,
+
+    selectors: {
+      "&:active:not(:disabled)": {
+        transform: `scale(${tokens.scale[95]})`,
+        boxShadow: buttonShadowInner,
+        textShadow: buttonTextShadowActive,
+      },
+
+      "&:hover": {
+        transform: `scale(${tokens.scale[105]})`,
+      },
+
+      "&:focus-visible": {
+        boxShadow: interactiveShadows.focus,
+      },
+
+      "&:disabled": disabledStyles,
+    },
+  },
+]);
+
+/**
+ * 按钮尺寸变体
+ */
+export const buttonSizes = styleVariants({
+  xs: [buttonBase, componentSizes.xs],
+  sm: [buttonBase, componentSizes.sm],
+  md: [buttonBase, componentSizes.md],
+  lg: [buttonBase, componentSizes.lg],
+  xl: [buttonBase, componentSizes.xl],
 });
 
-// 按钮变体
-export const buttonVariant = styleVariants({
-	primary: {
-		backgroundColor: themeContract.color.primary,
-		color: "#ffffff",
-		boxShadow: `
-    inset 1px 1px 0 ${themeContract.color.primaryShadowLight},
-    inset -1px -1px 0 ${themeContract.color.primaryShadowDark},
-    ${themeContract.color.primaryShadowLight} -2px -2px 4px,
-    ${themeContract.color.primaryShadowDark} 3px 3px 8px
-  `,
+/**
+ * 按钮变体样式配置（用于生成 CSS 变量值）
+ */
+export const buttonVariantVars = {
+  primary: {
+    sm: {
+      [buttonBgColor]: themeContract.color.primary,
+      [buttonTextColor]: themeContract.color.neutralForegroundStaticInverted,
+      [buttonShadowOuter]: generateOuterShadow("sm", {
+        baseSize: "0.5px",
+        colorType: "primary",
+        inner: { edge: true },
+      }),
+      [buttonShadowInner]: generateInnerShadow("sm", {
+        colorType: "primary",
+      }),
+      [buttonTextShadow]: "none",
+      [buttonTextShadowActive]: "none",
+    },
+    md: {
+      [buttonBgColor]: themeContract.color.primary,
+      [buttonTextColor]: themeContract.color.neutralForegroundStaticInverted,
+      [buttonShadowOuter]: generateOuterShadow("md", {
+        baseSize: "0.5px",
+        colorType: "primary",
+        inner: { edge: true },
+      }),
+      [buttonShadowInner]: generateInnerShadow("md", {
+        colorType: "primary",
+      }),
+      [buttonTextShadow]: "none",
+      [buttonTextShadowActive]: "none",
+    },
+    lg: {
+      [buttonBgColor]: themeContract.color.primary,
+      [buttonTextColor]: themeContract.color.neutralForegroundStaticInverted,
+      [buttonShadowOuter]: generateOuterShadow("lg", {
+        baseSize: "0.5px",
+        colorType: "primary",
+        inner: { edge: true },
+      }),
+      [buttonShadowInner]: generateInnerShadow("lg", {
+        colorType: "primary",
+      }),
+      [buttonTextShadow]: "none",
+      [buttonTextShadowActive]: "none",
+    },
+  },
 
-		selectors: {
-			"&:active:not(:disabled)": {
-				boxShadow: `
-    inset ${themeContract.color.primaryShadowDark} 3px 3px 6px,
-    inset ${themeContract.color.primaryShadowLight} -3px -3px 6px
-  `,
-				transform: "translateY(2px)",
-			},
-		},
-	},
+  secondary: {
+    sm: {
+      [buttonBgColor]: themeContract.color.surface,
+      [buttonTextColor]: themeContract.color.foreground,
+      [buttonShadowOuter]: generateOuterShadow("sm", {
+        baseSize: "0.5px",
+      }),
+      [buttonShadowInner]: generateInnerShadow("sm"),
+      [buttonTextShadow]: "none",
+      [buttonTextShadowActive]: "none",
+    },
+    md: {
+      [buttonBgColor]: themeContract.color.surface,
+      [buttonTextColor]: themeContract.color.foreground,
+      [buttonShadowOuter]: generateOuterShadow("md", {
+        baseSize: "0.75px",
+      }),
+      [buttonShadowInner]: generateInnerShadow("md"),
+      [buttonTextShadow]: "none",
+      [buttonTextShadowActive]: "none",
+    },
+    lg: {
+      [buttonBgColor]: themeContract.color.surface,
+      [buttonTextColor]: themeContract.color.foreground,
+      [buttonShadowOuter]: generateOuterShadow("lg", {
+        baseSize: "0.5px",
+        inner: { edge: true },
+      }),
+      [buttonShadowInner]: generateInnerShadow("lg"),
+      [buttonTextShadow]: "none",
+      [buttonTextShadowActive]: "none",
+    },
+  },
 
-	secondary: {
-		backgroundColor: themeContract.color.surface,
-		color: themeContract.color.foreground,
-		boxShadow: `${themeContract.color.shadowLight} -2px -2px 4px, ${themeContract.color.shadowDark} 3px 3px 8px`,
+  danger: {
+    sm: {
+      [buttonBgColor]: themeContract.color.error,
+      [buttonTextColor]: themeContract.color.neutralForegroundStaticInverted,
+      [buttonShadowOuter]: generateOuterShadow("sm", {
+        baseSize: "0.5px",
+        colorType: "error",
+      }),
+      [buttonShadowInner]: generateInnerShadow("sm", {
+        colorType: "error",
+      }),
+      [buttonTextShadow]: "none",
+      [buttonTextShadowActive]: "none",
+    },
+    md: {
+      [buttonBgColor]: themeContract.color.error,
+      [buttonTextColor]: themeContract.color.neutralForegroundStaticInverted,
+      [buttonShadowOuter]: generateOuterShadow("md", {
+        baseSize: "0.75px",
+        colorType: "error",
+      }),
+      [buttonShadowInner]: generateInnerShadow("md", {
+        colorType: "error",
+      }),
+      [buttonTextShadow]: "none",
+      [buttonTextShadowActive]: "none",
+    },
+    lg: {
+      [buttonBgColor]: themeContract.color.error,
+      [buttonTextColor]: themeContract.color.neutralForegroundStaticInverted,
+      [buttonShadowOuter]: generateOuterShadow("lg", {
+        baseSize: "0.5px",
+        colorType: "error",
+        inner: { edge: true },
+      }),
+      [buttonShadowInner]: generateInnerShadow("lg", {
+        colorType: "error",
+      }),
+      [buttonTextShadow]: "none",
+      [buttonTextShadowActive]: "none",
+    },
+  },
 
-		selectors: {
-			"&:active:not(:disabled)": {
-				boxShadow: `inset ${themeContract.color.shadowDark} 3px 3px 6px, inset ${themeContract.color.shadowLight} -3px -3px 6px`,
-				transform: "translateY(2px)",
-			},
-		},
-	},
+  ghost: {
+    sm: {
+      [buttonBgColor]: "transparent",
+      [buttonTextColor]: themeContract.color.foreground,
+      [buttonShadowOuter]: "none",
+      [buttonShadowInner]: generateInnerShadow("sm"),
+      [buttonTextShadow]: "none",
+      [buttonTextShadowActive]: "none",
+    },
+    md: {
+      [buttonBgColor]: "transparent",
+      [buttonTextColor]: themeContract.color.foreground,
+      [buttonShadowOuter]: "none",
+      [buttonShadowInner]: generateInnerShadow("md"),
+      [buttonTextShadow]: "none",
+      [buttonTextShadowActive]: "none",
+    },
+    lg: {
+      [buttonBgColor]: "transparent",
+      [buttonTextColor]: themeContract.color.foreground,
+      [buttonShadowOuter]: "none",
+      [buttonShadowInner]: generateInnerShadow("lg"),
+      [buttonTextShadow]: "none",
+      [buttonTextShadowActive]: "none",
+    },
+  },
 
-	danger: {
-		background: themeContract.color.error,
-		color: "#fff",
-		boxShadow: `
-    inset 1px 1px 0 ${themeContract.color.errorShadowLight},
-    inset -1px -1px 0 ${themeContract.color.errorShadowDark},
-    ${themeContract.color.errorShadowLight} -2px -2px 4px,
-    ${themeContract.color.errorShadowDark} 3px 3px 8px
-  `,
+  text: {
+    sm: {
+      [buttonBgColor]: "transparent",
+      [buttonTextColor]: themeContract.color.primary,
+      [buttonShadowOuter]: "none",
+      [buttonShadowInner]: "none",
+      [buttonTextShadow]: generateTextShadow("0.5px"),
+      [buttonTextShadowActive]: generateTextShadowActive("0.5px"),
+    },
+    md: {
+      [buttonBgColor]: "transparent",
+      [buttonTextColor]: themeContract.color.primary,
+      [buttonShadowOuter]: "none",
+      [buttonShadowInner]: "none",
+      [buttonTextShadow]: generateTextShadow(),
+      [buttonTextShadowActive]: generateTextShadowActive(),
+    },
+    lg: {
+      [buttonBgColor]: "transparent",
+      [buttonTextColor]: themeContract.color.primary,
+      [buttonShadowOuter]: "none",
+      [buttonShadowInner]: "none",
+      [buttonTextShadow]: generateTextShadow("1.5px"),
+      [buttonTextShadowActive]: generateTextShadowActive("1.5px"),
+    },
+  },
+} as const;
 
-		selectors: {
-			"&:active:not(:disabled)": {
-				boxShadow: `
-    inset ${themeContract.color.errorShadowDark} 3px 3px 6px,
-    inset ${themeContract.color.errorShadowLight} -3px -3px 6px
-  `,
-				transform: "translateY(2px)",
-			},
-		},
-	},
+/**
+ * 生成组合样式类
+ * 例如: primary-sm, primary-md, secondary-lg 等
+ */
+export const buttonVariantSize = styleVariants(
+  Object.entries(buttonVariantVars).reduce((acc, [variant, sizes]) => {
+    Object.entries(sizes).forEach(([size, vars]) => {
+      acc[`${variant}-${size}`] = { vars };
+    });
+    return acc;
+  }, {} as Record<string, { vars: Record<string, string> }>)
+);
 
-	text: {
-		background: "transparent",
-		color: themeContract.color.primary,
-		boxShadow: "none",
-		textShadow: `${themeContract.color.shadowLight} -1px -1px 2px, ${themeContract.color.shadowDark} 1px 1px 2px`,
-		border: "none",
-
-		selectors: {
-			"&:active:not(:disabled)": {
-				textShadow: `${themeContract.color.shadowDark} 1px 1px 3px, ${themeContract.color.shadowLight} -1px -1px 1px`,
-				transform: "translateY(2px)",
-			},
-		},
-	},
-});
-
-// 按钮尺寸
-export const buttonSize = styleVariants({
-	sm: {
-		padding: `${tokens.spacing.sm} ${tokens.spacing.lg}`,
-		fontSize: "14px",
-		minHeight: "36px",
-	},
-	md: {
-		padding: `${tokens.spacing.md} ${tokens.spacing.xl}`,
-		fontSize: "16px",
-		minHeight: "48px",
-	},
-	lg: {
-		padding: `${tokens.spacing.lg} ${tokens.spacing.xxl}`,
-		fontSize: "18px",
-		minHeight: "56px",
-	},
+// 图标按钮
+export const iconOnly = style({
+  aspectRatio: "1",
+  padding: 0,
 });
 
 // 按钮形状
 export const buttonShape = styleVariants({
-	circle: { borderRadius: tokens.radius.full },
-	rounded: { borderRadius: tokens.radius.md },
-	square: { borderRadius: tokens.radius.none },
-});
-
-// 图标按钮
-export const iconOnly = style({
-	padding: tokens.spacing.md,
-
-	selectors: {
-		[`${buttonSize.sm}.&`]: {
-			padding: tokens.spacing.sm,	minHeight: "32px",
-	minWidth: "32px",
-			width: "32px",
-			height: "32px",
-		},
-
-		[`${buttonSize.md}.&`]: {
-			padding: tokens.spacing.md,
-			width: "48px",
-			height: "48px",
-		},
-
-		[`${buttonSize.lg}.&`]: {
-			padding: tokens.spacing.lg,
-			width: "56px",
-			height: "56px",
-		},
-	},
+  circle: { borderRadius: tokens.radius.full },
+  rounded: { borderRadius: tokens.radius.md },
+  square: { borderRadius: tokens.radius.none },
 });
