@@ -1,4 +1,6 @@
 import { style } from "@vanilla-extract/css";
+import { generateOuterShadow } from "~/themes/helpers";
+import { tokens } from "~/themes/themes.css";
 
 export const wrapper = style({
   flex: 1,
@@ -18,7 +20,11 @@ export const contentWrapper = style({
 });
 
 export const svg = style({
-  margin: "10px 0",
+  width: "256px",
+  height: "256px",
+  borderRadius: tokens.radius.lg,
+  overflow: "hidden",
+  boxShadow: generateOuterShadow("md"),
 });
 
 export const link = style({
