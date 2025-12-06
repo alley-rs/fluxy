@@ -10,8 +10,6 @@ globalStyle('[data-theme="light"]', {
 });
 
 globalStyle("*", {
-  userSelect: "none",
-  WebkitUserSelect: "none",
   cursor: "default !important", // override all cursor styles
 });
 

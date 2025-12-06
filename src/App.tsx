@@ -45,11 +45,11 @@ const App = () => {
         about: { show: showAbout, onShow: () => setShowAbout(true) },
       }}
     >
-      <TitleBar />
-
-      <LazyQrcode />
-
       <div class={styles.app}>
+        <TitleBar />
+
+        <LazyQrcode />
+
         <Switch>
           <Match when={!mode()}>
             <HomePage />
