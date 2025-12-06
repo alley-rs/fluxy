@@ -14,7 +14,8 @@
     "trace": "cross-env RUST_BACKTRACE=1 tauri dev",
     "preview": "bun build:static && cross-env RUST_BACKTRACE=1 tauri dev --release",
     "dev": "bun start:dev",
-    "update:all": "bun update && cd static && bun update && cd ../src-tauri && cargo update"
+    "update:all": "bun update && cd static && bun update && cd ../src-tauri && cargo update",
+    "check": "biome check --write src"
   },
   "dependencies": {
     "@tauri-apps/api": "^2.9.1",
