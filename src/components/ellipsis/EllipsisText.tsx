@@ -19,20 +19,20 @@ interface EllipsisTextProps {
 export const EllipsisText = (props: EllipsisTextProps) => {
   const merged = mergeProps(
     { ellipsis: "...", position: "end", showTooltip: true } as const,
-    props,
+    props
   );
 
   let containerRef: HTMLSpanElement | undefined;
   let measureRef: HTMLSpanElement | undefined;
 
-  const [displayText, setDisplayText] = createSignal(props.text);
+  const [displayText, setDisplayText] = createSignal(merged.text);
   const [isOverflowing, setIsOverflowing] = createSignal(false);
 
   const calculateEllipsis = () => {
     if (!containerRef || !measureRef) return;
 
     const containerWidth = containerRef.offsetWidth;
-    const fullText = props.text;
+    const fullText = merged.text;
 
     // 测量完整文本
     measureRef.textContent = fullText;
@@ -121,7 +121,7 @@ export const EllipsisText = (props: EllipsisTextProps) => {
   // 中间省略
   const calculateMiddleEllipsis = (
     fullText: string,
-    availableWidth: number,
+    availableWidth: number
   ) => {
     if (!measureRef) return fullText;
 
@@ -155,7 +155,7 @@ export const EllipsisText = (props: EllipsisTextProps) => {
 
   // 监听文本和配置变化
   createEffect(() => {
-    props.text;
+    merged.text;
     merged.ellipsis;
     merged.position;
     calculateEllipsis();
@@ -191,7 +191,7 @@ export const EllipsisText = (props: EllipsisTextProps) => {
           </span>
         }
       >
-        <LazyTooltip content={merged.text} position="bottom-start">
+        <LazyTooltip content={merged.text} position="bottom">
           <span ref={containerRef} classList={classList()}>
             {displayText()}
           </span>
