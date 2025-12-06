@@ -6,8 +6,6 @@ mod i18n;
 mod lazy;
 #[cfg(target_os = "linux")]
 mod linux;
-#[cfg(target_os = "macos")]
-mod menu;
 mod server;
 mod stream;
 
@@ -24,7 +22,7 @@ use std::{
 use qrcode_generator::QrCodeEcc;
 use serde::Serialize;
 use sys_locale::get_locale;
-use tauri::{AppHandle, Manager, UpdaterEvent};
+use tauri::{AppHandle, Manager};
 use time::macros::{format_description, offset};
 use tokio::fs::File;
 use tracing::Level;
@@ -32,8 +30,6 @@ use tracing_subscriber::fmt::time::OffsetTime;
 
 use crate::i18n::{Locale, Translations, LOCALES};
 use crate::lazy::LOCAL_IP;
-#[cfg(target_os = "macos")]
-use crate::menu::{handle_menu_event, new_menu};
 use crate::server::{SendFile, DOWNLOADS_DIR, MAIN_WINDOW, QR_CODE_MAP, SEND_FILES};
 use crate::{error::FluxyResult, lazy::APP_CONFIG_DIR};
 
@@ -209,7 +205,7 @@ fn is_linux() -> bool {
 async fn show_main_window(app: AppHandle) {
     debug!("Showing and focusing main window");
 
-    let main_window = app.get_window("main").unwrap();
+    let main_window = app.get_webview_window("main").unwrap();
 
     main_window.show().unwrap();
     main_window.set_focus().unwrap();
@@ -275,8 +271,11 @@ async fn main() -> FluxyResult<()> {
 
     #[allow(unused_mut)]
     let mut builder = tauri::Builder::default()
+        .plugin(tauri_plugin_shell::init())
+        .plugin(tauri_plugin_dialog::init())
+        .plugin(tauri_plugin_clipboard_manager::init())
         .setup(|app| {
-            if let Some(w) = app.get_window("main") {
+            if let Some(w) = app.get_webview_window("main") {
                 w.set_title(translations.window_title).unwrap();
                 if MAIN_WINDOW.set(w).is_err() {
                     error!(message = "设置主窗口失败");
@@ -297,53 +296,10 @@ async fn main() -> FluxyResult<()> {
             get_locale_translations
         ]);
 
-    // windows 和 linux 的菜单在窗口内, 无法自动切换暗色, 所以不使用菜单
-    #[cfg(target_os = "macos")]
-    {
-        builder = builder
-            .menu(new_menu())
-            .on_menu_event(|event| handle_menu_event(event.window(), event.menu_item_id()));
-    }
-
-    let app = builder.build(tauri::generate_context!()).map_err(|e| {
+    builder.run(tauri::generate_context!()).map_err(|e| {
         error!(message = "创建 app 失败", error = ?e);
         e
     })?;
-
-    app.run(|_app_handle, event| {
-        if let tauri::RunEvent::Updater(e) = event {
-            match e {
-                UpdaterEvent::UpdateAvailable {
-                    body,
-                    date,
-                    version,
-                } => {
-                    info!(message = "版本有更新", body = body, date = ?date, version = version);
-                }
-                UpdaterEvent::Pending => {
-                    info!("准备下载新版本");
-                }
-                UpdaterEvent::DownloadProgress {
-                    chunk_length,
-                    content_length,
-                } => {
-                    trace!("正在下载: {}/{:?}", chunk_length, content_length);
-                }
-                UpdaterEvent::Downloaded => {
-                    info!("新版本已下载");
-                }
-                UpdaterEvent::Updated => {
-                    info!("更新完成");
-                }
-                UpdaterEvent::AlreadyUpToDate => {
-                    info!("当前已是最新版本");
-                }
-                UpdaterEvent::Error(e) => {
-                    error!(message = "更新失败", error = e);
-                }
-            }
-        }
-    });
 
     Ok(())
 }

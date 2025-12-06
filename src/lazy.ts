@@ -1,74 +1,20 @@
 import { lazy } from "solid-js";
 
-export const LazyButton = lazy(
-  () => import("alley-components/lib/components/button"),
-);
-export const LazyRow = lazy(
-  () => import("alley-components/lib/components/row"),
-);
-export const LazyCol = lazy(
-  () => import("alley-components/lib/components/col"),
-);
-export const LazyProgress = lazy(
-  () => import("alley-components/lib/components/progress"),
-);
-export const LazyDropdown = lazy(
-  () => import("alley-components/lib/components/dropdown"),
-);
-export const LazyTooltip = lazy(
-  () => import("alley-components/lib/components/tooltip"),
-);
-export const LazyLink = lazy(
-  () => import("alley-components/lib/components/link"),
-);
-export const LazyFlex = lazy(
-  () => import("alley-components/lib/components/flex"),
-);
-export const LazyEmpty = lazy(
-  () => import("alley-components/lib/components/empty"),
-);
-export const LazyList = lazy(
-  () => import("alley-components/lib/components/list"),
-);
-export const LazyListItem = lazy(
-  () => import("alley-components/lib/components/list/item"),
-);
-export const LazyFileTypeIcon = lazy(
-  () => import("~/components/file-type-icon"),
-);
-export const LazyFloatButton = lazy(
-  () => import("alley-components/lib/components/float-button/button"),
-);
-export const LazyFloatButtonGroup = lazy(
-  () => import("alley-components/lib/components/float-button/group"),
-);
-export const LazySwitch = lazy(
-  () => import("alley-components/lib/components/switch"),
-);
-export const LazySpace = lazy(
-  () => import("alley-components/lib/components/space"),
-);
-export const LazyTypographyText = lazy(
-  () => import("alley-components/lib/components/typography/text"),
-);
-export const LazyTypographyTitle = lazy(
-  () => import("alley-components/lib/components/typography/title"),
-);
-export const LazyToast = lazy(
-  () => import("alley-components/lib/components/toast"),
-);
-export const LazyLabel = lazy(
-  () => import("alley-components/lib/components/label"),
-);
-export const LazyDialog = lazy(
-  () => import("alley-components/lib/components/dialog"),
-);
+export const LazyButton = lazy(() => import("~/components/button"));
+
+export const LazyFlex = lazy(() => import("~/components/flex"));
+
+export const LazyDialog = lazy(() => import("~/components/dialog"));
+
+export const LazyText = lazy(() => import("~/components/text"));
+
+export const LazyTooltip = lazy(() => import("~/components/tooltip"));
+
+export const LazyCard = lazy(() => import("~/components/card"));
 
 export const LazyQrcode = lazy(() => import("~/components/qrcode"));
-export const LazyAboutButton = lazy(() => import("~/components/aboutButton"));
 
 export const LazySend = lazy(() => import("~/pages/send"));
-// export const LazySendFileList = lazy(() => import("~/pages/send/list"));
 
 export const LazyReceive = lazy(() => import("~/pages/receive"));
 export const LazyReceiveHeader = lazy(() => import("~/pages/receive/header"));

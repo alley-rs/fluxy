@@ -1,5 +1,6 @@
 import { defineConfig } from "vite";
 import solid from "vite-plugin-solid";
+import { vanillaExtractPlugin } from "@vanilla-extract/vite-plugin";
 import path from "node:path";
 
 const pathSrc = path.resolve(__dirname, "src");
@@ -13,7 +14,9 @@ export default defineConfig(async () => ({
     conditions: ["development", "browser"],
   },
 
-  plugins: [solid()],
+  envPrefix: ["TAURI_ENV_PLATFORM", "TAURI_ENV_DEBUG"],
+
+  plugins: [solid(), vanillaExtractPlugin()],
 
   // Vite options tailored for Tauri development and only applied in `tauri dev` or `tauri build`
   //

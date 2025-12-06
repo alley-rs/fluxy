@@ -17,7 +17,7 @@ pub(super) const ZH_CN: &Translations = &Translations {
     qrcode_page_url_copied_message: "已复制链接",
     qrcode_page_toast_message: "请使用手机扫描此二维码",
     ok_button_text: "确认",
-    clear_button_text: "清空文件列表",
+    clear_button_text: "清空",
     send_page_title: "发送文件",
     send_page_empty_drop_description: "将文件拖到此处",
     send_page_drop_description: "可继续拖入文件",

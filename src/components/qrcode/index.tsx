@@ -1,79 +1,74 @@
-import { open } from "@tauri-apps/api/shell";
-import { writeText } from "@tauri-apps/api/clipboard";
-import {
-  LazyButton,
-  LazyFlex,
-  LazyLink,
-  LazySpace,
-  LazyToast,
-  LazyTooltip,
-} from "~/lazy";
-import "./index.scss";
 import { AiFillCopy } from "solid-icons/ai";
-import { createSignal, useContext } from "solid-js";
+import { createEffect, onCleanup, useContext } from "solid-js";
+
+import { open } from "@tauri-apps/plugin-shell";
+import { writeText } from "@tauri-apps/plugin-clipboard-manager";
+
 import { AppContext } from "~/context";
 
-interface QRCodeProps {
-  qrcode: QrCode;
-}
+import { toast } from "../toast";
 
-const baseClassName = "qr-code";
+import * as styles from "./index.css";
+import { LazyButton, LazyDialog, LazyTooltip } from "~/lazy";
+import { getQrCodeState } from "~/api";
 
-const QRCode = ({ qrcode }: QRCodeProps) => {
-  const { translations } = useContext(AppContext)!;
-  const [showToast, setShowToast] = createSignal(false);
+const QRCode = () => {
+  const { translations, qrCode, setQrCode } = useContext(AppContext)!;
+
+  createEffect(() => {
+    const code = qrCode();
+    if (!code) return;
+
+    const timer = setInterval(async () => {
+      const used = await getQrCodeState(code.id);
+
+      if (used) {
+        clearTimeout(timer);
+        setQrCode();
+        code.onClose?.();
+      }
+    }, 500);
+
+    onCleanup(() => clearTimeout(timer));
+  });
 
   return (
-    <LazyFlex
-      class={baseClassName}
-      align="center"
-      justify="center"
-      direction="vertical"
+    <LazyDialog
+      open={!!qrCode()}
+      title={translations()?.qrcode_page_title}
+      titleCentered
     >
-      <LazyToast
-        placement="top"
-        open={true}
-        message={translations()?.qrcode_page_toast_message}
-        onClose={() => { }}
-      />
+      <div class={styles.contentWrapper}>
+        <div class={styles.svg} innerHTML={qrCode()?.svg} />
 
-      <h2>{translations()?.qrcode_page_title}</h2>
-      <div class={`${baseClassName}-svg`} innerHTML={qrcode.svg} />
+        <div class={styles.footer}>
+          <div>{translations()?.qrcode_page_url_label}</div>
 
-      <div>{translations()?.qrcode_page_url_label}</div>
+          <span
+            class={styles.link}
+            onClick={async () => await open(qrCode()!.url)}
+          >
+            {qrCode()?.url}
+          </span>
 
-      <LazySpace direction="vertical" gap={8}>
-        <LazyLink
-          class={`${baseClassName}-link`}
-          onClick={async () => await open(qrcode.url)}
-          filter={false}
-        >
-          {qrcode.url}
-        </LazyLink>
-
-        <LazyTooltip text={translations()!.qrcode_page_url_tooltip}>
-          <LazyButton
-            icon={<AiFillCopy />}
-            shape="circle"
-            onClick={() => {
-              writeText(qrcode.url);
-              setShowToast(true);
-            }}
-          />
-        </LazyTooltip>
-      </LazySpace>
-
-      <LazyToast
-        placement="bottom"
-        open={showToast()}
-        onClose={() => setShowToast(false)}
-        autoHideDuration={1000}
-        alert={{
-          type: "success",
-          message: translations()?.qrcode_page_url_copied_message,
-        }}
-      />
-    </LazyFlex>
+          <LazyTooltip
+            content={translations()!.qrcode_page_url_tooltip}
+            position="left"
+          >
+            <LazyButton
+              icon={<AiFillCopy />}
+              shape="circle"
+              onClick={() => {
+                writeText(qrCode()?.url ?? "");
+                toast.success(translations()?.qrcode_page_url_copied_message, {
+                  position: "bottom",
+                });
+              }}
+            />
+          </LazyTooltip>
+        </div>
+      </div>
+    </LazyDialog>
   );
 };
 

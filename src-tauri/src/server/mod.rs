@@ -7,13 +7,14 @@ use std::process;
 use std::sync::OnceLock;
 use std::time::Instant;
 
+#[cfg(not(debug_assertions))]
 use rust_embed::RustEmbed;
 use salvo::fs::NamedFile;
 use salvo::prelude::*;
 #[cfg(not(debug_assertions))]
 use salvo::serve_static::static_embed;
 use serde::{Deserialize, Serialize};
-use tauri::Window;
+use tauri::{Emitter, WebviewWindow};
 use tokio::fs;
 use tokio::fs::File;
 use tokio::sync::RwLock;
@@ -28,7 +29,7 @@ use crate::stream::ReadProgressStream;
 use self::error::{ServerError, ServerResult};
 
 const UPLOAD_EVENT: &str = "upload://progress";
-pub static MAIN_WINDOW: OnceLock<Window> = OnceLock::new();
+pub static MAIN_WINDOW: OnceLock<WebviewWindow> = OnceLock::new();
 
 lazy_static! {
     pub(super) static ref DOWNLOADS_DIR: RwLock<PathBuf> =
@@ -329,6 +330,7 @@ async fn upload(req: &mut Request) -> ServerResult<()> {
     Ok(())
 }
 
+#[cfg(not(debug_assertions))]
 #[derive(RustEmbed)]
 #[folder = "static"]
 struct Assets;
@@ -362,7 +364,7 @@ pub(super) async fn serve() -> FluxyResult<()> {
     #[cfg(not(debug_assertions))]
     {
         router = router.push(
-            Router::with_path("<**path>").get(static_embed::<Assets>().fallback("index.html")),
+            Router::with_path("{*path}").get(static_embed::<Assets>().fallback("index.html")),
         );
     }
 

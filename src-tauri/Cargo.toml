@@ -1,29 +1,22 @@
 [package]
 name = "fluxy"
 version = "0.0.0"
-description = "局域网文件传输工具"
+description = "Software for fast file transfer between terminals in the same network segment."
 authors = ["thep0y"]
 license = "AGPL-3.0"
-repository = "https://github.com/alley-rs/alley-transfer"
+repository = "https://github.com/alley-rs/fluxy"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [build-dependencies]
-tauri-build = { version = "1", features = [] }
+tauri-build = { version = "2", features = [] }
 
 [dependencies]
-tauri = { version = "1", features = [
-  "dialog-message",
-  "dialog-confirm",
-  "clipboard-write-text",
-  "updater",
-  "dialog-open",
-  "shell-open",
-] }
+tauri = { version = "2", features = ["macos-private-api"] }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
-dirs = "5"
+dirs = "6"
 lazy_static = "1"
 salvo = { version = "0", features = ["serve-static"] }
 tokio = { version = "1", features = ["macros"] }
@@ -44,6 +37,12 @@ tracing-appender = '0'
 rust-embed = "8"
 sys-locale = "0"
 
+tauri-plugin-dialog = "2"
+tauri-plugin-shell = "2"
+tauri-plugin-updater = "2"
+tauri-plugin-process = "2"
+tauri-plugin-clipboard-manager = "2"
+
 
 [features]
 # this feature is used for production builds or when `devPath` points to the filesystem
@@ -51,8 +50,9 @@ sys-locale = "0"
 custom-protocol = ["tauri/custom-protocol"]
 
 [profile.release]
-panic = "abort"   # Strip expensive panic clean-up logic
-codegen-units = 1 # Compile crates one after another so the compiler can optimize better
-lto = true        # Enables link to optimizations
-opt-level = "s"   # Optimize for binary size
-strip = true      # Remove debug symbols
+panic = "abort"
+codegen-units = 1
+lto = true
+incremental = true
+opt-level = "z"
+strip = true

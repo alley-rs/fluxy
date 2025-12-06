@@ -1,53 +1,58 @@
 {
+  "productName": "fluxy",
+  "version": "../package.json",
+  "identifier": "com.thepoy.alley",
   "build": {
     "beforeDevCommand": "bun run dev:vite",
     "beforeBuildCommand": "bun run build:vite",
-    "devPath": "http://localhost:1420/",
-    "withGlobalTauri": false
+    "devUrl": "http://localhost:1420/",
+    "frontendDist": "../dist"
   },
-  "package": {
-    "productName": "fluxy",
-    "version": "../package.json"
-  },
-  "tauri": {
-    "allowlist": {
-      "all": false,
-      "shell": {
-        "all": false,
-        "open": "^((/Users/.+)|(C:\\\\Users\\\\.+)|(/home/.+)|(http(s)?://.+)).+"
-      },
-      "dialog": {
-        "all": false,
-        "open": true,
-        "message": true,
-        "confirm": true
-      },
-      "clipboard": {
-        "all": false,
-        "writeText": true
+  "app": {
+    "windows": [
+      {
+        "title": "小路速传",
+        "width": 480,
+        "minWidth": 480,
+        "height": 720,
+        "minHeight": 720,
+        "resizable": true,
+        "decorations": false,
+        "transparent": true,
+        "visible": false
       }
-    },
-    "bundle": {
-      "active": true,
-      "targets": "all",
+    ],
+    "security": {
+      "csp": null
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": "all",
+    "linux": {
       "deb": {
         "desktopTemplate": "./linux/alley.desktop"
-      },
-      "windows": {
-        "wix": { "language": ["zh-CN", "en-US"] },
-        "nsis": {
-          "languages": ["SimpChinese", "English"],
-          "displayLanguageSelector": true
-        }
-      },
-      "identifier": "com.thepoy.alley",
-      "icon": [
-        "icons/32x32.png",
-        "icons/128x128.png",
-        "icons/128x128@2x.png",
-        "icons/icon.icns",
-        "icons/icon.ico"
-      ]
+      }
+    },
+    "windows": {
+      "wix": { "language": ["zh-CN", "en-US"] },
+      "nsis": {
+        "languages": ["SimpChinese", "English"],
+        "displayLanguageSelector": true
+      }
+    },
+
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ]
+  },
+  "plugins": {
+    "shell": {
+      "open": "^((/Users/.+)|(C:\\\\Users\\\\.+)|(/home/.+)|(http(s)?://.+)).+"
     },
     "updater": {
       "active": true,
@@ -58,19 +63,6 @@
       ],
       "dialog": true,
       "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDcxQTQ5NDZBNUIyMEVDRTUKUldUbDdDQmJhcFNrY2RYSkpGNUt0U3cvdEozMXJoN2pXeEFBcUQ4YmZMTi9MS2E2YjNQT1pSbTgK"
-    },
-    "security": {
-      "csp": null
-    },
-    "windows": [
-      {
-        "title": "小路速传",
-        "width": 400,
-        "height": 600,
-        "resizable": false,
-        "visible": false,
-        "fileDropEnabled": true
-      }
-    ]
+    }
   }
 }

@@ -84,7 +84,6 @@ const Upload = ({ action, headers, withCredentials, method }: UploadProps) => {
     ) {
       setFileItems([]);
       setRequestTasks([]);
-      // biome-ignore lint/style/noNonNullAssertion: <explanation>
       fileInput!.value = ""; // 点击按钮后清空 input files
       fileInput?.click();
       target.blur();
@@ -124,7 +123,7 @@ const Upload = ({ action, headers, withCredentials, method }: UploadProps) => {
           const xhr = item.xhr;
 
           item.done = resolve;
-          item.start = new Date().getTime() / 1000;
+          item.start = Date.now() / 1000;
 
           xhr.send(item.data);
         }),
