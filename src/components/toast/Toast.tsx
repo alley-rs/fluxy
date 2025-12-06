@@ -20,7 +20,8 @@ export type ToastPosition =
   | "left-end"
   | "right"
   | "right-start"
-  | "right-end";
+  | "right-end"
+  | "center";
 
 export interface ToastOptions {
   id?: string;
@@ -176,23 +177,23 @@ const removeToast = (id: string) => {
 export const toast = {
   show: (
     message: string | JSX.Element,
-    options?: Omit<ToastOptions, "message">,
+    options?: Omit<ToastOptions, "message">
   ) => addToast({ message, ...options }),
   success: (
     message: string | JSX.Element,
-    options?: Omit<ToastOptions, "message" | "type">,
+    options?: Omit<ToastOptions, "message" | "type">
   ) => addToast({ message, type: "success", ...options }),
   error: (
     message: string | JSX.Element,
-    options?: Omit<ToastOptions, "message" | "type">,
+    options?: Omit<ToastOptions, "message" | "type">
   ) => addToast({ message, type: "error", ...options }),
   warning: (
     message: string | JSX.Element,
-    options?: Omit<ToastOptions, "message" | "type">,
+    options?: Omit<ToastOptions, "message" | "type">
   ) => addToast({ message, type: "warning", ...options }),
   info: (
     message: string | JSX.Element,
-    options?: Omit<ToastOptions, "message" | "type">,
+    options?: Omit<ToastOptions, "message" | "type">
   ) => addToast({ message, type: "info", ...options }),
   remove: removeToast,
 };
@@ -256,7 +257,8 @@ const ToastItemComponent = (props: { item: ToastItem }) => {
       <LazyButton
         onClick={() => removeToast(item.id)}
         icon={<CloseIcon />}
-        iconOnly
+        variant="ghost"
+        shape="circle"
         aria-label="Close"
       />
     </div>
@@ -265,6 +267,7 @@ const ToastItemComponent = (props: { item: ToastItem }) => {
 
 // Toaster Container
 const POSITIONS: ToastPosition[] = [
+  "center",
   "top",
   "top-start",
   "top-end",

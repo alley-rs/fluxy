@@ -10,7 +10,7 @@ const positionBase = style({
   gap: tokens.spacing.md,
   padding: tokens.spacing.md,
   pointerEvents: "none",
-  zIndex: 9999,
+  zIndex: tokens.zIndex.notification,
   maxWidth: "100%",
   width: "auto",
   // Mobile adaptation
@@ -25,7 +25,24 @@ const positionBase = style({
 });
 
 export const positionWrapper = styleVariants({
-  top: [positionBase, { top: 0, left: "50%", transform: "translateX(-50%)" }],
+  center: [
+    positionBase,
+    {
+      left: "50%",
+      top: "50%",
+      transform: "translate(-50%, -50%)",
+      alignItems: "center",
+    },
+  ],
+  top: [
+    positionBase,
+    {
+      top: 0,
+      left: "50%",
+      transform: "translateX(-50%)",
+      alignItems: "center",
+    },
+  ],
   "top-start": [positionBase, { top: 0, left: 0, alignItems: "flex-start" }],
   "top-end": [positionBase, { top: 0, right: 0, alignItems: "flex-end" }],
   bottom: [
@@ -35,6 +52,7 @@ export const positionWrapper = styleVariants({
       left: "50%",
       transform: "translateX(-50%)",
       flexDirection: "column-reverse",
+      alignItems: "center",
     },
   ],
   "bottom-start": [
@@ -112,8 +130,8 @@ export const toastBase = style({
 
   // Light Neumorphism Effect
   boxShadow: `
-      6px 6px 12px ${themeContract.color.shadowDark},
-      -6px -6px 12px ${themeContract.color.shadowLight}
+      6px 6px 12px ${themeContract.color.shadowDark1},
+      -6px -6px 12px ${themeContract.color.shadowLight1}
     `,
   border: `1px solid rgba(255, 255, 255, 0.1)`,
 
