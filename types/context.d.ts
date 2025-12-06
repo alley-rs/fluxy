@@ -4,6 +4,8 @@ type Setter<T> = import("solid-js").Setter<T>;
 
 interface AppContext {
   mode: Accessor<Mode | null>;
+  qrCode: Accessor<QrCode | undefined>;
+  setQrCode: Setter<QrCode | undefined>;
   goHomePage: () => void;
   goReceivePage: () => void;
   goSendPage: () => void;

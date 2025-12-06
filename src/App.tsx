@@ -5,7 +5,7 @@ import { AppContext } from "./context";
 import { getLocaleTranslations, showMainWindow } from "./api";
 
 import HomePage from "./pages/home";
-import { LazyReceive, LazySend } from "./lazy";
+import { LazyQrcode, LazyReceive, LazySend } from "./lazy";
 
 import TitleBar from "./components/titleBar";
 import { Toaster } from "./components/toast";
@@ -21,7 +21,12 @@ const App = () => {
   const [showAbout, setShowAbout] = createSignal<boolean>(false);
   const [translations] = createResource(getLocaleTranslations);
 
-  const goHomePage = () => setMode(null);
+  const [qrCode, setQrCode] = createSignal<QrCode | undefined>();
+
+  const goHomePage = () => {
+    setQrCode();
+    setMode(null);
+  };
   const goReceivePage = () => setMode(Mode.Receive);
   const goSendPage = () => setMode(Mode.Send);
 
@@ -31,6 +36,8 @@ const App = () => {
     <AppContext.Provider
       value={{
         mode,
+        qrCode,
+        setQrCode,
         goHomePage,
         goReceivePage,
         goSendPage,
@@ -39,6 +46,8 @@ const App = () => {
       }}
     >
       <TitleBar />
+
+      <LazyQrcode />
 
       <div class={styles.app}>
         <Switch>
