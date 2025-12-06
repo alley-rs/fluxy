@@ -9,7 +9,7 @@ interface EmptyListProps {
 export default function EmptyList(props: EmptyListProps) {
   const merged = mergeProps(
     { title: "暂无内容", description: "列表是空的，快来添加第一项吧" } as const,
-    props
+    props,
   );
 
   return (

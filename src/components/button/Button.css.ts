@@ -262,12 +262,15 @@ export const buttonVariantVars = {
  * 例如: primary-sm, primary-md, secondary-lg 等
  */
 export const buttonVariantSize = styleVariants(
-  Object.entries(buttonVariantVars).reduce((acc, [variant, sizes]) => {
-    Object.entries(sizes).forEach(([size, vars]) => {
-      acc[`${variant}-${size}`] = { vars };
-    });
-    return acc;
-  }, {} as Record<string, { vars: Record<string, string> }>)
+  Object.entries(buttonVariantVars).reduce(
+    (acc, [variant, sizes]) => {
+      Object.entries(sizes).forEach(([size, vars]) => {
+        acc[`${variant}-${size}`] = { vars };
+      });
+      return acc;
+    },
+    {} as Record<string, { vars: Record<string, string> }>,
+  ),
 );
 
 // 图标按钮

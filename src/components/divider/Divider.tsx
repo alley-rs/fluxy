@@ -41,7 +41,7 @@ const Divider: Component<DividerProps> = (props) => {
       size: "md",
       textPosition: "center",
     } as const,
-    props
+    props,
   );
 
   const [local, others] = splitProps(merged, [

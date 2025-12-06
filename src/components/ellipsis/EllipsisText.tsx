@@ -19,7 +19,7 @@ interface EllipsisTextProps {
 export const EllipsisText = (props: EllipsisTextProps) => {
   const merged = mergeProps(
     { ellipsis: "...", position: "end", showTooltip: true } as const,
-    props
+    props,
   );
 
   let containerRef: HTMLSpanElement | undefined;
@@ -121,7 +121,7 @@ export const EllipsisText = (props: EllipsisTextProps) => {
   // 中间省略
   const calculateMiddleEllipsis = (
     fullText: string,
-    availableWidth: number
+    availableWidth: number,
   ) => {
     if (!measureRef) return fullText;
 

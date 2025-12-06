@@ -47,7 +47,7 @@ const SendPage = () => {
         const sendFiles = await getFilesMetadata(paths);
 
         setFiles((pre) => [...pre, ...sendFiles]);
-      }
+      },
     );
 
     onCleanup(() => {

@@ -144,11 +144,11 @@ const darkThemeColors = {
 // 应用主题变量
 export const lightEmptyListTheme = assignVars(
   emptyListThemeContract,
-  lightThemeColors
+  lightThemeColors,
 );
 export const darkEmptyListTheme = assignVars(
   emptyListThemeContract,
-  darkThemeColors
+  darkThemeColors,
 );
 
 globalStyle('[data-theme="dark"]', {

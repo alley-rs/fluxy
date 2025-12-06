@@ -80,7 +80,7 @@ const FileListItem = (props: FileListItemProps) => {
         variant="success"
         style={{ padding: 0 }}
       />
-    )
+    ),
   );
 
   return (

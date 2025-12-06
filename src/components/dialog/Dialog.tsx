@@ -53,7 +53,7 @@ export const Dialog: Component<DialogProps> = (props) => {
       showDivider: false,
       fullscreen: false,
     } as const,
-    props
+    props,
   );
 
   const [local, others] = splitProps(merged, [
@@ -75,7 +75,7 @@ export const Dialog: Component<DialogProps> = (props) => {
 
   const showCloseButton = createMemo(
     () =>
-      local.showCloseButton || !local.closeOnOverlayClick || local.fullscreen
+      local.showCloseButton || !local.closeOnOverlayClick || local.fullscreen,
   );
 
   // 控制可见性和动画状态

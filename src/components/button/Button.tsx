@@ -22,7 +22,7 @@ interface ButtonProps extends JSX.ButtonHTMLAttributes<HTMLButtonElement> {
 export const Button: Component<ButtonProps> = (props) => {
   const merged = mergeProps(
     { variant: "secondary", size: "md", shape: "rounded" } as const,
-    props
+    props,
   );
 
   const [local, others] = splitProps(merged, [

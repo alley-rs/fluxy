@@ -52,7 +52,7 @@ interface BaseShadowOptions {
  */
 const getShadowColor = (
   colorType: ColorType | "default",
-  variant: "Light" | "Dark"
+  variant: "Light" | "Dark",
 ): string => {
   const key =
     colorType === "default"
@@ -74,8 +74,8 @@ const getShadowRatios = (size: ShadowSize) => {
   if (!shadowBaseRatios[size]) {
     throw new Error(
       `[Shadow] Invalid size '${size}'. Available: ${Object.keys(
-        shadowBaseRatios
-      ).join(", ")}`
+        shadowBaseRatios,
+      ).join(", ")}`,
     );
   }
   return shadowBaseRatios[size];
@@ -151,7 +151,7 @@ interface OuterShadowOptions extends BaseShadowOptions {
  */
 export const generateOuterShadow = (
   size: ShadowSize,
-  options: OuterShadowOptions = {}
+  options: OuterShadowOptions = {},
 ): string => {
   const {
     baseSize = FALLBACK_BASE_SIZE,
@@ -182,14 +182,14 @@ export const generateOuterShadow = (
   if (highlight) {
     const innerLightOffset = calc.multiply(
       calc.multiply(baseSize, calc.multiply(ratios.outer.lightOffset, 0.5)),
-      intensity
+      intensity,
     );
     const innerLightBlur = calc.multiply(
       calc.multiply(baseSize, calc.multiply(ratios.outer.lightBlur, 0.4)),
-      intensity
+      intensity,
     );
     shadows.push(
-      `inset ${innerLightOffset} ${innerLightOffset} ${innerLightBlur} ${lightColor}`
+      `inset ${innerLightOffset} ${innerLightOffset} ${innerLightBlur} ${lightColor}`,
     );
   }
 
@@ -197,14 +197,14 @@ export const generateOuterShadow = (
   if (edge) {
     const innerDarkOffset = calc.multiply(
       calc.multiply(baseSize, calc.multiply(ratios.outer.darkOffset, 0.4)),
-      intensity * -1
+      intensity * -1,
     );
     const innerDarkBlur = calc.multiply(
       calc.multiply(baseSize, calc.multiply(ratios.outer.darkBlur, 0.3)),
-      intensity
+      intensity,
     );
     shadows.push(
-      `inset ${innerDarkOffset} ${innerDarkOffset} ${innerDarkBlur} ${darkColor}`
+      `inset ${innerDarkOffset} ${innerDarkOffset} ${innerDarkBlur} ${darkColor}`,
     );
   }
 
@@ -286,7 +286,7 @@ interface InnerShadowOptions extends BaseShadowOptions {
  */
 export const generateInnerShadow = (
   size: ShadowSize,
-  options: InnerShadowOptions = {}
+  options: InnerShadowOptions = {},
 ): string => {
   const {
     baseSize = FALLBACK_BASE_SIZE,
@@ -301,13 +301,13 @@ export const generateInnerShadow = (
   // 计算偏移和模糊 (应用强度系数)
   const lightOffset = calc.multiply(
     baseSize,
-    ratios.inner.lightOffset * intensity
+    ratios.inner.lightOffset * intensity,
   );
   const lightBlur = calc.multiply(baseSize, ratios.inner.lightBlur * intensity);
 
   const darkOffset = calc.multiply(
     baseSize,
-    ratios.inner.darkOffset * intensity
+    ratios.inner.darkOffset * intensity,
   );
   const darkBlur = calc.multiply(baseSize, ratios.inner.darkBlur * intensity);
 
@@ -342,14 +342,14 @@ export const generateInnerShadow = (
     // 使用更细腻的辅助阴影来增强立体感
     const subtleOffset = calc.multiply(
       baseSize,
-      ratios.inner.darkOffset * 0.4 * intensity
+      ratios.inner.darkOffset * 0.4 * intensity,
     );
     const subtleBlur = calc.multiply(
       baseSize,
-      ratios.inner.darkBlur * 1.2 * intensity
+      ratios.inner.darkBlur * 1.2 * intensity,
     );
     shadows.unshift(
-      `inset ${subtleOffset} ${subtleOffset} ${subtleBlur} ${darkColor}`
+      `inset ${subtleOffset} ${subtleOffset} ${subtleBlur} ${darkColor}`,
     );
   }
 
@@ -375,7 +375,7 @@ export const generateInnerShadow = (
 export const generateGradient = (
   startColor: string,
   endColor: string,
-  angle: number = 135
+  angle: number = 135,
 ): string => {
   return `linear-gradient(${angle}deg, ${startColor} 0%, ${endColor} 100%)`;
 };
@@ -392,21 +392,21 @@ export const generateGradient = (
  */
 export const generateScrollbarGradient = (
   action: "default" | "hover" | "active",
-  isVertical: boolean = true
+  isVertical: boolean = true,
 ): string => {
   const start =
     action === "default"
       ? themeContract.color.scrollbarThumbStart
       : action === "hover"
-      ? themeContract.color.scrollbarThumbHoverStart
-      : themeContract.color.scrollbarThumbActiveStart;
+        ? themeContract.color.scrollbarThumbHoverStart
+        : themeContract.color.scrollbarThumbActiveStart;
 
   const end =
     action === "default"
       ? themeContract.color.scrollbarThumbEnd
       : action === "hover"
-      ? themeContract.color.scrollbarThumbHoverEnd
-      : themeContract.color.scrollbarThumbActiveEnd;
+        ? themeContract.color.scrollbarThumbHoverEnd
+        : themeContract.color.scrollbarThumbActiveEnd;
 
   return generateGradient(start, end, isVertical ? 90 : 180);
 };
@@ -423,7 +423,7 @@ export const generateScrollbarGradient = (
  */
 export const generateFocusRing = (
   color: string = themeContract.color.primary,
-  offset: string = "2px"
+  offset: string = "2px",
 ): string => {
   return `0 0 0 ${offset} ${color}`;
 };
@@ -442,7 +442,7 @@ export const textClamp = (lines: number = 2) =>
 
 export const generateTextShadow = (offset: string = "1px"): string => {
   return `${themeContract.color.shadowLight1} ${calc.negate(
-    offset
+    offset,
   )} ${calc.negate(offset)} ${calc.multiply(offset, 2)}, ${
     themeContract.color.shadowDark1
   } ${offset} ${offset} ${calc.multiply(offset, 2)}`;
@@ -450,7 +450,7 @@ export const generateTextShadow = (offset: string = "1px"): string => {
 
 export const generateTextShadowActive = (offset: string = "1px"): string => {
   return `${themeContract.color.shadowLight1} ${calc.negate(
-    offset
+    offset,
   )} ${calc.negate(offset)} ${offset}, ${
     themeContract.color.shadowDark1
   } ${offset} ${offset} ${calc.multiply(offset, 3)}`;

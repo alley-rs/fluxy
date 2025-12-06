@@ -9,7 +9,7 @@ const Header = () => {
   const { translations } = useContext(AppContext)!;
 
   const [downloadDir, setDownloadDir] = createSignal<string | undefined>(
-    undefined
+    undefined,
   );
 
   createEffect(() => {
