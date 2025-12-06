@@ -3,8 +3,7 @@ import { open } from "@tauri-apps/plugin-shell";
 import { createEffect, createSignal, Show, useContext } from "solid-js";
 import { changeDownloadsDir, getDownloadsDir } from "~/api";
 import { AppContext } from "~/context";
-import { Card } from "~/components/card";
-import { LazyButton } from "~/lazy";
+import { LazyButton, LazyCard } from "~/lazy";
 
 const Header = () => {
   const { translations } = useContext(AppContext)!;
@@ -36,7 +35,7 @@ const Header = () => {
   };
 
   return (
-    <Card style={{ overflow: "unset" }}>
+    <LazyCard padding="sm" style={{ overflow: "unset" }}>
       <Show when={downloadDir()} fallback={<div>Loading...</div>}>
         <div
           style={{
@@ -61,7 +60,7 @@ const Header = () => {
           </LazyButton>
         </div>
       </Show>
-    </Card>
+    </LazyCard>
   );
 };
 

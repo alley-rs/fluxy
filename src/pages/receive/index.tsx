@@ -1,40 +1,32 @@
-import {
-  createEffect,
-  createSignal,
-  For,
-  Match,
-  onCleanup,
-  onMount,
-  Switch,
-} from "solid-js";
+import { createEffect, For, onCleanup, onMount, useContext } from "solid-js";
 
 import { createStore } from "solid-js/store";
 
 import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
 
-import { getQrCodeState, getUploadQrCode } from "~/api";
-import { LazyQrcode } from "~/lazy";
+import { getUploadQrCode } from "~/api";
 import Header from "./header";
 import FileListItem from "./FileListItem";
 import { tokens } from "~/themes/themes.css";
+import { AppContext } from "~/context";
 
 const appWindow = getCurrentWebviewWindow();
 
 const ReceivePage = () => {
-  const [qrcode, setQrcode] = createSignal<QrCode | null>(null);
+  const { qrCode, setQrCode } = useContext(AppContext)!;
 
   const [taskList, setTaskList] = createStore<TaskMessage[]>([]);
   const [fileList, setFileList] = createStore<Omit<TaskMessage, "speed">[]>([]);
 
   onMount(() => {
-    if (qrcode() || taskList.length || fileList.length) return;
+    if (qrCode() || taskList.length || fileList.length) return;
 
-    getUploadQrCode().then((c) => setQrcode(c));
+    getUploadQrCode().then((c) => setQrCode(c));
   });
 
   createEffect(() => {
     const unlisten = appWindow.listen<TaskMessage>("upload://progress", (e) => {
-      if (qrcode()) setQrcode(null);
+      if (qrCode()) setQrCode();
 
       const { path, percent, aborted } = e.payload;
 
@@ -68,76 +60,52 @@ const ReceivePage = () => {
     });
   });
 
-  createEffect(() => {
-    const code = qrcode();
-    if (!code) return;
-
-    const timer = setInterval(async () => {
-      const used = await getQrCodeState(code.id);
-
-      if (used) {
-        clearTimeout(timer);
-        setQrcode(null);
-      }
-    }, 500);
-
-    onCleanup(() => clearTimeout(timer));
-  });
-
   return (
-    <Switch>
-      <Match when={qrcode() !== null}>
-        <LazyQrcode qrcode={qrcode()!} />
-      </Match>
+    <div
+      style={{
+        flex: 1,
+        padding: "16px",
+        display: "flex",
+        "flex-direction": "column",
+        gap: tokens.spacing.md,
+      }}
+    >
+      <Header />
 
-      <Match when={qrcode() === null}>
-        <div
-          style={{
-            flex: 1,
-            padding: "16px",
-            display: "flex",
-            "flex-direction": "column",
-            gap: tokens.spacing.md,
-          }}
-        >
-          <Header />
+      <div
+        style={{
+          flex: 10,
+          display: "flex",
+          "flex-direction": "column",
+          gap: tokens.spacing.sm,
+          "overflow-y": "auto",
+        }}
+      >
+        <For each={fileList}>
+          {(file, index) => (
+            <FileListItem
+              path={file.path}
+              name={file.name}
+              size={file.size}
+              percent={100}
+              index={index()}
+            />
+          )}
+        </For>
 
-          <div
-            style={{
-              flex: 10,
-              display: "flex",
-              "flex-direction": "column",
-              gap: tokens.spacing.sm,
-              "overflow-y": "auto",
-            }}
-          >
-            <For each={fileList}>
-              {(file, index) => (
-                <FileListItem
-                  path={file.path}
-                  name={file.name}
-                  size={file.size}
-                  percent={100}
-                  index={index()}
-                />
-              )}
-            </For>
-
-            <For each={taskList}>
-              {(task) => (
-                <FileListItem
-                  path={task.path}
-                  name={task.name}
-                  size={task.size}
-                  percent={task.percent}
-                  speed={task.speed}
-                />
-              )}
-            </For>
-          </div>
-        </div>
-      </Match>
-    </Switch>
+        <For each={taskList}>
+          {(task) => (
+            <FileListItem
+              path={task.path}
+              name={task.name}
+              size={task.size}
+              percent={task.percent}
+              speed={task.speed}
+            />
+          )}
+        </For>
+      </div>
+    </div>
   );
 };
 
