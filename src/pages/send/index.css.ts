@@ -7,6 +7,7 @@ export const fileicon = style({
   display: "flex",
   justifyContent: "center",
   alignItems: "center",
+  marginRight: tokens.spacing.xs,
 });
 
 export const description = style({
