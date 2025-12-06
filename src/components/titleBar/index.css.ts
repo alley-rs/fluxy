@@ -1,42 +1,41 @@
 import { style } from "@vanilla-extract/css";
-import { themeContract } from "~/themes/themes.css";
+import { themeContract, tokens } from "~/themes/themes.css";
 import { buttonBase } from "../button/Button.css";
+import { flex } from "~/themes/primitives.css";
 
-export const macos = style({
-  height: "26px",
-  position: "fixed",
-  top: 0,
-  left: 0,
-  width: "100vw",
-  borderColor: "transparent",
-  display: "flex",
-  justifyContent: "flex-end",
-  alignItems: "center",
-
-  ":hover": {
-    boxShadow: `${themeContract.color.shadowLight} -2px -2px 4px, ${themeContract.color.shadowDark} 3px 3px 8px`,
+const titleBar = style([
+  flex.centerY,
+  {
+    position: "fixed",
+    top: 0,
+    left: 0,
+    width: "100vw",
+    borderColor: "transparent",
+    zIndex: tokens.zIndex.max,
   },
-});
+]);
 
-export const windows = style({
-  position: "fixed",
-  top: 0,
-  left: 0,
-  width: "100vw",
-  borderColor: "transparent",
-  display: "flex",
-  justifyContent: "space-between",
-  alignItems: "center",
-  boxShadow: `${themeContract.color.shadowLight} -2px -2px 4px, ${themeContract.color.shadowDark} 3px 3px 8px`,
-});
+export const macos = style([
+  titleBar,
+  {
+    height: "26px",
+    justifyContent: "flex-end",
+
+    ":hover": {
+      boxShadow: `${themeContract.color.shadowLight1} -2px -2px 4px, ${themeContract.color.shadowDark1} 3px 3px 8px`,
+    },
+  },
+]);
+
+export const windows = style([
+  titleBar,
+  {
+    justifyContent: "space-between",
+    boxShadow: `${themeContract.color.shadowLight1} -2px -2px 4px, ${themeContract.color.shadowDark1} 3px 3px 8px`,
+  },
+]);
 
 export const button = style({
-  // padding: "0 12px",
-  // maxWidth: "46px !important",
-  // minWidth: "46px !important",
-  // boxShadow: "none",
-  // backgroundColor: "transparent",
-
   selectors: {
     [`${buttonBase}&`]: {
       padding: "0 12px",
