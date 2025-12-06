@@ -1,6 +1,6 @@
 import { useContext } from "solid-js";
 
-import { LazyButton } from "~/lazy";
+import { LazyButton, LazyText } from "~/lazy";
 
 import { AppContext } from "~/context";
 
@@ -14,7 +14,9 @@ const HomePage = () => {
   return (
     <div class={styles.home}>
       <div class={styles.header}>
-        <h1 class={styles.title}>FLUXY</h1>
+        <LazyText variant="h1" class={styles.title}>
+          FLUXY
+        </LazyText>
 
         <About />
       </div>

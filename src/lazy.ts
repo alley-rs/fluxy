@@ -6,6 +6,8 @@ export const LazyFlex = lazy(() => import("~/components/flex"));
 
 export const LazyDialog = lazy(() => import("~/components/dialog"));
 
+export const LazyText = lazy(() => import("~/components/text"));
+
 export const LazyTooltip = lazy(() => import("~/components/tooltip"));
 
 export const LazyCard = lazy(() => import("~/components/card"));
