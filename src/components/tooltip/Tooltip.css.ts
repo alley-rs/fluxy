@@ -18,7 +18,7 @@ export const container = style({
 
 export const tooltipContent = style({
   position: "fixed", // Changed to fixed for Portal positioning relative to viewport
-  zIndex: 1000,
+  zIndex: tokens.zIndex.tooltip,
   maxWidth: "320px",
   padding: `${tokens.spacing.sm} ${tokens.spacing.md}`,
   borderRadius: tokens.radius.md,
@@ -28,7 +28,7 @@ export const tooltipContent = style({
   fontWeight: tokens.fontWeight.medium,
   pointerEvents: "none",
   wordBreak: "break-all",
-  boxShadow: `${themeContract.color.shadowLight} -2px -2px 4px, ${themeContract.color.shadowDark} 3px 3px 8px`,
+  boxShadow: `${themeContract.color.shadowLight1} -2px -2px 4px, ${themeContract.color.shadowDark1} 3px 3px 8px`,
   border: `1px solid ${themeContract.color.background}`,
   transition: "opacity 0.2s ease, transform 0.2s ease",
   opacity: 0,
@@ -71,25 +71,25 @@ export const arrow = style({
   selectors: {
     '[data-tooltip-position^="top"] &': {
       vars: {
-        [arrowShadow]: `${themeContract.color.shadowDark} 1px 1px 2px`,
+        [arrowShadow]: `${themeContract.color.shadowDark1} 1px 1px 2px`,
       },
       bottom: arrowOffset,
     },
     '[data-tooltip-position^="right"] &': {
       vars: {
-        [arrowShadow]: `${themeContract.color.shadowLight} -2px 1px 2px`,
+        [arrowShadow]: `${themeContract.color.shadowLight1} -2px 1px 2px`,
       },
       left: arrowOffset,
     },
     '[data-tooltip-position^="bottom"] &': {
       vars: {
-        [arrowShadow]: `${themeContract.color.shadowLight} -1px -1px 2px`,
+        [arrowShadow]: `${themeContract.color.shadowLight1} -1px -1px 2px`,
       },
       top: arrowOffset,
     },
     '[data-tooltip-position^="left"] &': {
       vars: {
-        [arrowShadow]: `${themeContract.color.shadowDark} 2px -1px 2px`,
+        [arrowShadow]: `${themeContract.color.shadowDark1} 2px -1px 2px`,
       },
       right: arrowOffset,
     },
