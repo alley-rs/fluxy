@@ -1,15 +1,20 @@
 import { children, Show, useContext } from "solid-js";
-import { open } from "@tauri-apps/plugin-shell";
+
 import { AiOutlineCheck } from "solid-icons/ai";
-import fileType from "./fileType";
+
+import { open } from "@tauri-apps/plugin-shell";
+
 import { AppContext } from "~/context";
-import { Card } from "~/components/card";
-import { Tooltip } from "~/components/tooltip";
+
+import { LazyCard, LazyTooltip } from "~/lazy";
+
+import fileType from "./fileType";
+
 import { Progress } from "~/components/progress";
 import Flex from "~/components/flex";
+import { Badge } from "~/components/badge";
 
 import * as styles from "./index.css";
-import { Badge } from "~/components/badge";
 
 interface FileListItemProps {
   index?: number;
@@ -37,7 +42,7 @@ const FileListItem = (props: FileListItemProps) => {
           <span classList={{ [styles.filename]: true }}>{props.name}</span>
         }
       >
-        <Tooltip
+        <LazyTooltip
           content={translations()!.receive_page_list_item_tooltip}
           position="top-start"
         >
@@ -50,7 +55,7 @@ const FileListItem = (props: FileListItemProps) => {
           >
             {props.name}
           </span>
-        </Tooltip>
+        </LazyTooltip>
       </Show>
     </span>
   ));
@@ -75,11 +80,11 @@ const FileListItem = (props: FileListItemProps) => {
         variant="success"
         style={{ padding: 0 }}
       />
-    ),
+    )
   );
 
   return (
-    <Card style={{ overflow: "unset", margin: "8px" }}>
+    <LazyCard style={{ overflow: "unset", margin: "8px" }}>
       <Flex
         direction="horizontal"
         justify="between"
@@ -96,7 +101,7 @@ const FileListItem = (props: FileListItemProps) => {
       </Flex>
 
       <Progress value={props.percent} size="sm" />
-    </Card>
+    </LazyCard>
   );
 };
 
