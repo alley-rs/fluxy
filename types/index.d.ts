@@ -11,6 +11,7 @@ interface QrCode {
   svg: string;
   url: string;
   id: number;
+  onClose?: () => void;
 }
 
 interface SendFile {

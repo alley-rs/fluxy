@@ -25,6 +25,7 @@ const QRCode = () => {
       if (used) {
         clearTimeout(timer);
         setQrCode();
+        code.onClose?.();
       }
     }, 500);
 

@@ -34,7 +34,7 @@ import * as styles from "./index.css";
 const appWindow = getCurrentWebviewWindow();
 
 const SendPage = () => {
-  const { translations, setQrCode } = useContext(AppContext)!;
+  const { translations, setQrCode, goHomePage } = useContext(AppContext)!;
 
   const [files, setFiles] = createStore<SendFile[]>([]);
 
@@ -47,7 +47,7 @@ const SendPage = () => {
         const sendFiles = await getFilesMetadata(paths);
 
         setFiles((pre) => [...pre, ...sendFiles]);
-      },
+      }
     );
 
     onCleanup(() => {
@@ -60,11 +60,14 @@ const SendPage = () => {
 
   const newSendFilesQrCode = async () => {
     const code = await getSendFilesUrlQrCode(files);
+    code.onClose = () => {
+      goHomePage();
+      toast.warning("文件未下载完成时请勿退出此程序", {
+        position: "center",
+        duration: 1 * 60 * 1000, // 1 minutes
+      });
+    };
     setQrCode(code);
-    toast.warning("文件未下载完成时请勿退出此程序", {
-      position: "bottom",
-      duration: 5 * 60 * 1000, // 5 minutes
-    });
   };
 
   const isEmpty = createMemo(() => files.length === 0);
