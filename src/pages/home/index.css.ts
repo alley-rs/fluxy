@@ -49,7 +49,7 @@ export const buttons = style({
 });
 
 // 使用 clamp 实现响应式尺寸：最小 3rem，理想 8vw（或 8vh），最大 6rem
-const buttonSize = "clamp(12rem, 16vw, 24rem)";
+const buttonSize = "clamp(12rem, 16vw, 24rem) !important";
 
 export const button = style({
   display: "flex !important",
