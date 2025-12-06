@@ -24,7 +24,6 @@ const About = () => {
         class={styles.aboutButton}
         icon={<AiFillGithub font-size="16px" />}
         shape="circle"
-        iconOnly
         size="sm"
         onClick={() => open("https://github.com/alley-rs/fluxy")}
       />

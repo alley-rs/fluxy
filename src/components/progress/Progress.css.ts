@@ -5,7 +5,7 @@ export const progressTrack = style({
   width: "100%",
   backgroundColor: themeContract.color.surface,
   borderRadius: tokens.radius.full,
-  boxShadow: `inset 2px 2px 5px ${themeContract.color.shadowDark}, inset -2px -2px 5px ${themeContract.color.shadowLight}`,
+  boxShadow: `inset 2px 2px 5px ${themeContract.color.shadowDark1}, inset -2px -2px 5px ${themeContract.color.shadowLight1}`,
   overflow: "hidden",
 });
 

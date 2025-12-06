@@ -18,7 +18,7 @@ export const badgeBase = style({
   color: "#fff",
   zIndex: 10,
   transition: "all 0.2s ease",
-  boxShadow: `1px 1px 3px ${themeContract.color.shadowDark}`,
+  boxShadow: `1px 1px 3px ${themeContract.color.shadowDark1}`,
   border: `1px solid ${themeContract.color.surface}`, // Border to separate from parent
 });
 
