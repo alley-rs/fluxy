@@ -13,6 +13,7 @@ import { AiOutlineDelete } from "solid-icons/ai";
 
 import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
 import { TauriEvent } from "@tauri-apps/api/event";
+import { message } from "@tauri-apps/plugin-dialog";
 
 import { getFilesMetadata, getSendFilesUrlQrCode } from "~/api";
 
@@ -24,7 +25,6 @@ import Flex from "~/components/flex";
 import FileTypeIcon from "~/components/file-type-icon";
 import EllipsisText from "~/components/ellipsis";
 import EmptyList from "~/components/emptyList";
-import { toast } from "~/components/toast";
 
 import { deleteRepetition } from "./utils";
 
@@ -60,12 +60,9 @@ const SendPage = () => {
 
   const newSendFilesQrCode = async () => {
     const code = await getSendFilesUrlQrCode(files);
-    code.onClose = () => {
+    code.onClose = async () => {
+      await message("文件未下载完成时请勿退出此程序");
       goHomePage();
-      toast.warning("文件未下载完成时请勿退出此程序", {
-        position: "center",
-        duration: 1 * 60 * 1000, // 1 minutes
-      });
     };
     setQrCode(code);
   };

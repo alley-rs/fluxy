@@ -12,6 +12,7 @@
     "shell:allow-open",
     "clipboard-manager:allow-write-text",
     "dialog:allow-open",
+    "dialog:allow-message",
     "process:default",
     "dialog:allow-ask"
   ]
